@@ -1,0 +1,203 @@
+/* Shared styling for subpages */
+.page-hero {
+  padding: 150px 0 60px;
+  background: radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 60%),
+              linear-gradient(180deg, #090a0d 0%, #101116 100%);
+  border-bottom: 1px solid var(--border-gold-subtle);
+  position: relative;
+  text-align: center;
+}
+
+.page-hero__breadcrumbs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  margin-bottom: 18px;
+}
+
+.page-hero__breadcrumbs a {
+  color: var(--color-text-secondary);
+}
+
+.page-hero__breadcrumbs a:hover {
+  color: var(--color-gold);
+}
+
+.page-hero__sep {
+  color: var(--color-gold-dark);
+}
+
+.page-hero__title {
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 14px;
+  letter-spacing: -0.5px;
+}
+
+.page-hero__desc {
+  max-width: 680px;
+  margin: 0 auto;
+  font-size: 1.05rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* Home Hub Section */
+.home-hub-section {
+  padding: 80px 0 60px;
+  background: linear-gradient(180deg, var(--bg-main) 0%, #0d0e13 50%, var(--bg-main) 100%);
+}
+
+.home-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.home-hub-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 34px 26px;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.home-hub-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--border-gold);
+  background: linear-gradient(180deg, #181922 0%, #121318 100%);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), var(--gold-glow-sm);
+}
+
+.home-hub-card__icon {
+  font-size: 2.2rem;
+  margin-bottom: 16px;
+  width: 54px;
+  height: 54px;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid var(--border-gold-subtle);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-hub-card__sub {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--color-gold);
+  margin-bottom: 8px;
+}
+
+.home-hub-card__title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.home-hub-card__desc {
+  font-size: 0.88rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 24px;
+  flex-grow: 1;
+}
+
+.home-hub-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-gold-light);
+  transition: color var(--transition-fast);
+}
+
+.hub-arrow {
+  transition: transform var(--transition-fast);
+}
+
+.home-hub-card:hover .hub-arrow {
+  transform: translateX(5px);
+}
+
+.home-hub-card:hover .home-hub-card__link {
+  color: #ffffff;
+}
+
+/* Page CTA Banner */
+.page-cta-banner {
+  margin: 60px 0 100px;
+}
+
+.cta-banner-box {
+  background: linear-gradient(135deg, #181920 0%, #121318 100%);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 50px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), var(--gold-glow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-banner-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 100%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cta-banner__title {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.cta-banner__desc {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  max-width: 550px;
+}
+
+/* Responsive */
+@media (max-width: 1080px) {
+  .home-hub-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .home-hub-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-banner-box {
+    flex-direction: column;
+    text-align: center;
+    padding: 36px 24px;
+  }
+
+  .cta-banner-box .btn-gold {
+    width: 100%;
+  }
+}

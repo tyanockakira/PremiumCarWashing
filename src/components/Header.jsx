@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
+import { NavLink, Link } from 'react-router-dom';
 import './Header.css';
 
-export default function Header({ onOpenBooking }) {
+export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+      setScrolled(window.scrollY > 30);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -21,7 +22,7 @@ export default function Header({ onOpenBooking }) {
     <header className={`header ${scrolled ? 'header--scrolled' : ''}`}>
       <div className="container header__container">
         {/* Brand Logo */}
-        <a href="#hero" className="header__logo" onClick={closeMobileMenu}>
+        <Link to="/" className="header__logo" onClick={closeMobileMenu}>
           <div className="logo-emblem">
             <span className="logo-symbol">✦</span>
           </div>
@@ -29,16 +30,52 @@ export default function Header({ onOpenBooking }) {
             <span className="logo-brand">PREMIUM<span className="logo-gold">WASH</span></span>
             <span className="logo-sub">DETAILING STUDIO</span>
           </div>
-        </a>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="header__nav">
           <ul className="nav__list">
-            <li><a href="#hero" className="nav__link">Главная</a></li>
-            <li><a href="#services" className="nav__link">Услуги</a></li>
-            <li><a href="#pricing" className="nav__link">Цены</a></li>
-            <li><a href="#advantages" className="nav__link">Преимущества</a></li>
-            <li><a href="#contacts" className="nav__link">Контакты</a></li>
+            <li>
+              <NavLink
+                to="/"
+                end
+                className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
+              >
+                Главная
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/services"
+                className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
+              >
+                Услуги
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/pricing"
+                className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
+              >
+                Цены
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/advantages"
+                className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
+              >
+                Преимущества
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/contacts"
+                className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
+              >
+                Контакты
+              </NavLink>
+            </li>
           </ul>
         </nav>
 
@@ -48,17 +85,13 @@ export default function Header({ onOpenBooking }) {
             <span className="phone-icon">✆</span>
             <span className="phone-number">+7 (495) 999-00-88</span>
           </a>
-          <button 
-            type="button" 
-            className="btn-gold header__cta"
-            onClick={onOpenBooking}
-          >
+          <Link to="/booking" className="btn-gold header__cta">
             Записаться
-          </button>
+          </Link>
         </div>
 
         {/* Mobile Hamburger Button */}
-        <button 
+        <button
           type="button"
           className={`hamburger ${mobileMenuOpen ? 'hamburger--active' : ''}`}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -74,45 +107,63 @@ export default function Header({ onOpenBooking }) {
       <div className={`mobile-menu ${mobileMenuOpen ? 'mobile-menu--open' : ''}`}>
         <ul className="mobile-menu__list">
           <li>
-            <a href="#hero" onClick={closeMobileMenu} className="mobile-menu__link">
+            <NavLink
+              to="/"
+              end
+              onClick={closeMobileMenu}
+              className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
+            >
               Главная
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a href="#services" onClick={closeMobileMenu} className="mobile-menu__link">
+            <NavLink
+              to="/services"
+              onClick={closeMobileMenu}
+              className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
+            >
               Услуги
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a href="#pricing" onClick={closeMobileMenu} className="mobile-menu__link">
+            <NavLink
+              to="/pricing"
+              onClick={closeMobileMenu}
+              className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
+            >
               Цены
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a href="#advantages" onClick={closeMobileMenu} className="mobile-menu__link">
+            <NavLink
+              to="/advantages"
+              onClick={closeMobileMenu}
+              className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
+            >
               Преимущества
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a href="#contacts" onClick={closeMobileMenu} className="mobile-menu__link">
+            <NavLink
+              to="/contacts"
+              onClick={closeMobileMenu}
+              className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
+            >
               Контакты
-            </a>
+            </NavLink>
           </li>
         </ul>
         <div className="mobile-menu__footer">
           <a href="tel:+74959990088" className="mobile-menu__phone">
             +7 (495) 999-00-88
           </a>
-          <button 
-            type="button"
+          <Link
+            to="/booking"
             className="btn-gold mobile-menu__cta"
-            onClick={() => {
-              closeMobileMenu();
-              onOpenBooking();
-            }}
+            onClick={closeMobileMenu}
           >
-            Записаться онлайн
-          </button>
+            Онлайн-запись
+          </Link>
         </div>
       </div>
     </header>

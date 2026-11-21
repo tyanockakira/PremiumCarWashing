@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createBooking } from '../api/bookingApi';
 import './BookingModal.css';
 
 const defaultServices = [
@@ -22,6 +23,8 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
     comment: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -35,36 +38,48 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.phone) return;
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      onClose();
-      setFormData({
-        name: '',
-        phone: '',
-        car: '',
-        service: defaultServices[0],
-        date: '',
-        timeSlot: '10:00 — 12:00',
-        comment: ''
-      });
-    }, 3000);
+
+    setIsSubmitting(true);
+    setErrorMsg('');
+
+    try {
+      await createBooking(formData);
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        onClose();
+        setFormData({
+          name: '',
+          phone: '',
+          car: '',
+          service: defaultServices[0],
+          date: '',
+          timeSlot: '10:00 — 12:00',
+          comment: ''
+        });
+      }, 3500);
+    } catch (err) {
+      console.error('Ошибка записи:', err);
+      setErrorMsg('Не удалось сохранить запись онлайн. Пожалуйста, позвоните нам по номеру +7 (495) 999-00-88.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div 
+      <div
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
       >
-        <button 
-          type="button" 
-          className="modal-close-btn" 
+        <button
+          type="button"
+          className="modal-close-btn"
           onClick={onClose}
           aria-label="Закрыть"
         >
@@ -91,6 +106,12 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
               </p>
             </div>
 
+            {errorMsg && (
+              <div className="modal-error-banner">
+                ⚠️ {errorMsg}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="modal-form">
               <div className="form-row">
                 <div className="modal-field">
@@ -101,6 +122,7 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                     required
                     placeholder="Константин"
                     value={formData.name}
+                    disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   />
                 </div>
@@ -113,6 +135,7 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                     required
                     placeholder="+7 (___) ___-__-__"
                     value={formData.phone}
+                    disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   />
                 </div>
@@ -126,6 +149,7 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                     type="text"
                     placeholder="Например: Mercedes-AMG GT"
                     value={formData.car}
+                    disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, car: e.target.value })}
                   />
                 </div>
@@ -135,6 +159,7 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                   <select
                     id="modal-service"
                     value={formData.service}
+                    disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                   >
                     {defaultServices.map((srv, idx) => (
@@ -156,6 +181,7 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                     id="modal-date"
                     type="date"
                     value={formData.date}
+                    disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                   />
                 </div>
@@ -165,6 +191,7 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                   <select
                     id="modal-slot"
                     value={formData.timeSlot}
+                    disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, timeSlot: e.target.value })}
                   >
                     <option value="10:00 — 12:00">Утро (10:00 — 12:00)</option>
@@ -183,12 +210,17 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                   rows="2"
                   placeholder="Например: требуется предварительный осмотр ЛКП или трансфер"
                   value={formData.comment}
+                  disabled={isSubmitting}
                   onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
                 ></textarea>
               </div>
 
-              <button type="submit" className="btn-gold modal-submit-btn">
-                Забронировать бокс
+              <button
+                type="submit"
+                className="btn-gold modal-submit-btn"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Бронирование...' : 'Забронировать бокс'}
               </button>
             </form>
           </>

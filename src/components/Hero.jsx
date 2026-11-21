@@ -1,6 +1,7 @@
+import { Link } from 'react-router-dom';
 import './Hero.css';
 
-export default function Hero({ onOpenBooking }) {
+export default function Hero() {
   return (
     <section id="hero" className="hero-section">
       {/* Background Ambience & Lighting */}
@@ -25,24 +26,20 @@ export default function Hero({ onOpenBooking }) {
 
           {/* Subtitle */}
           <p className="hero-description">
-            Восстановительная многоэтапная полировка, керамические составы 9H+ и 
+            Восстановительная многоэтапная полировка, керамические составы 9H+ и
             детальный уход за интерьером представительского и спортивного класса.
           </p>
 
           {/* Action CTAs */}
           <div className="hero-actions">
-            <button 
-              type="button" 
-              className="btn-gold hero-btn"
-              onClick={onOpenBooking}
-            >
+            <Link to="/booking" className="btn-gold hero-btn">
               <span>Записаться на детейлинг</span>
               <span className="btn-arrow">→</span>
-            </button>
+            </Link>
 
-            <a href="#pricing" className="btn-outline hero-btn">
+            <Link to="/pricing" className="btn-outline hero-btn">
               <span>Рассчитать стоимость</span>
-            </a>
+            </Link>
           </div>
 
           {/* Key Metrics / Highlights */}
@@ -70,13 +67,13 @@ export default function Hero({ onOpenBooking }) {
         <div className="hero-visual">
           <div className="car-frame">
             <div className="car-glow-ring"></div>
-            <img 
-              src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=85" 
+            <img
+              src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=85"
               alt="Эксклюзивный спорткар после детейлинга"
               className="car-image"
               loading="eager"
             />
-            
+
             {/* Floating Quality Badge */}
             <div className="floating-badge floating-badge--top">
               <span className="floating-badge__icon">💎</span>

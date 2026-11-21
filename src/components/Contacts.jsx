@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createConsultation } from '../api/bookingApi';
 import './Contacts.css';
 
-export default function Contacts({ onOpenBooking }) {
+export default function Contacts({ onOpenBooking, hideHeader = false }) {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -9,30 +11,55 @@ export default function Contacts({ onOpenBooking }) {
     question: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.phone) return;
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({ name: '', phone: '', carModel: '', question: '' });
-    }, 4000);
+
+    setIsSubmitting(true);
+    setErrorMsg('');
+
+    try {
+      await createConsultation(formData);
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({ name: '', phone: '', carModel: '', question: '' });
+      }, 4000);
+    } catch (err) {
+      console.error('Ошибка отправки формы:', err);
+      setErrorMsg('Не удалось отправить заявку. Пожалуйста, позвоните нам по номеру +7 (495) 999-00-88.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleBookingClick = () => {
+    if (onOpenBooking) {
+      onOpenBooking();
+    } else {
+      navigate('/booking');
+    }
   };
 
   return (
     <section id="contacts" className="contacts-section">
       <div className="container">
-        <div className="section-header">
-          <div className="gold-sub-title">КАК НАС НАЙТИ</div>
-          <h2 className="section-title">
-            Контакты и <span className="gold-text">локация студии</span>
-          </h2>
-          <p className="section-desc">
-            Ждем вас в удобной локации с собственной охраняемой территорией, 
-            лаундж-зоной с зерновым кофе и сигарной комнатой.
-          </p>
-        </div>
+        {!hideHeader && (
+          <div className="section-header">
+            <div className="gold-sub-title">КАК НАС НАЙТИ</div>
+            <h2 className="section-title">
+              Контакты и <span className="gold-text">локация студии</span>
+            </h2>
+            <p className="section-desc">
+              Ждем вас в удобной локации с собственной охраняемой территорией,
+              лаундж-зоной с зерновым кофе и сигарной комнатой.
+            </p>
+          </div>
+        )}
 
         <div className="contacts-grid">
           {/* Info Card */}
@@ -87,10 +114,10 @@ export default function Contacts({ onOpenBooking }) {
               <span className="lounge-perk__star">✦</span>
               <div className="lounge-perk__body">
                 <p>Для клиентов доступна VIP-лаундж зона с Wi-Fi, напитками и трансляцией процесса работы из бокса.</p>
-                <button 
-                  type="button" 
-                  className="lounge-perk__btn" 
-                  onClick={onOpenBooking}
+                <button
+                  type="button"
+                  className="lounge-perk__btn"
+                  onClick={handleBookingClick}
                 >
                   Забронировать VIP-визит →
                 </button>
@@ -104,6 +131,12 @@ export default function Contacts({ onOpenBooking }) {
             <p className="form-card__subtitle">
               Оставьте заявку на бесплатную диагностику ЛКП и подбор программы ухода.
             </p>
+
+            {errorMsg && (
+              <div className="contact-error-banner">
+                ⚠️ {errorMsg}
+              </div>
+            )}
 
             {submitted ? (
               <div className="form-success">
@@ -121,6 +154,7 @@ export default function Contacts({ onOpenBooking }) {
                     required
                     placeholder="Александр"
                     value={formData.name}
+                    disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   />
                 </div>
@@ -133,6 +167,7 @@ export default function Contacts({ onOpenBooking }) {
                     required
                     placeholder="+7 (___) ___-__-__"
                     value={formData.phone}
+                    disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   />
                 </div>
@@ -144,6 +179,7 @@ export default function Contacts({ onOpenBooking }) {
                     type="text"
                     placeholder="Например: Porsche Macan GTS"
                     value={formData.carModel}
+                    disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, carModel: e.target.value })}
                   />
                 </div>
@@ -155,12 +191,17 @@ export default function Contacts({ onOpenBooking }) {
                     rows="3"
                     placeholder="Хочу сделать керамику и химчистку..."
                     value={formData.question}
+                    disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, question: e.target.value })}
                   ></textarea>
                 </div>
 
-                <button type="submit" className="btn-gold form-submit-btn">
-                  Отправить заявку
+                <button
+                  type="submit"
+                  className="btn-gold form-submit-btn"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Отправка...' : 'Отправить заявку'}
                 </button>
 
                 <p className="form-privacy">

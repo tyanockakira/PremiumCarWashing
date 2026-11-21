@@ -33,19 +33,21 @@ const advantages = [
   }
 ];
 
-export default function Advantages() {
+export default function Advantages({ hideHeader = false }) {
   return (
     <section id="advantages" className="advantages-section">
       <div className="container">
-        <div className="section-header">
-          <div className="gold-sub-title">ПОЧЕМУ ВЫБИРАЮТ НАС</div>
-          <h2 className="section-title">
-            Стандарты качества <span className="gold-text">без компромиссов</span>
-          </h2>
-          <p className="section-desc">
-            Мы относимся к каждому автомобилю как к уникальному произведению инженерного искусства.
-          </p>
-        </div>
+        {!hideHeader && (
+          <div className="section-header">
+            <div className="gold-sub-title">ПОЧЕМУ ВЫБИРАЮТ НАС</div>
+            <h2 className="section-title">
+              Стандарты качества <span className="gold-text">без компромиссов</span>
+            </h2>
+            <p className="section-desc">
+              Мы относимся к каждому автомобилю как к уникальному произведению инженерного искусства.
+            </p>
+          </div>
+        )}
 
         <div className="advantages-grid">
           {advantages.map((item, idx) => (
