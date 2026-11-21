@@ -73,6 +73,17 @@
   margin-bottom: 28px;
 }
 
+.modal-error-banner {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  font-size: 0.85rem;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
 .modal-tag {
   font-size: 0.72rem;
   font-weight: 700;

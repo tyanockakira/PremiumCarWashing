@@ -14,7 +14,7 @@
   --gold-gradient: linear-gradient(135deg, #faebb7 0%, #d4af37 50%, #aa7a1e 100%);
   --gold-gradient-hover: linear-gradient(135deg, #ffffff 0%, #e8c659 50%, #b88628 100%);
   --gold-gradient-border: linear-gradient(135deg, rgba(247, 230, 166, 0.6) 0%, rgba(212, 175, 55, 0.3) 50%, rgba(158, 127, 34, 0.1) 100%);
-  
+
   --dark-gradient: linear-gradient(180deg, #08080a 0%, #101115 50%, #08080a 100%);
 
   --color-text-primary: #f5f6f8;

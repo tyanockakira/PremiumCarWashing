@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getServices } from '../api/bookingApi';
 import './Services.css';
 
-const servicesData = [
+const defaultServicesData = [
   {
     id: 'polishing',
     title: 'Восстановительная полировка',
@@ -68,27 +71,64 @@ const servicesData = [
   }
 ];
 
-export default function Services({ onSelectService }) {
+export default function Services({ onSelectService, hideHeader = false }) {
+  const [services, setServices] = useState(defaultServicesData);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let isMounted = true;
+    getServices().then((data) => {
+      if (isMounted && data && data.length > 0) {
+        setServices(
+          data.map((item) => ({
+            id: item.slug || item.id,
+            title: item.title,
+            tag: item.tag || 'ПРЕМИУМ',
+            featured: Boolean(item.is_featured),
+            price: `от ${new Intl.NumberFormat('ru-RU').format(item.base_price)} ₽`,
+            duration: item.duration_text || '',
+            image: item.image_url || defaultServicesData[0].image,
+            description: item.description,
+            features: item.features || []
+          }))
+        );
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleBook = (title) => {
+    if (onSelectService) {
+      onSelectService(title);
+    } else {
+      navigate('/booking', { state: { service: title } });
+    }
+  };
+
   return (
     <section id="services" className="services-section">
       <div className="container">
         {/* Section Header */}
-        <div className="section-header">
-          <div className="gold-sub-title">ЭКСКЛЮЗИВНЫЕ УСЛУГИ</div>
-          <h2 className="section-title">
-            Индивидуальные программы <span className="gold-text">детейлинга</span>
-          </h2>
-          <p className="section-desc">
-            Мы объединяем передовое оборудование, проверенные европейские составы
-            и филигранную ручную работу для безукоризненного результата.
-          </p>
-        </div>
+        {!hideHeader && (
+          <div className="section-header">
+            <div className="gold-sub-title">ЭКСКЛЮЗИВНЫЕ УСЛУГИ</div>
+            <h2 className="section-title">
+              Индивидуальные программы <span className="gold-text">детейлинга</span>
+            </h2>
+            <p className="section-desc">
+              Мы объединяем передовое оборудование, проверенные европейские составы
+              и филигранную ручную работу для безукоризненного результата.
+            </p>
+          </div>
+        )}
 
         {/* Services Grid */}
         <div className="services-grid">
-          {servicesData.map((service) => (
-            <article 
-              key={service.id} 
+          {services.map((service) => (
+            <article
+              key={service.id}
               className={`service-card ${service.featured ? 'service-card--featured' : ''}`}
             >
               {service.featured && (
@@ -99,15 +139,17 @@ export default function Services({ onSelectService }) {
 
               {/* Image & Header */}
               <div className="service-card__media">
-                <img 
-                  src={service.image} 
+                <img
+                  src={service.image}
                   alt={service.title}
                   className="service-card__img"
                   loading="lazy"
                 />
                 <div className="service-card__overlay"></div>
                 <span className="service-card__tag">{service.tag}</span>
-                <span className="service-card__duration">⏱ {service.duration}</span>
+                {service.duration && (
+                  <span className="service-card__duration">⏱ {service.duration}</span>
+                )}
               </div>
 
               {/* Body */}
@@ -132,10 +174,10 @@ export default function Services({ onSelectService }) {
                     <span className="price-value gold-text">{service.price}</span>
                   </div>
 
-                  <button 
+                  <button
                     type="button"
                     className="service-card__btn"
-                    onClick={() => onSelectService(service.title)}
+                    onClick={() => handleBook(service.title)}
                   >
                     <span>Записаться</span>
                     <span className="btn-icon">→</span>

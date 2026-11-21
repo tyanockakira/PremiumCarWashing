@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getPricingData } from '../api/bookingApi';
 import './Pricing.css';
 
-const carClasses = [
+const defaultCarClasses = [
   { id: 'sedan', label: 'Седан / Купе', multiplier: 1, example: 'BMW 3/5, Porsche 911, Mercedes E-Class' },
   { id: 'crossover', label: 'Кроссовер', multiplier: 1.2, example: 'BMW X3/X5, Porsche Macan/Cayenne' },
   { id: 'suv', label: 'Внедорожник / SUV', multiplier: 1.4, example: 'Mercedes G-Class, Range Rover, GLS' }
 ];
 
-const packages = [
+const defaultPackages = [
   {
     id: 'pkg-light',
     title: 'Executive Care',
@@ -61,10 +63,48 @@ const packages = [
   }
 ];
 
-export default function Pricing({ onSelectPackage }) {
+export default function Pricing({ onSelectPackage, hideHeader = false }) {
+  const [carClassesList, setCarClassesList] = useState(defaultCarClasses);
+  const [packagesList, setPackagesList] = useState(defaultPackages);
   const [selectedClass, setSelectedClass] = useState('sedan');
+  const navigate = useNavigate();
 
-  const currentClassObj = carClasses.find((c) => c.id === selectedClass);
+  useEffect(() => {
+    let isMounted = true;
+    getPricingData().then((res) => {
+      if (isMounted && res) {
+        if (res.carClasses && res.carClasses.length > 0) {
+          setCarClassesList(
+            res.carClasses.map((c) => ({
+              id: c.id,
+              label: c.label,
+              multiplier: Number(c.multiplier) || 1,
+              example: c.example_models || ''
+            }))
+          );
+        }
+        if (res.packages && res.packages.length > 0) {
+          setPackagesList(
+            res.packages.map((p) => ({
+              id: p.id,
+              title: p.title,
+              tag: p.tag || 'ТАРИФ',
+              basePrice: p.base_price,
+              time: p.time_text || '',
+              featured: Boolean(p.is_featured),
+              description: p.description,
+              items: p.items || []
+            }))
+          );
+        }
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const currentClassObj = carClassesList.find((c) => c.id === selectedClass) || carClassesList[0];
   const multiplier = currentClassObj ? currentClassObj.multiplier : 1;
 
   const formatPrice = (base) => {
@@ -72,26 +112,37 @@ export default function Pricing({ onSelectPackage }) {
     return new Intl.NumberFormat('ru-RU').format(total) + ' ₽';
   };
 
+  const handleSelect = (pkgTitle) => {
+    const fullTitle = `${pkgTitle} (${currentClassObj?.label})`;
+    if (onSelectPackage) {
+      onSelectPackage(fullTitle);
+    } else {
+      navigate('/booking', { state: { service: fullTitle } });
+    }
+  };
+
   return (
     <section id="pricing" className="pricing-section">
       <div className="container">
         {/* Section Header */}
-        <div className="section-header">
-          <div className="gold-sub-title">ПРОЗРАЧНЫЙ ПРАЙС-ЛИСТ</div>
-          <h2 className="section-title">
-            Пакеты услуг и <span className="gold-text">калькулятор стоимости</span>
-          </h2>
-          <p className="section-desc">
-            Выберите класс вашего автомобиля, чтобы увидеть точную расчетную стоимость 
-            готовых комплексов детейлинга.
-          </p>
-        </div>
+        {!hideHeader && (
+          <div className="section-header">
+            <div className="gold-sub-title">ПРОЗРАЧНЫЙ ПРАЙС-ЛИСТ</div>
+            <h2 className="section-title">
+              Пакеты услуг и <span className="gold-text">калькулятор стоимости</span>
+            </h2>
+            <p className="section-desc">
+              Выберите класс вашего автомобиля, чтобы увидеть точную расчетную стоимость
+              готовых комплексов детейлинга.
+            </p>
+          </div>
+        )}
 
         {/* Car Class Selector Tabs */}
         <div className="class-selector">
           <span className="class-selector__label">Класс автомобиля:</span>
           <div className="class-selector__tabs">
-            {carClasses.map((item) => (
+            {carClassesList.map((item) => (
               <button
                 key={item.id}
                 type="button"
@@ -107,9 +158,9 @@ export default function Pricing({ onSelectPackage }) {
 
         {/* Packages Cards */}
         <div className="pricing-grid">
-          {packages.map((pkg) => (
-            <div 
-              key={pkg.id} 
+          {packagesList.map((pkg) => (
+            <div
+              key={pkg.id}
               className={`pricing-card ${pkg.featured ? 'pricing-card--featured' : ''}`}
             >
               {pkg.featured && (
@@ -120,7 +171,9 @@ export default function Pricing({ onSelectPackage }) {
                 <span className="pricing-tag">{pkg.tag}</span>
                 <h3 className="pricing-card__title">{pkg.title}</h3>
                 <p className="pricing-card__desc">{pkg.description}</p>
-                <div className="pricing-time">Срок выполнения: <strong>{pkg.time}</strong></div>
+                {pkg.time && (
+                  <div className="pricing-time">Срок выполнения: <strong>{pkg.time}</strong></div>
+                )}
               </div>
 
               <div className="pricing-card__cost">
@@ -139,10 +192,10 @@ export default function Pricing({ onSelectPackage }) {
                 ))}
               </ul>
 
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={pkg.featured ? 'btn-gold pricing-btn' : 'btn-outline pricing-btn'}
-                onClick={() => onSelectPackage(`${pkg.title} (${currentClassObj?.label})`)}
+                onClick={() => handleSelect(pkg.title)}
               >
                 Выбрать комплекс
               </button>

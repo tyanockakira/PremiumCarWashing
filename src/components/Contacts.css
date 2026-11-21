@@ -171,6 +171,17 @@
   line-height: 1.5;
 }
 
+.contact-error-banner {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  font-size: 0.85rem;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
 .contact-form {
   display: flex;
   flex-direction: column;

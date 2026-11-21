@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import './Footer.css';
 
 export default function Footer() {
@@ -9,12 +10,12 @@ export default function Footer() {
         <div className="footer-top">
           {/* Brand info */}
           <div className="footer-brand">
-            <div className="footer-logo">
+            <Link to="/" className="footer-logo">
               <span className="footer-logo__symbol">✦</span>
               <span className="footer-logo__text">PREMIUM<span className="gold-text">WASH</span></span>
-            </div>
+            </Link>
             <p className="footer-desc">
-              Эксклюзивный уход за премиальными автомобилями, спорткарами и коллекционными моделями. 
+              Эксклюзивный уход за премиальными автомобилями, спорткарами и коллекционными моделями.
               Стандарты европейских детейлинг-ателье.
             </p>
             <div className="footer-badges">
@@ -28,11 +29,12 @@ export default function Footer() {
           <div className="footer-col">
             <h4 className="footer-col__title">Навигация</h4>
             <ul className="footer-nav">
-              <li><a href="#hero">Главная</a></li>
-              <li><a href="#services">Услуги детейлинга</a></li>
-              <li><a href="#pricing">Калькулятор цен</a></li>
-              <li><a href="#advantages">Преимущества</a></li>
-              <li><a href="#contacts">Контакты</a></li>
+              <li><Link to="/">Главная</Link></li>
+              <li><Link to="/services">Услуги детейлинга</Link></li>
+              <li><Link to="/pricing">Калькулятор цен</Link></li>
+              <li><Link to="/advantages">Преимущества</Link></li>
+              <li><Link to="/contacts">Контакты</Link></li>
+              <li><Link to="/booking">Онлайн-запись</Link></li>
             </ul>
           </div>
 
@@ -40,11 +42,11 @@ export default function Footer() {
           <div className="footer-col">
             <h4 className="footer-col__title">Услуги</h4>
             <ul className="footer-nav">
-              <li><a href="#services">Восстановительная полировка</a></li>
-              <li><a href="#services">Нанокерамика 9H / 10H</a></li>
-              <li><a href="#services">Детейлинг-химчистка</a></li>
-              <li><a href="#services">Антигравийная защита PPF</a></li>
-              <li><a href="#services">Антидождь на стёкла</a></li>
+              <li><Link to="/services">Восстановительная полировка</Link></li>
+              <li><Link to="/services">Нанокерамика 9H / 10H</Link></li>
+              <li><Link to="/services">Детейлинг-химчистка</Link></li>
+              <li><Link to="/services">Антигравийная защита PPF</Link></li>
+              <li><Link to="/pricing">Комплексные пакеты</Link></li>
             </ul>
           </div>
 
