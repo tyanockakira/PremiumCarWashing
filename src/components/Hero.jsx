@@ -14,51 +14,51 @@ export default function Hero() {
           {/* Status Badge */}
           <div className="hero-badge">
             <span className="badge-pulse"></span>
-            <span className="badge-text">ПРЕМИАЛЬНЫЙ ДЕТЕЙЛИНГ В МОСКВЕ</span>
+            <span className="badge-text">ПРЕМІАЛЬНИЙ ДЕТЕЙЛІНГ • ДЕМО-ВІТРИНА</span>
           </div>
 
           {/* Main Title */}
           <h1 className="hero-title">
-            Искусство блеска <br />
-            и <span className="gold-text">абсолютная защита</span> <br />
-            вашего автомобиля
+            Мистецтво блиску <br />
+            та <span className="platinum-text">абсолютний захист</span> <br />
+            вашого автомобіля
           </h1>
 
           {/* Subtitle */}
           <p className="hero-description">
-            Восстановительная многоэтапная полировка, керамические составы 9H+ и
-            детальный уход за интерьером представительского и спортивного класса.
+            Багатоетапне відновлювальне полірування, нанокерамічні покриття 9H Pro та
+            делікатний догляд за інтер&apos;єром представницького й спортивного класу.
           </p>
 
           {/* Action CTAs */}
           <div className="hero-actions">
-            <Link to="/booking" className="btn-gold hero-btn">
-              <span>Записаться на детейлинг</span>
+            <Link to="/booking" className="btn-platinum hero-btn">
+              <span>Записатися на дітейлінг</span>
               <span className="btn-arrow">→</span>
             </Link>
 
             <Link to="/pricing" className="btn-outline hero-btn">
-              <span>Рассчитать стоимость</span>
+              <span>Розрахувати вартість</span>
             </Link>
           </div>
 
           {/* Key Metrics / Highlights */}
           <div className="hero-stats">
             <div className="stat-card">
-              <span className="stat-number gold-text">9+</span>
-              <span className="stat-label">Лет на рынке детейлинга</span>
+              <span className="stat-number platinum-text">9+</span>
+              <span className="stat-label">Років досвіду майстрів</span>
             </div>
             <div className="stat-divider"></div>
 
             <div className="stat-card">
-              <span className="stat-number gold-text">3 800+</span>
-              <span className="stat-label">Обработанных спорткаров и SUV</span>
+              <span className="stat-number platinum-text">3 800+</span>
+              <span className="stat-label">Обслугованих спорткарів та SUV</span>
             </div>
             <div className="stat-divider"></div>
 
             <div className="stat-card">
-              <span className="stat-number gold-text">100%</span>
-              <span className="stat-label">Гарантия на стойкость покрытия</span>
+              <span className="stat-number platinum-text">100%</span>
+              <span className="stat-label">Контроль якості кожного етапу</span>
             </div>
           </div>
         </div>
@@ -69,25 +69,25 @@ export default function Hero() {
             <div className="car-glow-ring"></div>
             <img
               src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=85"
-              alt="Эксклюзивный спорткар после детейлинга"
+              alt="Ексклюзивний спорткар після дітейлінгу"
               className="car-image"
               loading="eager"
             />
 
             {/* Floating Quality Badge */}
             <div className="floating-badge floating-badge--top">
-              <span className="floating-badge__icon">💎</span>
+              <span className="floating-badge__icon">✦</span>
               <div>
-                <span className="floating-badge__title">Керамика 9H Pro</span>
-                <span className="floating-badge__desc">Гидрофобный эффект до 36 мес</span>
+                <span className="floating-badge__title">Кераміка 9H Pro</span>
+                <span className="floating-badge__desc">Гідрофобний ефект до 36 міс</span>
               </div>
             </div>
 
             <div className="floating-badge floating-badge--bottom">
               <span className="floating-badge__icon">⭐</span>
               <div>
-                <span className="floating-badge__title">Глянцевый блеск 100%</span>
-                <span className="floating-badge__desc">Устранение голограмм и рисок</span>
+                <span className="floating-badge__title">Глянцевий блиск 100%</span>
+                <span className="floating-badge__desc">Усунення рисок та голограм</span>
               </div>
             </div>
           </div>

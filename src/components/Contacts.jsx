@@ -30,8 +30,8 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
         setFormData({ name: '', phone: '', carModel: '', question: '' });
       }, 4000);
     } catch (err) {
-      console.error('Ошибка отправки формы:', err);
-      setErrorMsg('Не удалось отправить заявку. Пожалуйста, позвоните нам по номеру +7 (495) 999-00-88.');
+      console.error('Помилка відправлення форми:', err);
+      setErrorMsg('Не вдалося надіслати заявку. Будь ласка, зателефонуйте нам або спробуйте пізніше.');
     } finally {
       setIsSubmitting(false);
     }
@@ -50,13 +50,13 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
       <div className="container">
         {!hideHeader && (
           <div className="section-header">
-            <div className="gold-sub-title">КАК НАС НАЙТИ</div>
+            <div className="tech-sub-title">ЯК НАС ЗНАЙТИ</div>
             <h2 className="section-title">
-              Контакты и <span className="gold-text">локация студии</span>
+              Контакти та <span className="platinum-text">локація студії</span>
             </h2>
             <p className="section-desc">
-              Ждем вас в удобной локации с собственной охраняемой территорией,
-              лаундж-зоной с зерновым кофе и сигарной комнатой.
+              Чекаємо на вас у зручній локації із власною охоронюваною територією,
+              лаундж-зоною з добірною кавою та швидкісним Wi-Fi.
             </p>
           </div>
         )}
@@ -67,36 +67,36 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
             <div className="contact-item">
               <div className="contact-item__icon">📍</div>
               <div className="contact-item__content">
-                <span className="contact-item__label">Адрес студии</span>
-                <p className="contact-item__value">г. Москва, Кутузовский проспект, 36с1</p>
-                <span className="contact-item__hint">Закрытый охраняемый въезд, въезд по пропускам</span>
+                <span className="contact-item__label">Адреса студії</span>
+                <p className="contact-item__value">м. Київ, вул. Автомобільна, 1</p>
+                <span className="contact-item__hint">Закритий в&apos;їзд під охороною (демонстраційна адреса)</span>
               </div>
             </div>
 
             <div className="contact-item">
               <div className="contact-item__icon">⏱️</div>
               <div className="contact-item__content">
-                <span className="contact-item__label">График работы</span>
-                <p className="contact-item__value">Круглосуточно — 24/7</p>
-                <span className="contact-item__hint">Приёмка и выдача автомобилей в любое время по записи</span>
+                <span className="contact-item__label">Графік роботи</span>
+                <p className="contact-item__value">Цілодобово — 24/7</p>
+                <span className="contact-item__hint">Прийом та видача авто за попереднім записом</span>
               </div>
             </div>
 
             <div className="contact-item">
               <div className="contact-item__icon">📞</div>
               <div className="contact-item__content">
-                <span className="contact-item__label">Телефон для бронирования</span>
-                <a href="tel:+74959990088" className="contact-item__value contact-item__value--link">
-                  +7 (495) 999-00-88
+                <span className="contact-item__label">Телефон для бронювання</span>
+                <a href="tel:+380440000000" className="contact-item__value contact-item__value--link">
+                  +380 (44) 000-00-00
                 </a>
-                <span className="contact-item__hint">Консьерж-сервис и персональный мастер-приемщик</span>
+                <span className="contact-item__hint">Консьєрж-сервіс (демонстраційний номер)</span>
               </div>
             </div>
 
             <div className="contact-item">
               <div className="contact-item__icon">💬</div>
               <div className="contact-item__content">
-                <span className="contact-item__label">Мессенджеры</span>
+                <span className="contact-item__label">Месенджери</span>
                 <div className="social-links">
                   <a href="https://t.me" target="_blank" rel="noreferrer" className="social-pill">
                     <span className="social-pill__icon">✈️</span>
@@ -113,13 +113,13 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
             <div className="lounge-perk">
               <span className="lounge-perk__star">✦</span>
               <div className="lounge-perk__body">
-                <p>Для клиентов доступна VIP-лаундж зона с Wi-Fi, напитками и трансляцией процесса работы из бокса.</p>
+                <p>Для гостей доступна VIP-лаундж зона з кавою, Wi-Fi та прямою трансляцією процесу робіт із боксу.</p>
                 <button
                   type="button"
                   className="lounge-perk__btn"
                   onClick={handleBookingClick}
                 >
-                  Забронировать VIP-визит →
+                  Забронювати VIP-візит →
                 </button>
               </div>
             </div>
@@ -127,9 +127,9 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
 
           {/* Quick Contact Form */}
           <div className="contacts-form-card">
-            <h3 className="form-card__title">Задать вопрос технологу</h3>
+            <h3 className="form-card__title">Задати питання технологу</h3>
             <p className="form-card__subtitle">
-              Оставьте заявку на бесплатную диагностику ЛКП и подбор программы ухода.
+              Залиште запит на діагностику стану ЛФП та професійний підбір програми догляду.
             </p>
 
             {errorMsg && (
@@ -141,18 +141,18 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
             {submitted ? (
               <div className="form-success">
                 <div className="success-icon">✓</div>
-                <h4>Заявка успешно принята!</h4>
-                <p>Наш мастер-технолог свяжется с вами в течение 10 минут.</p>
+                <h4>Запит успішно прийнято!</h4>
+                <p>Наш майстер-технолог зв&apos;яжеться з вами протягом 10 хвилин (демо-режим).</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="contact-form">
                 <div className="form-group">
-                  <label htmlFor="contact-name">Ваше имя *</label>
+                  <label htmlFor="contact-name">Ваше ім&apos;я *</label>
                   <input
                     id="contact-name"
                     type="text"
                     required
-                    placeholder="Александр"
+                    placeholder="Олександр"
                     value={formData.name}
                     disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -160,12 +160,12 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="contact-phone">Номер телефона *</label>
+                  <label htmlFor="contact-phone">Номер телефону *</label>
                   <input
                     id="contact-phone"
                     type="tel"
                     required
-                    placeholder="+7 (___) ___-__-__"
+                    placeholder="+380 (__) ___-__-__"
                     value={formData.phone}
                     disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -173,11 +173,11 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="contact-car">Марка и модель автомобиля</label>
+                  <label htmlFor="contact-car">Марка та модель автомобіля</label>
                   <input
                     id="contact-car"
                     type="text"
-                    placeholder="Например: Porsche Macan GTS"
+                    placeholder="Наприклад: Porsche Macan GTS"
                     value={formData.carModel}
                     disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, carModel: e.target.value })}
@@ -185,11 +185,11 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="contact-msg">Интересующая услуга или вопрос</label>
+                  <label htmlFor="contact-msg">Бажана послуга або запитання</label>
                   <textarea
                     id="contact-msg"
                     rows="3"
-                    placeholder="Хочу сделать керамику и химчистку..."
+                    placeholder="Цікавить нанесення кераміки та хімчистка..."
                     value={formData.question}
                     disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, question: e.target.value })}
@@ -198,14 +198,14 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
 
                 <button
                   type="submit"
-                  className="btn-gold form-submit-btn"
+                  className="btn-platinum form-submit-btn"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Отправка...' : 'Отправить заявку'}
+                  {isSubmitting ? 'Надсилання...' : 'Надіслати запит'}
                 </button>
 
                 <p className="form-privacy">
-                  Нажимая кнопку, вы соглашаетесь на обработку персональных данных.
+                  🔒 Демонстраційний сайт. Дані обробляються виключно в навчальних цілях.
                 </p>
               </form>
             )}

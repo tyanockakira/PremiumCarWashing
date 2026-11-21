@@ -6,68 +6,68 @@ import './Services.css';
 const defaultServicesData = [
   {
     id: 'polishing',
-    title: 'Восстановительная полировка',
-    tag: 'ГЛУБОКИЙ ГЛЯНЕЦ',
-    price: 'от 18 000 ₽',
-    duration: '1–2 дня',
+    title: 'Відновлювальне полірування',
+    tag: 'ГЛИБОКИЙ ГЛЯНЕЦЬ',
+    price: 'від 8 500 грн',
+    duration: '1–2 дні',
     image: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=800&q=80',
-    description: 'Многоэтапное удаление царапин, паутинок и оксидного слоя с сохранением максимальной толщины заводского лака.',
+    description: 'Багатоетапне усунення подряпин, павутинок та оксидного шару зі збереженням максимальної товщини заводського лаку.',
     features: [
-      'Устранение до 98% дефектов и рисок',
-      'Пасты и полировальные круги Rupes & Koch Chemie',
-      'Контроль толщины ЛКП ультразвуковым сканером',
-      'Финишная антиголограммная обработка'
+      'Усунення до 98% дефектів і рисок',
+      'Пасти та полірувальні круги Rupes & Koch Chemie',
+      'Контроль товщини ЛФП ультразвуковим сканером',
+      'Фінішна антиголограмна обробка'
     ],
-    badgeColor: 'gold'
+    badgeColor: 'platinum'
   },
   {
     id: 'ceramic',
-    title: 'Нанокерамика 9H Pro',
-    tag: 'ХИТ ЗАЩИТЫ',
+    title: 'Нанокераміка 9H Pro',
+    tag: 'ХІТ ЗАХИСТУ',
     featured: true,
-    price: 'от 35 000 ₽',
-    duration: '2–3 дня',
+    price: 'від 16 000 грн',
+    duration: '2–3 дні',
     image: 'https://images.unsplash.com/photo-1619405399517-d7fce0f13302?auto=format&fit=crop&w=800&q=80',
-    description: 'Нанесение многослойной керамической брони Gyeon Quartz с гидрофобным эффектом и зеркальной глубиной цвета.',
+    description: 'Нанесення багатошарової керамічної броні Gyeon Quartz із гідрофобним ефектом і дзеркальною глибиною кольору.',
     features: [
-      'Защита от реагентов, смол и выгорания цвета',
-      'Экстремальный водо- и грязеотталкивающий эффект',
-      'Нанесение 2–4 слоёв с ИК-сушкой',
-      'Сертификат и гарантия на стойкость 24–36 месяцев'
+      'Захист від реагентів, смол і бруду',
+      'Екстремальний водовідштовхувальний ефект',
+      'Нанесення 2–4 шарів з ІЧ-сушкою',
+      'Сертифікат та гарантія на стійкість 24–36 місяців'
     ],
-    badgeColor: 'gold-solid'
+    badgeColor: 'platinum-solid'
   },
   {
     id: 'interior',
-    title: 'Премиум-химчистка салона',
-    tag: 'СПА ДЛЯ САЛОНА',
-    price: 'от 16 000 ₽',
-    duration: '1–2 дня',
+    title: 'Преміум-хімчистка салону',
+    tag: 'СПА ДЛЯ САЛОНУ',
+    price: 'від 7 500 грн',
+    duration: '1–2 дні',
     image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80',
-    description: 'Деликатная химчистка всех поверхностей с озонированием и консервацией кожи натуральными швейцарскими составами.',
+    description: 'Делікатна хімчистка всіх поверхонь із озонуванням та консервацією шкіри натуральними швейцарськими складами.',
     features: [
-      'Глубокая очистка кожи, алькантары и текстиля',
-      'Антибактериальная обработка и озонирование',
-      'Питание и защита кожи кремами LeTech',
-      'Безопасная эко-химия без резких запахов'
+      'Глибоке очищення шкіри, алькантари та текстилю',
+      'Антибактеріальна обробка та озонування',
+      'Живлення та захист шкіри кремами LeTech',
+      'Безпечна еко-хімія без сторонніх запахів'
     ],
-    badgeColor: 'gold'
+    badgeColor: 'platinum'
   },
   {
     id: 'ppf',
-    title: 'Оклейка полиуретаном PPF',
-    tag: 'БРОНЕПЛЕНКА',
-    price: 'от 65 000 ₽',
-    duration: '2–4 дня',
+    title: 'Обклеювання поліуретаном PPF',
+    tag: 'БРОНЕПЛІВКА',
+    price: 'від 32 000 грн',
+    duration: '2–4 дні',
     image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80',
-    description: 'Невидимый барьер от сколов, гравия, царапин и притёртостей пленками премиум-сегмента SunTek и Stek.',
+    description: 'Невидимий бар’єр від відколів, гравію, подряпин та притертостей плівками преміум-сегмента SunTek і Stek.',
     features: [
-      'Эффект самозатягивания царапин при нагреве',
-      'Толщина полиуретана до 220 микрон',
-      'Идеальный раскрой по фирменным лекалам',
-      'Официальная гарантия производителя 7 лет'
+      'Ефект самозатягування подряпин під час нагрівання',
+      'Товщина поліуретану до 220 мікронів',
+      'Ідеальний розкрій за фірмовими лекалами',
+      'Офіційна гарантія виробника 7 років'
     ],
-    badgeColor: 'gold'
+    badgeColor: 'platinum'
   }
 ];
 
@@ -83,9 +83,9 @@ export default function Services({ onSelectService, hideHeader = false }) {
           data.map((item) => ({
             id: item.slug || item.id,
             title: item.title,
-            tag: item.tag || 'ПРЕМИУМ',
+            tag: item.tag || 'ПРЕМІУМ',
             featured: Boolean(item.is_featured),
-            price: `от ${new Intl.NumberFormat('ru-RU').format(item.base_price)} ₽`,
+            price: `від ${new Intl.NumberFormat('uk-UA').format(item.base_price)} грн`,
             duration: item.duration_text || '',
             image: item.image_url || defaultServicesData[0].image,
             description: item.description,
@@ -113,13 +113,13 @@ export default function Services({ onSelectService, hideHeader = false }) {
         {/* Section Header */}
         {!hideHeader && (
           <div className="section-header">
-            <div className="gold-sub-title">ЭКСКЛЮЗИВНЫЕ УСЛУГИ</div>
+            <div className="tech-sub-title">ЕКСКЛЮЗИВНІ ПОСЛУГИ</div>
             <h2 className="section-title">
-              Индивидуальные программы <span className="gold-text">детейлинга</span>
+              Індивідуальні програми <span className="platinum-text">дітейлінгу</span>
             </h2>
             <p className="section-desc">
-              Мы объединяем передовое оборудование, проверенные европейские составы
-              и филигранную ручную работу для безукоризненного результата.
+              Ми поєднуємо передове обладнання, перевірені європейські склади
+              та філігранну ручну роботу для бездоганного результату.
             </p>
           </div>
         )}
@@ -133,7 +133,7 @@ export default function Services({ onSelectService, hideHeader = false }) {
             >
               {service.featured && (
                 <div className="card-popular-pill">
-                  ВЫБОР КЛИЕНТОВ
+                  ВИБІР КЛІЄНТІВ
                 </div>
               )}
 
@@ -170,8 +170,8 @@ export default function Services({ onSelectService, hideHeader = false }) {
                 {/* Card Footer: Price & CTA */}
                 <div className="service-card__footer">
                   <div className="service-price-block">
-                    <span className="price-label">Стоимость:</span>
-                    <span className="price-value gold-text">{service.price}</span>
+                    <span className="price-label">Орієнтовна вартість:</span>
+                    <span className="price-value platinum-text">{service.price}</span>
                   </div>
 
                   <button
@@ -179,7 +179,7 @@ export default function Services({ onSelectService, hideHeader = false }) {
                     className="service-card__btn"
                     onClick={() => handleBook(service.title)}
                   >
-                    <span>Записаться</span>
+                    <span>Записатися</span>
                     <span className="btn-icon">→</span>
                   </button>
                 </div>

@@ -9,15 +9,15 @@ export default function ContactsPage() {
       <section className="page-hero">
         <div className="container">
           <div className="page-hero__breadcrumbs">
-            <Link to="/">Главная</Link>
+            <Link to="/">Головна</Link>
             <span className="page-hero__sep">/</span>
-            <span>Контакты и локация</span>
+            <span>Контакти та локація</span>
           </div>
           <h1 className="page-hero__title">
-            Контакты студии <span className="gold-text">Premium Car Wash</span>
+            Контакти студії <span className="gold-text">Premium Car Wash</span>
           </h1>
           <p className="page-hero__desc">
-            Ждем вас в удобной престижной локации на Кутузовском проспекте. Закрытая охраняемая территория, круглосуточная приёмка 24/7 и комфортабельный VIP-лаундж.
+            Чекаємо на вас за зручною демонстраційною адресою в Києві. Закрита територія, цілодобовий прийом 24/7 та комфортабельний VIP-лаундж.
           </p>
         </div>
       </section>
@@ -29,12 +29,12 @@ export default function ContactsPage() {
       <section style={{ padding: '80px 0', backgroundColor: '#090a0e' }}>
         <div className="container">
           <div className="section-header">
-            <div className="gold-sub-title">КАК ДОБРАТЬСЯ</div>
+            <div className="gold-sub-title">ЯК ДІСТАТИСЯ</div>
             <h2 className="section-title">
-              Схема проезда и <span className="gold-text">пропускной режим</span>
+              Схема проїзду та <span className="gold-text">перепустковий режим</span>
             </h2>
             <p className="section-desc">
-              Территория детейлинг-центра закрыта для посторонних. При подтверждении записи мы автоматически оформляем гостевой пропуск на ваш госномер.
+              Територія дітейлінг-центру закрита для сторонніх. При підтвердженні запису ми автоматично оформлюємо гостьову перепустку на ваш номер авто.
             </p>
           </div>
 
@@ -46,9 +46,9 @@ export default function ContactsPage() {
           }}>
             <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '26px' }}>
               <span style={{ fontSize: '1.8rem', color: 'var(--color-gold)' }}>🚗</span>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#ffffff', margin: '12px 0 6px' }}>Въезд на автомобиле</h4>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#ffffff', margin: '12px 0 6px' }}>В’їзд на автомобілі</h4>
               <p style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
-                Съезд с Кутузовского проспекта по указателю «Кутузовский 36». На КПП №1 назовите фамилию или госномер — шлагбаум откроется автоматически.
+                З’їзд за вказівником комплексу «Автомобільна 1». На КПП №1 назвіть прізвище або номер авто — шлагбаум відкриється автоматично.
               </p>
             </div>
 
@@ -56,15 +56,15 @@ export default function ContactsPage() {
               <span style={{ fontSize: '1.8rem', color: 'var(--color-gold)' }}>☕</span>
               <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#ffffff', margin: '12px 0 6px' }}>VIP-Лаундж зона</h4>
               <p style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
-                Пока автомобиль проходит процедуру, вы можете отдохнуть в комфортной лаундж-зоне с премиальным зерновым кофе, чаем и скоростным Wi-Fi.
+                Поки автомобіль проходить процедуру, ви можете відпочити у затишній лаундж-зоні з преміальною зерновою кавою, чаєм і швидкісним Wi-Fi.
               </p>
             </div>
 
             <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '26px' }}>
               <span style={{ fontSize: '1.8rem', color: 'var(--color-gold)' }}>🛡️</span>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#ffffff', margin: '12px 0 6px' }}>Охраняемый паркинг</h4>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#ffffff', margin: '12px 0 6px' }}>Охоронюваний паркінг</h4>
               <p style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
-                Тёплый подземный паркинг с постоянным видеонаблюдением 4K. Доступ посторонних лиц в рабочие зоны строго запрещён.
+                Теплий критий паркінг із постійним відеоспостереженням 4K. Доступ сторонніх осіб у робочі зони суворо заборонений.
               </p>
             </div>
           </div>
@@ -77,14 +77,14 @@ export default function ContactsPage() {
           <div className="cta-banner-box">
             <div>
               <h3 className="cta-banner__title">
-                Хотите записаться прямо сейчас?
+                Бажаєте записатися просто зараз?
               </h3>
               <p className="cta-banner__desc">
-                Выберите удобную дату и временной слот онлайн за 1 минуту.
+                Оберіть зручну дату та часовий слот онлайн за 1 хвилину.
               </p>
             </div>
             <Link to="/booking" className="btn-gold" style={{ flexShrink: 0 }}>
-              Онлайн-запись →
+              Онлайн-запис →
             </Link>
           </div>
         </div>

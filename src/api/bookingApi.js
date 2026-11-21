@@ -1,16 +1,16 @@
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 /**
- * Отправка заявки на детейлинг через модальное окно бронирования
+ * Відправлення заявки на дітейлінг через модальне вікно або сторінку бронювання
  */
 export async function createBooking({ name, phone, car, service, date, timeSlot, comment }) {
   if (!isSupabaseConfigured || !supabase) {
-    // Режим разработки без подключенного бэкенда: эмуляция сетевого запроса
+    // Режим розробки без підключеного бекенду: емуляція мережевого запиту
     await new Promise((resolve) => setTimeout(resolve, 800));
     return {
       success: true,
       demo: true,
-      message: 'Заявка принята в демо-режиме (Supabase не настроен)'
+      message: 'Заявку прийнято в демо-режимі (Supabase не налаштовано)'
     };
   }
 
@@ -26,14 +26,14 @@ export async function createBooking({ name, phone, car, service, date, timeSlot,
 
   if (error) {
     console.error('Supabase submit_booking error:', error);
-    throw new Error(error.message || 'Ошибка при отправке заявки');
+    throw new Error(error.message || 'Помилка під час надсилання заявки');
   }
 
   return data;
 }
 
 /**
- * Отправка вопроса / запроса на консультацию из блока контактов
+ * Відправлення запитання / запиту на консультацію з блоку контактів
  */
 export async function createConsultation({ name, phone, carModel, question }) {
   if (!isSupabaseConfigured || !supabase) {
@@ -41,7 +41,7 @@ export async function createConsultation({ name, phone, carModel, question }) {
     return {
       success: true,
       demo: true,
-      message: 'Консультация принята в демо-режиме (Supabase не настроен)'
+      message: 'Запит на консультацію прийнято в демо-режимі'
     };
   }
 
@@ -54,18 +54,18 @@ export async function createConsultation({ name, phone, carModel, question }) {
 
   if (error) {
     console.error('Supabase submit_consultation error:', error);
-    throw new Error(error.message || 'Ошибка при отправке формы');
+    throw new Error(error.message || 'Помилка під час надсилання форми');
   }
 
   return data;
 }
 
 /**
- * Получение активных услуг из базы данных
+ * Отримання активних послуг із бази даних
  */
 export async function getServices() {
   if (!isSupabaseConfigured || !supabase) {
-    return null; // Вернет null для использования локального фоллбека
+    return null; // Повертає null для використання локального фолбека
   }
 
   try {
@@ -76,19 +76,19 @@ export async function getServices() {
       .order('sort_order', { ascending: true });
 
     if (error) {
-      console.warn('Не удалось загрузить услуги из Supabase, используется локальный кэш:', error);
+      console.warn('Не вдалося завантажити послуги із Supabase, використовується локальний кеш:', error);
       return null;
     }
 
     return data;
   } catch (err) {
-    console.warn('Ошибка сети при загрузке услуг:', err);
+    console.warn('Помилка мережі під час завантаження послуг:', err);
     return null;
   }
 }
 
 /**
- * Получение тарифов и классов авто из базы данных
+ * Отримання тарифів і класів авто із бази даних
  */
 export async function getPricingData() {
   if (!isSupabaseConfigured || !supabase) {
@@ -102,7 +102,7 @@ export async function getPricingData() {
     ]);
 
     if (classesRes.error || packagesRes.error) {
-      console.warn('Не удалось загрузить тарифы из Supabase:', classesRes.error || packagesRes.error);
+      console.warn('Не вдалося завантажити тарифи із Supabase:', classesRes.error || packagesRes.error);
       return null;
     }
 
@@ -111,7 +111,7 @@ export async function getPricingData() {
       packages: packagesRes.data
     };
   } catch (err) {
-    console.warn('Ошибка сети при загрузке тарифов:', err);
+    console.warn('Помилка мережі під час завантаження тарифів:', err);
     return null;
   }
 }

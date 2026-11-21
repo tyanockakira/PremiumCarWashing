@@ -56,19 +56,19 @@ function App() {
           <Link
             to="/booking"
             className="btn-floating-cta"
-            title="Записаться онлайн"
-            aria-label="Записаться онлайн"
+            title="Записатися онлайн"
+            aria-label="Записатися онлайн"
           >
             <span className="floating-sparkle">✦</span>
-            <span className="floating-text">Записаться</span>
+            <span className="floating-text">Записатися</span>
           </Link>
 
           <button
             type="button"
             className="btn-scroll-top"
             onClick={scrollToTop}
-            title="Наверх"
-            aria-label="Наверх"
+            title="Вгору"
+            aria-label="Вгору"
           >
             ↑
           </button>

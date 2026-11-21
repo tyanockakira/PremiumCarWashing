@@ -3,10 +3,10 @@ import { createBooking } from '../api/bookingApi';
 import './BookingModal.css';
 
 const defaultServices = [
-  'Восстановительная полировка',
-  'Нанокерамика 9H Pro',
-  'Премиум-химчистка салона',
-  'Оклейка полиуретаном PPF',
+  'Відновлювальне полірування',
+  'Нанокераміка 9H Pro',
+  'Преміум-хімчистка салона',
+  'Обклеювання поліуретаном PPF',
   'Executive Care (Комплекс)',
   'Ceramic Elite (Комплекс)',
   'Royal Perfection (Комплекс)'
@@ -62,8 +62,8 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
         });
       }, 3500);
     } catch (err) {
-      console.error('Ошибка записи:', err);
-      setErrorMsg('Не удалось сохранить запись онлайн. Пожалуйста, позвоните нам по номеру +7 (495) 999-00-88.');
+      console.error('Помилка запису:', err);
+      setErrorMsg('Не вдалося зберегти запис онлайн. Будь ласка, зателефонуйте нам за номером +380 (44) 000-00-00.');
     } finally {
       setIsSubmitting(false);
     }
@@ -81,7 +81,7 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
           type="button"
           className="modal-close-btn"
           onClick={onClose}
-          aria-label="Закрыть"
+          aria-label="Закрити"
         >
           ✕
         </button>
@@ -89,21 +89,33 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
         {submitted ? (
           <div className="modal-success">
             <div className="modal-success__icon">✦</div>
-            <h3 className="modal-success__title">Запись подтверждена!</h3>
+            <h3 className="modal-success__title">Запис підтверджено!</h3>
             <p className="modal-success__text">
-              Спасибо, <strong>{formData.name}</strong>! Персональный консьерж свяжется с вами по номеру{' '}
-              <strong>{formData.phone}</strong> для уточнения деталей.
+              Дякуємо, <strong>{formData.name}</strong>! Персональний консьєрж зв’яжеться з вами за номером{' '}
+              <strong>{formData.phone}</strong> для уточнення деталей.
             </p>
             <div className="modal-success__bar"></div>
           </div>
         ) : (
           <>
             <div className="modal-header">
-              <span className="modal-tag">ОНЛАЙН-БРОНИРОВАНИЕ</span>
-              <h3 className="modal-title">Запись на детейлинг</h3>
+              <span className="modal-tag">ОНЛАЙН-БРОНЮВАННЯ • ДЕМО</span>
+              <h3 className="modal-title">Запис на дітейлінг</h3>
               <p className="modal-subtitle">
-                Заполните форму, и мы забронируем индивидуальный чистый бокс для вашего авто.
+                Заповніть форму, і ми забронюємо індивідуальний чистий бокс для вашого авто.
               </p>
+            </div>
+
+            <div style={{
+              background: 'rgba(56, 189, 248, 0.08)',
+              border: '1px solid rgba(56, 189, 248, 0.25)',
+              borderRadius: 'var(--radius-sm)',
+              padding: '10px 14px',
+              fontSize: '0.8rem',
+              color: 'var(--color-text-secondary)',
+              marginBottom: '18px'
+            }}>
+              ℹ️ <strong>Демо-режим:</strong> форма демонструє взаємодію з базою даних. Усі дані наведені для прикладу.
             </div>
 
             {errorMsg && (
@@ -115,12 +127,12 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
             <form onSubmit={handleSubmit} className="modal-form">
               <div className="form-row">
                 <div className="modal-field">
-                  <label htmlFor="modal-name">Ваше имя *</label>
+                  <label htmlFor="modal-name">Ваше ім’я *</label>
                   <input
                     id="modal-name"
                     type="text"
                     required
-                    placeholder="Константин"
+                    placeholder="Костянтин"
                     value={formData.name}
                     disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -133,7 +145,7 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                     id="modal-phone"
                     type="tel"
                     required
-                    placeholder="+7 (___) ___-__-__"
+                    placeholder="+380 (__) ___-__-__"
                     value={formData.phone}
                     disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -143,11 +155,11 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
 
               <div className="form-row">
                 <div className="modal-field">
-                  <label htmlFor="modal-car">Автомобиль (Марка/Модель)</label>
+                  <label htmlFor="modal-car">Автомобіль (Марка / Модель)</label>
                   <input
                     id="modal-car"
                     type="text"
-                    placeholder="Например: Mercedes-AMG GT"
+                    placeholder="Наприклад: Porsche 911 GT3"
                     value={formData.car}
                     disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, car: e.target.value })}
@@ -155,7 +167,7 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                 </div>
 
                 <div className="modal-field">
-                  <label htmlFor="modal-service">Желаемая услуга</label>
+                  <label htmlFor="modal-service">Бажана послуга</label>
                   <select
                     id="modal-service"
                     value={formData.service}
@@ -176,7 +188,7 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
 
               <div className="form-row">
                 <div className="modal-field">
-                  <label htmlFor="modal-date">Желаемая дата</label>
+                  <label htmlFor="modal-date">Бажана дата</label>
                   <input
                     id="modal-date"
                     type="date"
@@ -187,28 +199,28 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                 </div>
 
                 <div className="modal-field">
-                  <label htmlFor="modal-slot">Удобное время приёмки</label>
+                  <label htmlFor="modal-slot">Зручний час прийому</label>
                   <select
                     id="modal-slot"
                     value={formData.timeSlot}
                     disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, timeSlot: e.target.value })}
                   >
-                    <option value="10:00 — 12:00">Утро (10:00 — 12:00)</option>
+                    <option value="10:00 — 12:00">Ранок (10:00 — 12:00)</option>
                     <option value="12:00 — 15:00">День (12:00 — 15:00)</option>
-                    <option value="15:00 — 19:00">Вечер (15:00 — 19:00)</option>
-                    <option value="19:00 — 23:00">Поздний вечер (19:00 — 23:00)</option>
-                    <option value="Ночь 24/7">Ночная смена (по договорённости)</option>
+                    <option value="15:00 — 19:00">Вечір (15:00 — 19:00)</option>
+                    <option value="19:00 — 23:00">Пізній вечір (19:00 — 23:00)</option>
+                    <option value="Ніч 24/7">Нічна зміна (за домовленістю)</option>
                   </select>
                 </div>
               </div>
 
               <div className="modal-field">
-                <label htmlFor="modal-comment">Особые пожелания (необязательно)</label>
+                <label htmlFor="modal-comment">Особливі побажання (необов’язково)</label>
                 <textarea
                   id="modal-comment"
                   rows="2"
-                  placeholder="Например: требуется предварительный осмотр ЛКП или трансфер"
+                  placeholder="Наприклад: потрібен попередній огляд ЛФП або трансфер"
                   value={formData.comment}
                   disabled={isSubmitting}
                   onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
@@ -220,7 +232,7 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                 className="btn-gold modal-submit-btn"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Бронирование...' : 'Забронировать бокс'}
+                {isSubmitting ? 'Бронювання...' : 'Забронювати бокс'}
               </button>
             </form>
           </>

@@ -3,11 +3,11 @@ import Advantages from '../components/Advantages';
 import './PagesCommon.css';
 
 const partnerBrands = [
-  { name: 'Rupes BigFoot', country: 'Италия', desc: 'Профессиональное эксцентриковое полировальное оборудование номер один в мире.' },
-  { name: 'Gyeon Quartz', country: 'Южная Корея', desc: 'Эталонные нанокерамические защитные покрытия на основе диоксида кремния (SiO2).' },
-  { name: 'Koch Chemie', country: 'Германия', desc: 'Премиальная автохимия, одобренная концернами Daimler, BMW и Audi.' },
-  { name: 'Scangrip Detailing', country: 'Дания', desc: 'Специализированный студийный инспекционный свет с индексом цветопередачи CRI 96+.' },
-  { name: 'LeTech Leather Lab', country: 'Великобритания', desc: 'Элитные формулы реставрации, питания и защиты натуральной автомобильной кожи.' }
+  { name: 'Rupes BigFoot', country: 'Італія', desc: 'Професійне ексцентрикове полірувальне обладнання преміум-класу номер один у світі.' },
+  { name: 'Gyeon Quartz', country: 'Південна Корея', desc: 'Еталонні нанокерамічні захисні покриття на основі діоксиду кремнію (SiO2).' },
+  { name: 'Koch Chemie', country: 'Німеччина', desc: 'Преміальна автохімія, схвалена концернами Mercedes-Benz, BMW та Audi.' },
+  { name: 'Scangrip Detailing', country: 'Данія', desc: 'Спеціалізоване студійне інспекційне світло з індексом передачі кольору CRI 96+.' },
+  { name: 'LeTech Leather Lab', country: 'Велика Британія', desc: 'Елітні формули реставрації, живлення та захисту натуральної автомобільної шкіри.' }
 ];
 
 export default function AdvantagesPage() {
@@ -17,15 +17,15 @@ export default function AdvantagesPage() {
       <section className="page-hero">
         <div className="container">
           <div className="page-hero__breadcrumbs">
-            <Link to="/">Главная</Link>
+            <Link to="/">Головна</Link>
             <span className="page-hero__sep">/</span>
-            <span>Преимущества и стандарты</span>
+            <span>Переваги та стандарти</span>
           </div>
           <h1 className="page-hero__title">
-            Стандарты детейлинга <span className="gold-text">высшей пробы</span>
+            Стандарти дітейлінгу <span className="gold-text">найвищої проби</span>
           </h1>
           <p className="page-hero__desc">
-            Наша студия спроектирована как чистая лаборатория. Мы объединяем передовое оборудование, стерильный микроклимат и сертифицированных специалистов.
+            Наша студія спроєктована як чиста лабораторія. Ми поєднуємо передове обладнання, стерильний мікроклімат і сертифікованих майстрів.
           </p>
         </div>
       </section>
@@ -37,12 +37,12 @@ export default function AdvantagesPage() {
       <section style={{ padding: '80px 0', backgroundColor: '#090a0e' }}>
         <div className="container">
           <div className="section-header">
-            <div className="gold-sub-title">ОБОРУДОВАНИЕ И МАТЕРИАЛЫ</div>
+            <div className="gold-sub-title">ОБЛАДНАННЯ ТА МАТЕРІАЛИ</div>
             <h2 className="section-title">
-              Работаем только с <span className="gold-text">мировыми лидерами</span>
+              Працюємо тільки зі <span className="gold-text">світовими лідерами</span>
             </h2>
             <p className="section-desc">
-              Никаких безымянных составов. Каждый флакон сертифицирован и поставляется официальными дистрибьюторами.
+              Жодних безіменних складів. Кожен флакон сертифікований і постачається офіційними дистриб’юторами.
             </p>
           </div>
 
@@ -88,20 +88,20 @@ export default function AdvantagesPage() {
           <div style={{ padding: '24px', background: 'rgba(212, 175, 55, 0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-gold-subtle)' }}>
             <span style={{ fontSize: '2rem' }}>🏛️</span>
             <h4 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#ffffff', margin: '10px 0 6px' }}>
-              Страхование на 50 000 000 ₽
+              Страхування на 50 000 000 грн
             </h4>
             <p style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
-              Каждый принятый автомобиль на все время проведения работ застрахован в ведущей страховой компании.
+              Кожен прийнятий автомобіль на весь час проведення робіт застрахований у провідній страховій компанії.
             </p>
           </div>
 
           <div style={{ padding: '24px', background: 'rgba(212, 175, 55, 0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-gold-subtle)' }}>
             <span style={{ fontSize: '2rem' }}>❄️</span>
             <h4 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#ffffff', margin: '10px 0 6px' }}>
-              Климат-контроль 22°C
+              Клімат-контроль 22°C
             </h4>
             <p style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
-              Стерильные боксы с постоянной температурой, влажностью 50% и многоступенчатой очисткой воздуха от пыли.
+              Стерильні бокси з постійною температурою, вологістю 50% та багатоступеневим очищенням повітря від пилу.
             </p>
           </div>
         </div>
@@ -113,14 +113,14 @@ export default function AdvantagesPage() {
           <div className="cta-banner-box">
             <div>
               <h3 className="cta-banner__title">
-                Доверьте автомобиль <span className="gold-text">профессионалам</span>
+                Довірте автомобіль <span className="gold-text">професіоналам</span>
               </h3>
               <p className="cta-banner__desc">
-                Забронируйте визит онлайн и убедитесь в высочайших стандартах премиального сервиса.
+                Забронюйте візит онлайн та переконайтеся у найвищих стандартах преміального сервісу.
               </p>
             </div>
             <Link to="/booking" className="btn-gold" style={{ flexShrink: 0 }}>
-              Записаться в студию →
+              Записатися в студію →
             </Link>
           </div>
         </div>

@@ -5,22 +5,22 @@ import './PagesCommon.css';
 import './BookingPage.css';
 
 const availableServices = [
-  'Восстановительная полировка',
-  'Нанокерамика 9H Pro',
-  'Премиум-химчистка салона',
-  'Оклейка полиуретаном PPF',
+  'Відновлювальне полірування',
+  'Нанокераміка 9H Pro',
+  'Преміум-хімчистка салона',
+  'Обклеювання поліуретаном PPF',
   'Executive Care (Комплекс)',
   'Ceramic Elite (Комплекс)',
   'Royal Perfection (Комплекс)',
-  'Индивидуальный подбор с технологом'
+  'Індивідуальний підбір із технологом'
 ];
 
 const timeSlots = [
-  '10:00 — 12:00 (Утро)',
+  '10:00 — 12:00 (Ранок)',
   '12:00 — 15:00 (День)',
   '15:00 — 18:00 (День)',
-  '18:00 — 21:00 (Вечер)',
-  '21:00 — 00:00 (Ночная смена)'
+  '18:00 — 21:00 (Вечір)',
+  '21:00 — 00:00 (Нічна зміна)'
 ];
 
 export default function BookingPage() {
@@ -53,8 +53,8 @@ export default function BookingPage() {
       setBookingResult(res);
       window.scrollTo({ top: 100, behavior: 'smooth' });
     } catch (err) {
-      console.error('Ошибка бронирования:', err);
-      setErrorMsg('Не удалось сохранить запись онлайн. Пожалуйста, позвоните нам по номеру +7 (495) 999-00-88.');
+      console.error('Помилка бронювання:', err);
+      setErrorMsg('Не вдалося зберегти запис онлайн. Будь ласка, зателефонуйте нам за номером +380 (44) 000-00-00.');
     } finally {
       setIsSubmitting(false);
     }
@@ -79,15 +79,15 @@ export default function BookingPage() {
       <section className="page-hero">
         <div className="container">
           <div className="page-hero__breadcrumbs">
-            <Link to="/">Главная</Link>
+            <Link to="/">Головна</Link>
             <span className="page-hero__sep">/</span>
-            <span>Онлайн-запись</span>
+            <span>Онлайн-запис</span>
           </div>
           <h1 className="page-hero__title">
-            Онлайн-бронирование <span className="gold-text">бокса</span>
+            Онлайн-бронювання <span className="gold-text">бокса</span>
           </h1>
           <p className="page-hero__desc">
-            Забронируйте индивидуальный чистый бокс с персональным мастером-технологом. Все заявки мгновенно регистрируются в системе.
+            Забронюйте індивідуальний чистий бокс із персональним майстром-технологом. Усі заявки миттєво реєструються в системі.
           </p>
         </div>
       </section>
@@ -98,36 +98,36 @@ export default function BookingPage() {
           {bookingResult ? (
             <div className="booking-confirmation-card">
               <div className="confirmation-icon">✦</div>
-              <h2 className="confirmation-title">Запись успешно подтверждена!</h2>
+              <h2 className="confirmation-title">Запис успішно підтверджено!</h2>
               <p className="confirmation-desc">
-                Благодарим вас, <strong>{formData.name}</strong>! Персональный консьерж свяжется с вами по номеру{' '}
-                <strong className="gold-text">{formData.phone}</strong> для подтверждения брони и оформления гостевого пропуска на автомобиль.
+                Щиро дякуємо, <strong>{formData.name}</strong>! Персональний консьєрж зв’яжеться з вами за номером{' '}
+                <strong className="gold-text">{formData.phone}</strong> для підтвердження броні та оформлення гостьової перепустки на автомобіль.
               </p>
 
               <div className="confirmation-details">
                 <div className="detail-row">
-                  <span className="detail-label">Выбранная услуга:</span>
+                  <span className="detail-label">Обрана послуга:</span>
                   <span className="detail-val">{formData.service}</span>
                 </div>
                 {formData.car && (
                   <div className="detail-row">
-                    <span className="detail-label">Автомобиль:</span>
+                    <span className="detail-label">Автомобіль:</span>
                     <span className="detail-val">{formData.car}</span>
                   </div>
                 )}
                 {formData.date && (
                   <div className="detail-row">
-                    <span className="detail-label">Дата визита:</span>
+                    <span className="detail-label">Дата візиту:</span>
                     <span className="detail-val">{formData.date}</span>
                   </div>
                 )}
                 <div className="detail-row">
-                  <span className="detail-label">Временной слот:</span>
+                  <span className="detail-label">Часовий слот:</span>
                   <span className="detail-val">{formData.timeSlot}</span>
                 </div>
                 {bookingResult.booking_id && (
                   <div className="detail-row">
-                    <span className="detail-label">Номер заявки в базе:</span>
+                    <span className="detail-label">Номер заявки в базі:</span>
                     <span className="detail-val detail-val--id">{bookingResult.booking_id}</span>
                   </div>
                 )}
@@ -135,21 +135,35 @@ export default function BookingPage() {
 
               <div className="confirmation-actions">
                 <button type="button" onClick={resetForm} className="btn-outline">
-                  Оформить еще одну запись
+                  Оформити ще один запис
                 </button>
                 <Link to="/" className="btn-gold">
-                  Вернуться на главную
+                  Повернутися на головну
                 </Link>
               </div>
             </div>
           ) : (
             <div className="booking-card">
               <div className="booking-card__header">
-                <span className="booking-badge">ЭКСКЛЮЗИВНЫЙ СЕРВИС</span>
-                <h2 className="booking-card__title">Заполните данные для визита</h2>
+                <span className="booking-badge">ЕКСКЛЮЗИВНИЙ СЕРВІС • ДЕМО-ВІТРИНА</span>
+                <h2 className="booking-card__title">Заповніть дані для візиту</h2>
                 <p className="booking-card__desc">
-                  Укажите желаемую программу ухода и удобное время. Мы свяжемся с вами в течение 10 минут.
+                  Вкажіть бажану програму догляду та зручний час. Ми зв’яжемося з вами протягом 10 хвилин.
                 </p>
+              </div>
+
+              {/* Demo Mode Notice Banner */}
+              <div style={{
+                background: 'rgba(56, 189, 248, 0.08)',
+                border: '1px solid rgba(56, 189, 248, 0.25)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '12px 16px',
+                fontSize: '0.85rem',
+                color: 'var(--color-text-secondary)',
+                marginBottom: '24px',
+                lineHeight: '1.5'
+              }}>
+                ℹ️ <strong>Демонстраційний режим:</strong> цей сайт є вітринним портфоліо-проєктом. Форма демонструє повноцінне підключення до бази даних Supabase PostgreSQL.
               </div>
 
               {errorMsg && (
@@ -161,7 +175,7 @@ export default function BookingPage() {
               <form onSubmit={handleSubmit} className="booking-form">
                 {/* 1. Service Selection */}
                 <div className="booking-form-block">
-                  <label className="booking-label">1. Выберите услугу или пакет *</label>
+                  <label className="booking-label">1. Оберіть послугу або пакет *</label>
                   <select
                     className="booking-select"
                     value={formData.service}
@@ -179,12 +193,12 @@ export default function BookingPage() {
                 {/* 2. Client & Vehicle details */}
                 <div className="booking-grid-2">
                   <div className="booking-form-block">
-                    <label htmlFor="b-name" className="booking-label">Ваше имя *</label>
+                    <label htmlFor="b-name" className="booking-label">Ваше ім’я *</label>
                     <input
                       id="b-name"
                       type="text"
                       required
-                      placeholder="Константин"
+                      placeholder="Костянтин"
                       className="booking-input"
                       value={formData.name}
                       disabled={isSubmitting}
@@ -193,12 +207,12 @@ export default function BookingPage() {
                   </div>
 
                   <div className="booking-form-block">
-                    <label htmlFor="b-phone" className="booking-label">Номер телефона *</label>
+                    <label htmlFor="b-phone" className="booking-label">Номер телефону *</label>
                     <input
                       id="b-phone"
                       type="tel"
                       required
-                      placeholder="+7 (___) ___-__-__"
+                      placeholder="+380 (__) ___-__-__"
                       className="booking-input"
                       value={formData.phone}
                       disabled={isSubmitting}
@@ -209,11 +223,11 @@ export default function BookingPage() {
 
                 <div className="booking-grid-2">
                   <div className="booking-form-block">
-                    <label htmlFor="b-car" className="booking-label">Марка и модель авто</label>
+                    <label htmlFor="b-car" className="booking-label">Марка та модель авто</label>
                     <input
                       id="b-car"
                       type="text"
-                      placeholder="Например: Porsche 911 Turbo S"
+                      placeholder="Наприклад: Porsche 911 Turbo S"
                       className="booking-input"
                       value={formData.car}
                       disabled={isSubmitting}
@@ -222,7 +236,7 @@ export default function BookingPage() {
                   </div>
 
                   <div className="booking-form-block">
-                    <label htmlFor="b-date" className="booking-label">Желаемая дата визита</label>
+                    <label htmlFor="b-date" className="booking-label">Бажана дата візиту</label>
                     <input
                       id="b-date"
                       type="date"
@@ -236,7 +250,7 @@ export default function BookingPage() {
 
                 {/* 3. Slot Selector */}
                 <div className="booking-form-block">
-                  <label className="booking-label">Удобное время приёмки</label>
+                  <label className="booking-label">Зручний час прийому</label>
                   <div className="slot-pills">
                     {timeSlots.map((slot, idx) => (
                       <button
@@ -253,11 +267,11 @@ export default function BookingPage() {
 
                 {/* 4. Comments */}
                 <div className="booking-form-block">
-                  <label htmlFor="b-comment" className="booking-label">Особые пожелания (необязательно)</label>
+                  <label htmlFor="b-comment" className="booking-label">Особливі побажання (необов’язково)</label>
                   <textarea
                     id="b-comment"
                     rows="3"
-                    placeholder="Например: необходим пропуск на несколько дней или бережное снятие старой пленки"
+                    placeholder="Наприклад: необхідна перепустка на кілька днів або делікатне зняття старої плівки"
                     className="booking-textarea"
                     value={formData.comment}
                     disabled={isSubmitting}
@@ -270,11 +284,11 @@ export default function BookingPage() {
                   className="btn-gold booking-submit-btn"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Регистрация бронирования...' : 'Забронировать бокс онлайн →'}
+                  {isSubmitting ? 'Реєстрація бронювання...' : 'Забронювати бокс онлайн →'}
                 </button>
 
                 <p className="booking-privacy">
-                  🔒 Ваши данные защищены шифрованием. Мы не передаем контакты третьим лицам.
+                  🔒 Демонстраційний захист даних. Контакти не передаються третім особам.
                 </p>
               </form>
             </div>

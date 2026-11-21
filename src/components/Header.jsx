@@ -21,14 +21,14 @@ export default function Header() {
   return (
     <header className={`header ${scrolled ? 'header--scrolled' : ''}`}>
       <div className="container header__container">
-        {/* Brand Logo */}
+        {/* Brand Logo with Demo Tag */}
         <Link to="/" className="header__logo" onClick={closeMobileMenu}>
           <div className="logo-emblem">
             <span className="logo-symbol">✦</span>
           </div>
           <div className="logo-text">
             <span className="logo-brand">PREMIUM<span className="logo-gold">WASH</span></span>
-            <span className="logo-sub">DETAILING STUDIO</span>
+            <span className="logo-sub">DETAILING STUDIO • ДЕМО</span>
           </div>
         </Link>
 
@@ -41,7 +41,7 @@ export default function Header() {
                 end
                 className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
               >
-                Главная
+                Головна
               </NavLink>
             </li>
             <li>
@@ -49,7 +49,7 @@ export default function Header() {
                 to="/services"
                 className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
               >
-                Услуги
+                Послуги
               </NavLink>
             </li>
             <li>
@@ -57,7 +57,7 @@ export default function Header() {
                 to="/pricing"
                 className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
               >
-                Цены
+                Ціни
               </NavLink>
             </li>
             <li>
@@ -65,7 +65,7 @@ export default function Header() {
                 to="/advantages"
                 className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
               >
-                Преимущества
+                Переваги
               </NavLink>
             </li>
             <li>
@@ -73,7 +73,7 @@ export default function Header() {
                 to="/contacts"
                 className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
               >
-                Контакты
+                Контакти
               </NavLink>
             </li>
           </ul>
@@ -81,12 +81,12 @@ export default function Header() {
 
         {/* Action button & Phone */}
         <div className="header__actions">
-          <a href="tel:+74959990088" className="header__phone">
+          <a href="tel:+380440000000" className="header__phone" title="Демонстраційний номер">
             <span className="phone-icon">✆</span>
-            <span className="phone-number">+7 (495) 999-00-88</span>
+            <span className="phone-number">+380 (44) 000-00-00</span>
           </a>
-          <Link to="/booking" className="btn-gold header__cta">
-            Записаться
+          <Link to="/booking" className="btn-platinum header__cta">
+            Записатися
           </Link>
         </div>
 
@@ -95,7 +95,7 @@ export default function Header() {
           type="button"
           className={`hamburger ${mobileMenuOpen ? 'hamburger--active' : ''}`}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Открыть меню"
+          aria-label="Відкрити меню"
         >
           <span className="hamburger__line"></span>
           <span className="hamburger__line"></span>
@@ -113,7 +113,7 @@ export default function Header() {
               onClick={closeMobileMenu}
               className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
             >
-              Главная
+              Головна
             </NavLink>
           </li>
           <li>
@@ -122,7 +122,7 @@ export default function Header() {
               onClick={closeMobileMenu}
               className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
             >
-              Услуги
+              Послуги
             </NavLink>
           </li>
           <li>
@@ -131,7 +131,7 @@ export default function Header() {
               onClick={closeMobileMenu}
               className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
             >
-              Цены
+              Ціни
             </NavLink>
           </li>
           <li>
@@ -140,7 +140,7 @@ export default function Header() {
               onClick={closeMobileMenu}
               className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
             >
-              Преимущества
+              Переваги
             </NavLink>
           </li>
           <li>
@@ -149,20 +149,21 @@ export default function Header() {
               onClick={closeMobileMenu}
               className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
             >
-              Контакты
+              Контакти
             </NavLink>
           </li>
         </ul>
         <div className="mobile-menu__footer">
-          <a href="tel:+74959990088" className="mobile-menu__phone">
-            +7 (495) 999-00-88
+          <span className="mobile-menu__demo-tag">Демонстраційний сайт</span>
+          <a href="tel:+380440000000" className="mobile-menu__phone">
+            +380 (44) 000-00-00
           </a>
           <Link
             to="/booking"
-            className="btn-gold mobile-menu__cta"
+            className="btn-platinum mobile-menu__cta"
             onClick={closeMobileMenu}
           >
-            Онлайн-запись
+            Онлайн-запис
           </Link>
         </div>
       </div>

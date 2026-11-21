@@ -252,6 +252,15 @@
   padding-top: 24px;
 }
 
+.mobile-menu__demo-tag {
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color-cyan);
+  text-align: center;
+  font-weight: 600;
+}
+
 .mobile-menu__phone {
   font-size: 1.15rem;
   font-weight: 700;
