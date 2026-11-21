@@ -1,45 +1,78 @@
 :root {
-  --bg-main: #08080a;
-  --bg-card: #111215;
-  --bg-card-hover: #16181e;
-  --bg-surface: #191b22;
-  --bg-glass: rgba(12, 13, 16, 0.82);
-  --bg-glass-card: rgba(22, 24, 30, 0.65);
+  /* ==========================================================================
+     DARK PREMIUM AUTOMOTIVE DESIGN SYSTEM
+     Colors: Void Black, Graphite, Brushed Steel, Liquid Platinum, Ice Cyan
+     ========================================================================== */
 
-  --color-gold: #d4af37;
-  --color-gold-light: #f7e6a6;
-  --color-gold-hover: #e2be4b;
-  --color-gold-dark: #9e7f22;
+  /* Backgrounds */
+  --bg-main: #050507;
+  --bg-surface: #0e1015;
+  --bg-card: #13161f;
+  --bg-card-hover: #191d26;
+  --bg-glass: rgba(8, 10, 14, 0.85);
+  --bg-glass-card: rgba(19, 22, 31, 0.72);
 
-  --gold-gradient: linear-gradient(135deg, #faebb7 0%, #d4af37 50%, #aa7a1e 100%);
-  --gold-gradient-hover: linear-gradient(135deg, #ffffff 0%, #e8c659 50%, #b88628 100%);
-  --gold-gradient-border: linear-gradient(135deg, rgba(247, 230, 166, 0.6) 0%, rgba(212, 175, 55, 0.3) 50%, rgba(158, 127, 34, 0.1) 100%);
+  /* Typography Colors */
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-text-inverse: #050507;
 
-  --dark-gradient: linear-gradient(180deg, #08080a 0%, #101115 50%, #08080a 100%);
+  /* Accent: Liquid Platinum & Cold Steel */
+  --color-accent: #e2e8f0;
+  --color-accent-light: #ffffff;
+  --color-accent-hover: #f1f5f9;
+  --color-accent-dark: #64748b;
 
-  --color-text-primary: #f5f6f8;
-  --color-text-secondary: #a3a8b5;
-  --color-text-muted: #676c78;
+  --accent-gradient: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #ffffff 0%, #f1f5f9 45%, #cbd5e1 100%);
+  --accent-gradient-border: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(148, 163, 184, 0.12) 50%, rgba(255, 255, 255, 0.04) 100%);
+  --accent-gradient-subtle: linear-gradient(135deg, rgba(226, 232, 240, 0.08) 0%, rgba(226, 232, 240, 0.02) 100%);
 
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-gold: rgba(212, 175, 55, 0.35);
-  --border-gold-subtle: rgba(212, 175, 55, 0.15);
+  /* Secondary Technical Accent: Ice Cyan (Used Sparingly) */
+  --color-cyan: #38bdf8;
+  --color-cyan-glow: rgba(56, 189, 248, 0.18);
+  --color-cyan-subtle: rgba(56, 189, 248, 0.08);
 
-  --gold-glow: 0 0 30px rgba(212, 175, 55, 0.25);
-  --gold-glow-sm: 0 0 15px rgba(212, 175, 55, 0.18);
-  --shadow-deep: 0 25px 60px rgba(0, 0, 0, 0.7);
+  /* Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-accent: rgba(226, 232, 240, 0.22);
+  --border-accent-subtle: rgba(226, 232, 240, 0.12);
+  --border-cyan: rgba(56, 189, 248, 0.25);
 
-  --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Cinzel', serif;
+  /* Shadows & Ambient Glows (Refined, no harsh glowing halos) */
+  --accent-glow: 0 0 35px rgba(226, 232, 240, 0.12);
+  --accent-glow-sm: 0 0 16px rgba(226, 232, 240, 0.08);
+  --shadow-card: 0 16px 36px -10px rgba(0, 0, 0, 0.7);
+  --shadow-deep: 0 24px 50px -12px rgba(0, 0, 0, 0.85);
 
+  /* Backward Compatibility Aliases for Existing Components */
+  --color-gold: var(--color-accent);
+  --color-gold-light: var(--color-accent-light);
+  --color-gold-hover: var(--color-accent-hover);
+  --color-gold-dark: var(--color-accent-dark);
+  --gold-gradient: var(--accent-gradient);
+  --gold-gradient-hover: var(--accent-gradient-hover);
+  --gold-gradient-border: var(--accent-gradient-border);
+  --border-gold: var(--border-accent);
+  --border-gold-subtle: var(--border-accent-subtle);
+  --gold-glow: var(--accent-glow);
+  --gold-glow-sm: var(--accent-glow-sm);
+
+  /* Typography */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+
+  /* Border Radii */
   --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
   --radius-full: 9999px;
 
-  --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-normal: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-smooth: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Transitions */
+  --transition-fast: 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 *, *::before, *::after {
@@ -65,20 +98,64 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom Scrollbar */
+/* Text Selection */
+::selection {
+  background: #334155;
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background: #334155;
+  color: #ffffff;
+}
+
+/* Custom Dark Graphite Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #08080a;
+  background: var(--bg-main);
 }
 ::-webkit-scrollbar-thumb {
-  background: #252830;
-  border-radius: 4px;
-  border: 2px solid #08080a;
+  background: #1e2430;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--bg-main);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gold-dark);
+  background: var(--color-text-muted);
+}
+
+/* Typography Defaults */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 4.4vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: clamp(1.85rem, 3.2vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+h3 {
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+p {
+  color: var(--color-text-secondary);
 }
 
 a {
@@ -101,7 +178,7 @@ img {
   display: block;
 }
 
-/* Utilities */
+/* Container */
 .container {
   width: 100%;
   max-width: 1240px;
@@ -109,32 +186,40 @@ img {
   padding: 0 24px;
 }
 
+/* Text & Title Utility Classes */
+.platinum-text,
+.silver-text,
+.accent-text,
 .gold-text {
-  background: var(--gold-gradient);
+  background: var(--accent-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
 }
 
+.tech-sub-title,
 .gold-sub-title {
-  font-size: 0.85rem;
+  font-family: var(--font-display);
+  font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 3.5px;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-accent);
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
+.tech-sub-title::before,
+.tech-sub-title::after,
 .gold-sub-title::before,
 .gold-sub-title::after {
   content: '';
   display: inline-block;
-  width: 24px;
+  width: 20px;
   height: 1px;
-  background: var(--color-gold);
+  background: var(--border-accent);
 }
 
 .section-header {
@@ -145,10 +230,10 @@ img {
 .section-title {
   font-size: clamp(2rem, 3.5vw, 2.75rem);
   font-weight: 800;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.025em;
   color: #ffffff;
   margin-bottom: 16px;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .section-desc {
@@ -160,31 +245,37 @@ img {
 }
 
 /* Buttons */
+.btn-primary,
+.btn-platinum,
 .btn-gold {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: var(--gold-gradient);
-  color: #08080a;
+  background: var(--accent-gradient);
+  color: #050507;
   font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 0.5px;
-  padding: 16px 34px;
+  font-size: 0.92rem;
+  letter-spacing: 0.3px;
+  padding: 15px 32px;
   border-radius: var(--radius-full);
-  box-shadow: var(--gold-glow);
-  transition: all var(--transition-normal);
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.08);
+  transition: transform var(--transition-normal), background var(--transition-normal), box-shadow var(--transition-normal);
   text-transform: uppercase;
   position: relative;
   overflow: hidden;
 }
 
+.btn-primary:hover,
+.btn-platinum:hover,
 .btn-gold:hover {
   transform: translateY(-2px);
-  background: var(--gold-gradient-hover);
-  box-shadow: 0 0 40px rgba(212, 175, 55, 0.45);
+  background: var(--accent-gradient-hover);
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.16);
 }
 
+.btn-primary:active,
+.btn-platinum:active,
 .btn-gold:active {
   transform: translateY(0);
 }
@@ -194,45 +285,49 @@ img {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
   color: var(--color-text-primary);
   font-weight: 600;
-  font-size: 0.95rem;
-  padding: 15px 32px;
+  font-size: 0.92rem;
+  padding: 14px 30px;
   border-radius: var(--radius-full);
-  border: 1px solid var(--border-gold-subtle);
+  border: 1px solid var(--border-accent-subtle);
   transition: all var(--transition-normal);
   backdrop-filter: blur(10px);
 }
 
 .btn-outline:hover {
-  border-color: var(--color-gold);
-  background: rgba(212, 175, 55, 0.08);
+  border-color: var(--color-accent);
+  background: rgba(255, 255, 255, 0.05);
   color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: var(--gold-glow-sm);
+  box-shadow: var(--accent-glow-sm);
 }
 
-/* Shimmer Keyframe */
-@keyframes goldShimmer {
+.btn-outline:active {
+  transform: translateY(0);
+}
+
+/* Subtle Shimmer & Pulse Keyframes */
+@keyframes metallicShimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
-@keyframes floatSlow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.04); }
 }
 
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
 @keyframes fadeInScale {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.98);
+    transform: translateY(20px) scale(0.98);
   }
   to {
     opacity: 1;
