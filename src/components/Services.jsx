@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { getServices } from '../api/bookingApi';
+import { CheckIcon, ArrowRightIcon, ClockIcon } from './Icons';
 import './Services.css';
 
 const defaultServicesData = [
@@ -112,7 +114,13 @@ export default function Services({ onSelectService, hideHeader = false }) {
       <div className="container">
         {/* Section Header */}
         {!hideHeader && (
-          <div className="section-header">
+          <motion.div
+            className="section-header"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="tech-sub-title">ЕКСКЛЮЗИВНІ ПОСЛУГИ</div>
             <h2 className="section-title">
               Індивідуальні програми <span className="platinum-text">дітейлінгу</span>
@@ -121,15 +129,19 @@ export default function Services({ onSelectService, hideHeader = false }) {
               Ми поєднуємо передове обладнання, перевірені європейські склади
               та філігранну ручну роботу для бездоганного результату.
             </p>
-          </div>
+          </motion.div>
         )}
 
-        {/* Services Grid */}
+        {/* Services Grid with Motion Stagger */}
         <div className="services-grid">
-          {services.map((service) => (
-            <article
+          {services.map((service, index) => (
+            <motion.article
               key={service.id}
               className={`service-card ${service.featured ? 'service-card--featured' : ''}`}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
               {service.featured && (
                 <div className="card-popular-pill">
@@ -148,7 +160,10 @@ export default function Services({ onSelectService, hideHeader = false }) {
                 <div className="service-card__overlay"></div>
                 <span className="service-card__tag">{service.tag}</span>
                 {service.duration && (
-                  <span className="service-card__duration">⏱ {service.duration}</span>
+                  <span className="service-card__duration" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                    <ClockIcon size={13} />
+                    <span>{service.duration}</span>
+                  </span>
                 )}
               </div>
 
@@ -161,7 +176,9 @@ export default function Services({ onSelectService, hideHeader = false }) {
                 <ul className="service-card__features">
                   {service.features.map((feature, idx) => (
                     <li key={idx} className="feature-item">
-                      <span className="feature-check">✦</span>
+                      <span className="feature-check" style={{ display: 'inline-flex', marginTop: '2px' }}>
+                        <CheckIcon size={14} />
+                      </span>
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -180,11 +197,13 @@ export default function Services({ onSelectService, hideHeader = false }) {
                     onClick={() => handleBook(service.title)}
                   >
                     <span>Записатися</span>
-                    <span className="btn-icon">→</span>
+                    <span className="btn-icon">
+                      <ArrowRightIcon size={14} />
+                    </span>
                   </button>
                 </div>
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
       </div>

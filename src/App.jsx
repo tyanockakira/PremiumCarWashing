@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import { SparkleIcon, ArrowUpIcon } from './components/Icons';
 
 import HomePage from './pages/HomePage';
 import ServicesPage from './pages/ServicesPage';
@@ -51,28 +53,40 @@ function App() {
         {/* Footer */}
         <Footer />
 
-        {/* Floating Controls */}
-        <div className={`floating-controls ${showScrollTop ? 'floating-controls--visible' : ''}`}>
-          <Link
-            to="/booking"
-            className="btn-floating-cta"
-            title="Записатися онлайн"
-            aria-label="Записатися онлайн"
-          >
-            <span className="floating-sparkle">✦</span>
-            <span className="floating-text">Записатися</span>
-          </Link>
+        {/* Floating Controls with Motion Animation */}
+        <AnimatePresence>
+          {showScrollTop && (
+            <motion.div
+              className="floating-controls floating-controls--visible"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 16 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <Link
+                to="/booking"
+                className="btn-floating-cta"
+                title="Записатися онлайн"
+                aria-label="Записатися онлайн"
+              >
+                <span className="floating-sparkle">
+                  <SparkleIcon size={16} />
+                </span>
+                <span className="floating-text">Записатися</span>
+              </Link>
 
-          <button
-            type="button"
-            className="btn-scroll-top"
-            onClick={scrollToTop}
-            title="Вгору"
-            aria-label="Вгору"
-          >
-            ↑
-          </button>
-        </div>
+              <button
+                type="button"
+                className="btn-scroll-top"
+                onClick={scrollToTop}
+                title="Вгору"
+                aria-label="Вгору"
+              >
+                <ArrowUpIcon size={18} />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </BrowserRouter>
   );

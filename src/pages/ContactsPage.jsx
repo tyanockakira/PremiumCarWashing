@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Contacts from '../components/Contacts';
+import { CarIcon, CoffeeIcon, ShieldIcon } from '../components/Icons';
 import './PagesCommon.css';
 
 export default function ContactsPage() {
@@ -45,7 +46,7 @@ export default function ContactsPage() {
             marginTop: '30px'
           }}>
             <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '26px' }}>
-              <span style={{ fontSize: '1.8rem', color: 'var(--color-gold)' }}>🚗</span>
+              <span style={{ display: 'flex', alignItems: 'center', color: 'var(--color-gold)', width: '1.8rem', height: '1.8rem' }}><CarIcon size={26} /></span>
               <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#ffffff', margin: '12px 0 6px' }}>В’їзд на автомобілі</h4>
               <p style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
                 З’їзд за вказівником комплексу «Автомобільна 1». На КПП №1 назвіть прізвище або номер авто — шлагбаум відкриється автоматично.
@@ -53,7 +54,7 @@ export default function ContactsPage() {
             </div>
 
             <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '26px' }}>
-              <span style={{ fontSize: '1.8rem', color: 'var(--color-gold)' }}>☕</span>
+              <span style={{ display: 'flex', alignItems: 'center', color: 'var(--color-gold)', width: '1.8rem', height: '1.8rem' }}><CoffeeIcon size={26} /></span>
               <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#ffffff', margin: '12px 0 6px' }}>VIP-Лаундж зона</h4>
               <p style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
                 Поки автомобіль проходить процедуру, ви можете відпочити у затишній лаундж-зоні з преміальною зерновою кавою, чаєм і швидкісним Wi-Fi.
@@ -61,7 +62,7 @@ export default function ContactsPage() {
             </div>
 
             <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '26px' }}>
-              <span style={{ fontSize: '1.8rem', color: 'var(--color-gold)' }}>🛡️</span>
+              <span style={{ display: 'flex', alignItems: 'center', color: 'var(--color-gold)', width: '1.8rem', height: '1.8rem' }}><ShieldIcon size={26} /></span>
               <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#ffffff', margin: '12px 0 6px' }}>Охоронюваний паркінг</h4>
               <p style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
                 Теплий критий паркінг із постійним відеоспостереженням 4K. Доступ сторонніх осіб у робочі зони суворо заборонений.

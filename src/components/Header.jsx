@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
+import { LogoEmblem, PhoneIcon } from './Icons';
 import './Header.css';
 
 export default function Header() {
@@ -24,7 +26,9 @@ export default function Header() {
         {/* Brand Logo with Demo Tag */}
         <Link to="/" className="header__logo" onClick={closeMobileMenu}>
           <div className="logo-emblem">
-            <span className="logo-symbol">✦</span>
+            <span className="logo-symbol">
+              <LogoEmblem size={20} />
+            </span>
           </div>
           <div className="logo-text">
             <span className="logo-brand">PREMIUM<span className="logo-gold">WASH</span></span>
@@ -82,7 +86,9 @@ export default function Header() {
         {/* Action button & Phone */}
         <div className="header__actions">
           <a href="tel:+380440000000" className="header__phone" title="Демонстраційний номер">
-            <span className="phone-icon">✆</span>
+            <span className="phone-icon" style={{ display: 'flex', alignItems: 'center' }}>
+              <PhoneIcon size={16} />
+            </span>
             <span className="phone-number">+380 (44) 000-00-00</span>
           </a>
           <Link to="/booking" className="btn-platinum header__cta">
@@ -103,70 +109,80 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile Drawer Menu */}
-      <div className={`mobile-menu ${mobileMenuOpen ? 'mobile-menu--open' : ''}`}>
-        <ul className="mobile-menu__list">
-          <li>
-            <NavLink
-              to="/"
-              end
-              onClick={closeMobileMenu}
-              className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
-            >
-              Головна
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/services"
-              onClick={closeMobileMenu}
-              className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
-            >
-              Послуги
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/pricing"
-              onClick={closeMobileMenu}
-              className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
-            >
-              Ціни
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/advantages"
-              onClick={closeMobileMenu}
-              className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
-            >
-              Переваги
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/contacts"
-              onClick={closeMobileMenu}
-              className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
-            >
-              Контакти
-            </NavLink>
-          </li>
-        </ul>
-        <div className="mobile-menu__footer">
-          <span className="mobile-menu__demo-tag">Демонстраційний сайт</span>
-          <a href="tel:+380440000000" className="mobile-menu__phone">
-            +380 (44) 000-00-00
-          </a>
-          <Link
-            to="/booking"
-            className="btn-platinum mobile-menu__cta"
-            onClick={closeMobileMenu}
+      {/* Mobile Drawer Menu with AnimatePresence */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            className="mobile-menu mobile-menu--open"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
           >
-            Онлайн-запис
-          </Link>
-        </div>
-      </div>
+            <ul className="mobile-menu__list">
+              <li>
+                <NavLink
+                  to="/"
+                  end
+                  onClick={closeMobileMenu}
+                  className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
+                >
+                  Головна
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/services"
+                  onClick={closeMobileMenu}
+                  className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
+                >
+                  Послуги
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/pricing"
+                  onClick={closeMobileMenu}
+                  className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
+                >
+                  Ціни
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/advantages"
+                  onClick={closeMobileMenu}
+                  className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
+                >
+                  Переваги
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/contacts"
+                  onClick={closeMobileMenu}
+                  className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
+                >
+                  Контакти
+                </NavLink>
+              </li>
+            </ul>
+            <div className="mobile-menu__footer">
+              <span className="mobile-menu__demo-tag">Демонстраційний сайт</span>
+              <a href="tel:+380440000000" className="mobile-menu__phone">
+                +380 (44) 000-00-00
+              </a>
+              <Link
+                to="/booking"
+                className="btn-platinum mobile-menu__cta"
+                onClick={closeMobileMenu}
+              >
+                Онлайн-запис
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

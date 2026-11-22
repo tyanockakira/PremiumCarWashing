@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Advantages from '../components/Advantages';
+import { BuildingIcon, SnowflakeIcon } from '../components/Icons';
 import './PagesCommon.css';
 
 const partnerBrands = [
@@ -86,7 +87,7 @@ export default function AdvantagesPage() {
       <section style={{ padding: '60px 0', backgroundColor: '#111217', borderTop: '1px solid var(--border-subtle)' }}>
         <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
           <div style={{ padding: '24px', background: 'rgba(212, 175, 55, 0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-gold-subtle)' }}>
-            <span style={{ fontSize: '2rem' }}>🏛️</span>
+            <span style={{ display: 'flex', alignItems: 'center', color: 'var(--color-gold)', width: '2rem', height: '2rem' }}><BuildingIcon size={28} /></span>
             <h4 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#ffffff', margin: '10px 0 6px' }}>
               Страхування на 50 000 000 грн
             </h4>
@@ -96,7 +97,7 @@ export default function AdvantagesPage() {
           </div>
 
           <div style={{ padding: '24px', background: 'rgba(212, 175, 55, 0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-gold-subtle)' }}>
-            <span style={{ fontSize: '2rem' }}>❄️</span>
+            <span style={{ display: 'flex', alignItems: 'center', color: 'var(--color-gold)', width: '2rem', height: '2rem' }}><SnowflakeIcon size={28} /></span>
             <h4 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#ffffff', margin: '10px 0 6px' }}>
               Клімат-контроль 22°C
             </h4>

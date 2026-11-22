@@ -37,50 +37,51 @@ main {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--gold-gradient);
-  color: #08080a;
+  background: var(--accent-gradient);
+  color: #050507;
   font-weight: 700;
   font-size: 0.88rem;
   padding: 13px 22px;
   border-radius: var(--radius-full);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), var(--gold-glow);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
   transition: all var(--transition-fast);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .btn-floating-cta:hover {
-  transform: scale(1.05);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 30px rgba(212, 175, 55, 0.5);
+  transform: translateY(-2px);
+  background: var(--accent-gradient-hover);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65);
 }
 
 .floating-sparkle {
-  font-size: 1rem;
+  display: flex;
+  align-items: center;
 }
 
 .btn-scroll-top {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(18, 19, 24, 0.85);
-  border: 1px solid var(--border-gold-subtle);
-  color: var(--color-gold-light);
-  font-size: 1.2rem;
-  font-weight: 700;
+  background: rgba(18, 20, 28, 0.85);
+  border: 1px solid var(--border-accent-subtle);
+  color: var(--color-accent);
   display: flex;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(10px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
   transition: all var(--transition-fast);
 }
 
 .btn-scroll-top:hover {
-  border-color: var(--color-gold);
-  background: var(--color-gold);
-  color: #08080a;
-  transform: translateY(-3px);
-  box-shadow: var(--gold-glow-sm);
+  border-color: rgba(255, 255, 255, 0.4);
+  background: #191d28;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
 }
 
 /* Responsive adjustments */

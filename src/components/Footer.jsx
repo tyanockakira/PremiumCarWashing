@@ -1,4 +1,12 @@
 import { Link } from 'react-router-dom';
+import {
+  LogoEmblem,
+  AlertTriangleIcon,
+  PinIcon,
+  PhoneIcon,
+  ClockIcon,
+  MailIcon
+} from './Icons';
 import './Footer.css';
 
 export default function Footer() {
@@ -9,7 +17,9 @@ export default function Footer() {
       <div className="container">
         {/* Prominent Demo Notice */}
         <div className="footer-demo-alert">
-          <span className="footer-demo-alert__icon">⚠️</span>
+          <span className="footer-demo-alert__icon">
+            <AlertTriangleIcon size={20} />
+          </span>
           <div className="footer-demo-alert__text">
             <strong>Демонстраційний сайт.</strong> Усі послуги, ціни, контактні дані та форми наведені виключно для прикладу й не є реальними комерційними пропозиціями.
           </div>
@@ -19,7 +29,9 @@ export default function Footer() {
           {/* Brand info */}
           <div className="footer-brand">
             <Link to="/" className="footer-logo">
-              <span className="footer-logo__symbol">✦</span>
+              <span className="footer-logo__symbol">
+                <LogoEmblem size={22} />
+              </span>
               <span className="footer-logo__text">PREMIUM<span className="gold-text">WASH</span></span>
             </Link>
             <p className="footer-desc">
@@ -62,10 +74,22 @@ export default function Footer() {
           <div className="footer-col">
             <h4 className="footer-col__title">Зв’язок з нами</h4>
             <div className="footer-contact-list">
-              <p>📍 м. Київ, вул. Автомобільна, 1 (демо-адреса)</p>
-              <p>📞 <a href="tel:+380440000000">+380 (44) 000-00-00</a></p>
-              <p>⏱️ Працюємо цілодобово 24/7</p>
-              <p>✉️ <a href="mailto:demo@premiumwash.example">demo@premiumwash.example</a></p>
+              <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <PinIcon size={14} />
+                <span>м. Київ, вул. Автомобільна, 1 (демо-адреса)</span>
+              </p>
+              <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <PhoneIcon size={14} />
+                <a href="tel:+380440000000">+380 (44) 000-00-00</a>
+              </p>
+              <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ClockIcon size={14} />
+                <span>Працюємо цілодобово 24/7</span>
+              </p>
+              <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <MailIcon size={14} />
+                <a href="mailto:demo@premiumwash.example">demo@premiumwash.example</a>
+              </p>
             </div>
           </div>
         </div>

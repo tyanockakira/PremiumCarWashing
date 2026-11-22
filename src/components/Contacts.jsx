@@ -1,6 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { createConsultation } from '../api/bookingApi';
+import {
+  PinIcon,
+  ClockIcon,
+  PhoneIcon,
+  MessageSquareIcon,
+  SendIcon,
+  SparkleIcon,
+  ArrowRightIcon,
+  CheckIcon,
+  LockIcon,
+  AlertTriangleIcon
+} from './Icons';
 import './Contacts.css';
 
 export default function Contacts({ onOpenBooking, hideHeader = false }) {
@@ -49,7 +62,13 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
     <section id="contacts" className="contacts-section">
       <div className="container">
         {!hideHeader && (
-          <div className="section-header">
+          <motion.div
+            className="section-header"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="tech-sub-title">ЯК НАС ЗНАЙТИ</div>
             <h2 className="section-title">
               Контакти та <span className="platinum-text">локація студії</span>
@@ -58,14 +77,22 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
               Чекаємо на вас у зручній локації із власною охоронюваною територією,
               лаундж-зоною з добірною кавою та швидкісним Wi-Fi.
             </p>
-          </div>
+          </motion.div>
         )}
 
         <div className="contacts-grid">
           {/* Info Card */}
-          <div className="contacts-info">
+          <motion.div
+            className="contacts-info"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="contact-item">
-              <div className="contact-item__icon">📍</div>
+              <div className="contact-item__icon">
+                <PinIcon size={20} />
+              </div>
               <div className="contact-item__content">
                 <span className="contact-item__label">Адреса студії</span>
                 <p className="contact-item__value">м. Київ, вул. Автомобільна, 1</p>
@@ -74,7 +101,9 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
             </div>
 
             <div className="contact-item">
-              <div className="contact-item__icon">⏱️</div>
+              <div className="contact-item__icon">
+                <ClockIcon size={20} />
+              </div>
               <div className="contact-item__content">
                 <span className="contact-item__label">Графік роботи</span>
                 <p className="contact-item__value">Цілодобово — 24/7</p>
@@ -83,7 +112,9 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
             </div>
 
             <div className="contact-item">
-              <div className="contact-item__icon">📞</div>
+              <div className="contact-item__icon">
+                <PhoneIcon size={20} />
+              </div>
               <div className="contact-item__content">
                 <span className="contact-item__label">Телефон для бронювання</span>
                 <a href="tel:+380440000000" className="contact-item__value contact-item__value--link">
@@ -94,16 +125,18 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
             </div>
 
             <div className="contact-item">
-              <div className="contact-item__icon">💬</div>
+              <div className="contact-item__icon">
+                <MessageSquareIcon size={20} />
+              </div>
               <div className="contact-item__content">
                 <span className="contact-item__label">Месенджери</span>
                 <div className="social-links">
                   <a href="https://t.me" target="_blank" rel="noreferrer" className="social-pill">
-                    <span className="social-pill__icon">✈️</span>
+                    <SendIcon size={14} />
                     <span>Telegram</span>
                   </a>
                   <a href="https://whatsapp.com" target="_blank" rel="noreferrer" className="social-pill">
-                    <span className="social-pill__icon">🟢</span>
+                    <MessageSquareIcon size={14} />
                     <span>WhatsApp</span>
                   </a>
                 </div>
@@ -111,7 +144,9 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
             </div>
 
             <div className="lounge-perk">
-              <span className="lounge-perk__star">✦</span>
+              <span className="lounge-perk__star">
+                <SparkleIcon size={16} />
+              </span>
               <div className="lounge-perk__body">
                 <p>Для гостей доступна VIP-лаундж зона з кавою, Wi-Fi та прямою трансляцією процесу робіт із боксу.</p>
                 <button
@@ -119,28 +154,38 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
                   className="lounge-perk__btn"
                   onClick={handleBookingClick}
                 >
-                  Забронювати VIP-візит →
+                  <span>Забронювати VIP-візит</span>
+                  <ArrowRightIcon size={14} />
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Quick Contact Form */}
-          <div className="contacts-form-card">
+          <motion.div
+            className="contacts-form-card"
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
             <h3 className="form-card__title">Задати питання технологу</h3>
             <p className="form-card__subtitle">
               Залиште запит на діагностику стану ЛФП та професійний підбір програми догляду.
             </p>
 
             {errorMsg && (
-              <div className="contact-error-banner">
-                ⚠️ {errorMsg}
+              <div className="contact-error-banner" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <AlertTriangleIcon size={16} />
+                <span>{errorMsg}</span>
               </div>
             )}
 
             {submitted ? (
               <div className="form-success">
-                <div className="success-icon">✓</div>
+                <div className="success-icon">
+                  <CheckIcon size={24} />
+                </div>
                 <h4>Запит успішно прийнято!</h4>
                 <p>Наш майстер-технолог зв&apos;яжеться з вами протягом 10 хвилин (демо-режим).</p>
               </div>
@@ -204,12 +249,13 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
                   {isSubmitting ? 'Надсилання...' : 'Надіслати запит'}
                 </button>
 
-                <p className="form-privacy">
-                  🔒 Демонстраційний сайт. Дані обробляються виключно в навчальних цілях.
+                <p className="form-privacy" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                  <LockIcon size={12} />
+                  <span>Демонстраційний сайт. Дані обробляються виключно в навчальних цілях.</span>
                 </p>
               </form>
             )}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

@@ -1,33 +1,42 @@
+import { motion } from 'motion/react';
+import {
+  ZapIcon,
+  ShieldIcon,
+  TrophyIcon,
+  GemIcon,
+  CameraIcon,
+  FileCheckIcon
+} from './Icons';
 import './Advantages.css';
 
 const advantages = [
   {
-    icon: '⚡',
+    icon: <ZapIcon size={22} />,
     title: 'Інспекційне світло Scangrip',
     desc: 'Кожен етап полірування контролюється спеціалізованим студійним світлом з різною колірною температурою (CRI 96+).'
   },
   {
-    icon: '🛡️',
+    icon: <ShieldIcon size={22} />,
     title: 'Чисті бокси з клімат-контролем',
     desc: 'Нанесення керамічних складів та плівок відбувається за температури 22°C та контрольованої вологості 50%.'
   },
   {
-    icon: '🏆',
+    icon: <TrophyIcon size={22} />,
     title: 'Сертифіковані майстри',
     desc: 'Усі фахівці мають стаж понад 6 років та щорічно підтверджують кваліфікацію в європейських академіях Gyeon і Rupes.'
   },
   {
-    icon: '💎',
+    icon: <GemIcon size={22} />,
     title: 'Світова преміальна хімія',
     desc: 'Використовуємо виключно безкомпромісні склади з Німеччини, Великої Британії та Японії: Koch Chemie, Gyeon, LeTech, Rupes.'
   },
   {
-    icon: '🎥',
+    icon: <CameraIcon size={22} />,
     title: 'Охорона 24/7 та відеоспостереження',
     desc: 'Закритий теплий паркінг із постійною охороною, відеоконтролем 4K та відповідальним страхуванням автомобіля.'
   },
   {
-    icon: '📋',
+    icon: <FileCheckIcon size={22} />,
     title: 'Контроль якості за 45 пунктами',
     desc: 'Фінальний огляд автомобіля технологом за суворою шкалою дефектування перед видачею клієнту.'
   }
@@ -38,7 +47,13 @@ export default function Advantages({ hideHeader = false }) {
     <section id="advantages" className="advantages-section">
       <div className="container">
         {!hideHeader && (
-          <div className="section-header">
+          <motion.div
+            className="section-header"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="tech-sub-title">ЧОМУ ОБИРАЮТЬ НАС</div>
             <h2 className="section-title">
               Стандарти якості <span className="platinum-text">без компромісів</span>
@@ -46,17 +61,23 @@ export default function Advantages({ hideHeader = false }) {
             <p className="section-desc">
               Ми ставимося до кожного автомобіля як до унікального витвору інженерного мистецтва.
             </p>
-          </div>
+          </motion.div>
         )}
 
         <div className="advantages-grid">
           {advantages.map((item, idx) => (
-            <div key={idx} className="advantage-card">
+            <motion.div
+              key={idx}
+              className="advantage-card"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            >
               <div className="advantage-card__icon">{item.icon}</div>
               <h3 className="advantage-card__title">{item.title}</h3>
               <p className="advantage-card__desc">{item.desc}</p>
-              <div className="advantage-card__corner"></div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

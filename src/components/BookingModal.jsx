@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createBooking } from '../api/bookingApi';
+import { InfoIcon, AlertTriangleIcon, CloseIcon, SparkleIcon } from './Icons';
 import './BookingModal.css';
 
 const defaultServices = [
@@ -83,12 +84,12 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
           onClick={onClose}
           aria-label="Закрити"
         >
-          ✕
+          <CloseIcon size={18} />
         </button>
 
         {submitted ? (
           <div className="modal-success">
-            <div className="modal-success__icon">✦</div>
+            <div className="modal-success__icon"><SparkleIcon size={28} /></div>
             <h3 className="modal-success__title">Запис підтверджено!</h3>
             <p className="modal-success__text">
               Дякуємо, <strong>{formData.name}</strong>! Персональний консьєрж зв’яжеться з вами за номером{' '}
@@ -115,12 +116,15 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
               color: 'var(--color-text-secondary)',
               marginBottom: '18px'
             }}>
-              ℹ️ <strong>Демо-режим:</strong> форма демонструє взаємодію з базою даних. Усі дані наведені для прикладу.
+              <span style={{ display: 'flex', alignItems: 'flex-start', gap: '7px' }}>
+                <span style={{ flexShrink: 0, marginTop: '1px' }}><InfoIcon size={15} /></span>
+                <span><strong>Демо-режим:</strong> форма демонструє взаємодію з базою даних. Усі дані наведені для прикладу.</span>
+              </span>
             </div>
 
             {errorMsg && (
               <div className="modal-error-banner">
-                ⚠️ {errorMsg}
+                <span style={{ flexShrink: 0 }}><AlertTriangleIcon size={16} /></span> {errorMsg}
               </div>
             )}
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { createBooking } from '../api/bookingApi';
+import { InfoIcon, AlertTriangleIcon, LockIcon, SparkleIcon } from '../components/Icons';
 import './PagesCommon.css';
 import './BookingPage.css';
 
@@ -97,7 +98,7 @@ export default function BookingPage() {
         <div className="container" style={{ maxWidth: '860px' }}>
           {bookingResult ? (
             <div className="booking-confirmation-card">
-              <div className="confirmation-icon">✦</div>
+              <div className="confirmation-icon"><SparkleIcon size={28} /></div>
               <h2 className="confirmation-title">Запис успішно підтверджено!</h2>
               <p className="confirmation-desc">
                 Щиро дякуємо, <strong>{formData.name}</strong>! Персональний консьєрж зв’яжеться з вами за номером{' '}
@@ -163,12 +164,15 @@ export default function BookingPage() {
                 marginBottom: '24px',
                 lineHeight: '1.5'
               }}>
-                ℹ️ <strong>Демонстраційний режим:</strong> цей сайт є вітринним портфоліо-проєктом. Форма демонструє повноцінне підключення до бази даних Supabase PostgreSQL.
+                <span style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                  <span style={{ flexShrink: 0, marginTop: '1px' }}><InfoIcon size={16} /></span>
+                  <span><strong>Демонстраційний режим:</strong> цей сайт є вітринним портфоліо-проєктом. Форма демонструє повноцінне підключення до бази даних Supabase PostgreSQL.</span>
+                </span>
               </div>
 
               {errorMsg && (
                 <div className="booking-error-banner">
-                  ⚠️ {errorMsg}
+                  <span style={{ flexShrink: 0 }}><AlertTriangleIcon size={16} /></span> {errorMsg}
                 </div>
               )}
 
@@ -287,8 +291,8 @@ export default function BookingPage() {
                   {isSubmitting ? 'Реєстрація бронювання...' : 'Забронювати бокс онлайн →'}
                 </button>
 
-                <p className="booking-privacy">
-                  🔒 Демонстраційний захист даних. Контакти не передаються третім особам.
+                <p className="booking-privacy" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <LockIcon size={14} /> Демонстраційний захист даних. Контакти не передаються третім особам.
                 </p>
               </form>
             </div>

@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
+import { SparkleIcon, CreditCardIcon, ShieldIcon, PinIcon } from '../components/Icons';
 import './PagesCommon.css';
 
 const hubSections = [
   {
-    icon: '✨',
+    Icon: SparkleIcon,
     subtitle: 'КАТАЛОГ',
     title: 'Послуги дітейлінгу',
     desc: 'Багатоетапне полірування, кераміка 9H Pro, обклеювання поліуретаном PPF та преміальний догляд за шкірою салону.',
@@ -12,7 +13,7 @@ const hubSections = [
     linkText: 'Перейти до послуг'
   },
   {
-    icon: '💳',
+    Icon: CreditCardIcon,
     subtitle: 'ПРАЙС-ЛИСТ',
     title: 'Калькулятор цін',
     desc: '3 збалансовані комплекси догляду з миттєвим автоматичним розрахунком під клас вашого автомобіля.',
@@ -20,7 +21,7 @@ const hubSections = [
     linkText: 'Розрахувати вартість'
   },
   {
-    icon: '🛡️',
+    Icon: ShieldIcon,
     subtitle: 'СТАНДАРТИ',
     title: 'Переваги студії',
     desc: 'Стерильні бокси з клімат-контролем 22°C, інспекційне світло Scangrip та страхування відповідальності.',
@@ -28,7 +29,7 @@ const hubSections = [
     linkText: 'Про наші стандарти'
   },
   {
-    icon: '📍',
+    Icon: PinIcon,
     subtitle: 'ЛОКАЦІЯ',
     title: 'Контакти та візит',
     desc: 'Зручний заїзд, цілодобовий прийом 24/7, закритий паркінг і затишна VIP-лаундж зона.',
@@ -60,7 +61,7 @@ export default function HomePage() {
           <div className="home-hub-grid">
             {hubSections.map((item, idx) => (
               <Link to={item.link} key={idx} className="home-hub-card">
-                <div className="home-hub-card__icon">{item.icon}</div>
+                <div className="home-hub-card__icon"><item.Icon size={22} /></div>
                 <span className="home-hub-card__sub">{item.subtitle}</span>
                 <h3 className="home-hub-card__title">{item.title}</h3>
                 <p className="home-hub-card__desc">{item.desc}</p>

@@ -40,11 +40,15 @@
   --border-accent-subtle: rgba(226, 232, 240, 0.12);
   --border-cyan: rgba(56, 189, 248, 0.25);
 
-  /* Shadows & Ambient Glows (Refined, no harsh glowing halos) */
-  --accent-glow: 0 0 35px rgba(226, 232, 240, 0.12);
-  --accent-glow-sm: 0 0 16px rgba(226, 232, 240, 0.08);
-  --shadow-card: 0 16px 36px -10px rgba(0, 0, 0, 0.7);
-  --shadow-deep: 0 24px 50px -12px rgba(0, 0, 0, 0.85);
+  /* Shadows & Ambient Depth (Refined, no fuzzy glowing halos) */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --shadow-elevated: 0 24px 56px rgba(0, 0, 0, 0.75);
+  --shadow-deep: 0 32px 72px rgba(0, 0, 0, 0.9);
+
+  /* Clean interactive accents */
+  --accent-glow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --accent-glow-sm: 0 4px 16px rgba(0, 0, 0, 0.4);
 
   /* Backward Compatibility Aliases for Existing Components */
   --color-gold: var(--color-accent);
@@ -56,8 +60,8 @@
   --gold-gradient-border: var(--accent-gradient-border);
   --border-gold: var(--border-accent);
   --border-gold-subtle: var(--border-accent-subtle);
-  --gold-glow: var(--accent-glow);
-  --gold-glow-sm: var(--accent-glow-sm);
+  --gold-glow: var(--shadow-card);
+  --gold-glow-sm: var(--shadow-sm);
 
   /* Typography */
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -271,7 +275,7 @@ img {
 .btn-gold:hover {
   transform: translateY(-2px);
   background: var(--accent-gradient-hover);
-  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.16);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 .btn-primary:active,
@@ -297,40 +301,24 @@ img {
 }
 
 .btn-outline:hover {
-  border-color: var(--color-accent);
+  border-color: rgba(255, 255, 255, 0.35);
   background: rgba(255, 255, 255, 0.05);
   color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: var(--accent-glow-sm);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 .btn-outline:active {
   transform: translateY(0);
 }
 
-/* Subtle Shimmer & Pulse Keyframes */
-@keyframes metallicShimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes pulseSubtle {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.04); }
-}
-
-@keyframes floatSlow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-@keyframes fadeInScale {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+/* Accessibility: Support for Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
+

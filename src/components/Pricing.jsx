@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { getPricingData } from '../api/bookingApi';
+import { CheckIcon } from './Icons';
 import './Pricing.css';
 
 const defaultCarClasses = [
@@ -126,7 +128,13 @@ export default function Pricing({ onSelectPackage, hideHeader = false }) {
       <div className="container">
         {/* Section Header */}
         {!hideHeader && (
-          <div className="section-header">
+          <motion.div
+            className="section-header"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="tech-sub-title">ПРОЗОРИЙ ПРАЙС-ЛИСТ</div>
             <h2 className="section-title">
               Пакети послуг і <span className="platinum-text">калькулятор вартості</span>
@@ -135,7 +143,7 @@ export default function Pricing({ onSelectPackage, hideHeader = false }) {
               Оберіть клас вашого автомобіля, щоб побачити точну розрахункову вартість
               готових комплексів дітейлінгу.
             </p>
-          </div>
+          </motion.div>
         )}
 
         {/* Car Class Selector Tabs */}
@@ -156,12 +164,16 @@ export default function Pricing({ onSelectPackage, hideHeader = false }) {
           </div>
         </div>
 
-        {/* Packages Cards */}
+        {/* Packages Cards with Motion Stagger */}
         <div className="pricing-grid">
-          {packagesList.map((pkg) => (
-            <div
+          {packagesList.map((pkg, idx) => (
+            <motion.div
               key={pkg.id}
               className={`pricing-card ${pkg.featured ? 'pricing-card--featured' : ''}`}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.5, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
               {pkg.featured && (
                 <div className="pricing-badge">РЕКОМЕНДУЄМО</div>
@@ -184,9 +196,11 @@ export default function Pricing({ onSelectPackage, hideHeader = false }) {
               </div>
 
               <ul className="pricing-card__list">
-                {pkg.items.map((item, idx) => (
-                  <li key={idx} className="pricing-list-item">
-                    <span className="pricing-check">✓</span>
+                {pkg.items.map((item, itemIdx) => (
+                  <li key={itemIdx} className="pricing-list-item">
+                    <span className="pricing-check" style={{ display: 'inline-flex', marginTop: '2px' }}>
+                      <CheckIcon size={14} />
+                    </span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -199,7 +213,7 @@ export default function Pricing({ onSelectPackage, hideHeader = false }) {
               >
                 Обрати комплекс
               </button>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
