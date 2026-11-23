@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import Contacts from '../components/Contacts';
-import { CarIcon, CoffeeIcon, ShieldIcon } from '../components/Icons';
+import { CarIcon, CoffeeIcon, ShieldIcon, ArrowRightIcon } from '../components/Icons';
 import './PagesCommon.css';
 
 export default function ContactsPage() {
@@ -84,8 +84,9 @@ export default function ContactsPage() {
                 Оберіть зручну дату та часовий слот онлайн за 1 хвилину.
               </p>
             </div>
-            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0 }}>
-              Онлайн-запис →
+            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <span>Онлайн-запис</span>
+              <ArrowRightIcon size={16} />
             </Link>
           </div>
         </div>

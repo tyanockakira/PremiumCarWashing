@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import Advantages from '../components/Advantages';
-import { BuildingIcon, SnowflakeIcon } from '../components/Icons';
+import { BuildingIcon, SnowflakeIcon, ArrowRightIcon } from '../components/Icons';
 import './PagesCommon.css';
 
 const partnerBrands = [
@@ -120,8 +120,9 @@ export default function AdvantagesPage() {
                 Забронюйте візит онлайн та переконайтеся у найвищих стандартах преміального сервісу.
               </p>
             </div>
-            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0 }}>
-              Записатися в студію →
+            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <span>Записатися в студію</span>
+              <ArrowRightIcon size={16} />
             </Link>
           </div>
         </div>

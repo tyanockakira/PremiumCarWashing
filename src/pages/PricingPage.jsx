@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Pricing from '../components/Pricing';
+import { PlusIcon, MinusIcon, ArrowRightIcon } from '../components/Icons';
 import './PagesCommon.css';
 
 const faqs = [
@@ -79,8 +80,8 @@ export default function PricingPage() {
                   <h4 style={{ fontSize: '1.05rem', fontWeight: '700', color: openFaq === idx ? 'var(--color-gold-light)' : '#ffffff' }}>
                     {faq.q}
                   </h4>
-                  <span style={{ color: 'var(--color-gold)', fontSize: '1.3rem', fontWeight: '300' }}>
-                    {openFaq === idx ? '−' : '+'}
+                  <span style={{ color: 'var(--color-gold)', display: 'flex', alignItems: 'center' }}>
+                    {openFaq === idx ? <MinusIcon size={18} /> : <PlusIcon size={18} />}
                   </span>
                 </div>
                 {openFaq === idx && (
@@ -106,8 +107,9 @@ export default function PricingPage() {
                 Залиште онлайн-заявку — майстер зв’яжеться з вами та запропонує оптимальний пакет догляду.
               </p>
             </div>
-            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0 }}>
-              Забронювати візит →
+            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <span>Забронювати візит</span>
+              <ArrowRightIcon size={16} />
             </Link>
           </div>
         </div>

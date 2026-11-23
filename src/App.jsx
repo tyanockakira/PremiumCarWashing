@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'motion/react';
+import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
@@ -14,6 +14,44 @@ import ContactsPage from './pages/ContactsPage';
 import BookingPage from './pages/BookingPage';
 
 import './App.css';
+
+function PageWrapper({ children }) {
+  const shouldReduceMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      className="page-transition-wrapper"
+      initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -8 }}
+      transition={{
+        duration: shouldReduceMotion ? 0 : 0.24,
+        ease: [0.16, 1, 0.3, 1]
+      }}
+    >
+      <ScrollToTop />
+      {children}
+    </motion.div>
+  );
+}
+
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
+        <Route path="/services" element={<PageWrapper><ServicesPage /></PageWrapper>} />
+        <Route path="/pricing" element={<PageWrapper><PricingPage /></PageWrapper>} />
+        <Route path="/advantages" element={<PageWrapper><AdvantagesPage /></PageWrapper>} />
+        <Route path="/contacts" element={<PageWrapper><ContactsPage /></PageWrapper>} />
+        <Route path="/booking" element={<PageWrapper><BookingPage /></PageWrapper>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
 
 function App() {
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -32,22 +70,13 @@ function App() {
 
   return (
     <BrowserRouter>
-      <ScrollToTop />
       <div className="app-wrapper">
         {/* Navigation Header */}
         <Header />
 
-        {/* Dynamic Route Content */}
+        {/* Dynamic Route Content with Smooth Page Transitions */}
         <main>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/advantages" element={<AdvantagesPage />} />
-            <Route path="/contacts" element={<ContactsPage />} />
-            <Route path="/booking" element={<BookingPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <AnimatedRoutes />
         </main>
 
         {/* Footer */}

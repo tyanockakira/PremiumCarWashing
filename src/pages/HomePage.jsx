@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
-import { SparkleIcon, CreditCardIcon, ShieldIcon, PinIcon } from '../components/Icons';
+import { SparkleIcon, CreditCardIcon, ShieldIcon, PinIcon, ArrowRightIcon } from '../components/Icons';
 import './PagesCommon.css';
 
 const hubSections = [
@@ -67,7 +67,9 @@ export default function HomePage() {
                 <p className="home-hub-card__desc">{item.desc}</p>
                 <div className="home-hub-card__link">
                   <span>{item.linkText}</span>
-                  <span className="hub-arrow">→</span>
+                  <span className="hub-arrow" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    <ArrowRightIcon size={14} />
+                  </span>
                 </div>
               </Link>
             ))}
@@ -87,8 +89,9 @@ export default function HomePage() {
                 Забронюйте зручний час візиту онлайн. Ми підготуємо індивідуальний чистий бокс і персонального майстра-технолога.
               </p>
             </div>
-            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0 }}>
-              Записатися онлайн →
+            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <span>Записатися онлайн</span>
+              <ArrowRightIcon size={16} />
             </Link>
           </div>
         </div>

@@ -1,32 +1,40 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { ArrowRightIcon, ShieldCheckIcon, SparkleIcon } from './Icons';
 import './Hero.css';
 
-const containerVariants = {
-  hidden: { opacity: 0 },
+const createContainerVariants = (reduceMotion) => ({
+  hidden: { opacity: reduceMotion ? 1 : 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.05
-    }
+    transition: reduceMotion
+      ? { duration: 0 }
+      : {
+          staggerChildren: 0.11,
+          delayChildren: 0.04
+        }
   }
-};
+});
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+const createItemVariants = (reduceMotion) => ({
+  hidden: { opacity: reduceMotion ? 1 : 0, y: reduceMotion ? 0 : 18 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.16, 1, 0.3, 1]
-    }
+    transition: reduceMotion
+      ? { duration: 0 }
+      : {
+          duration: 0.55,
+          ease: [0.16, 1, 0.3, 1]
+        }
   }
-};
+});
 
 export default function Hero() {
+  const shouldReduceMotion = useReducedMotion();
+  const containerVariants = createContainerVariants(shouldReduceMotion);
+  const itemVariants = createItemVariants(shouldReduceMotion);
+
   return (
     <section id="hero" className="hero-section">
       <div className="hero-grid-pattern"></div>
@@ -46,9 +54,11 @@ export default function Hero() {
 
           {/* Main Title */}
           <motion.h1 variants={itemVariants} className="hero-title">
-            Мистецтво блиску <br />
-            та <span className="platinum-text">абсолютний захист</span> <br />
-            вашого автомобіля
+            <span className="hero-title__row">Мистецтво блиску</span>
+            <span className="hero-title__row">
+              та&nbsp;<span className="platinum-text">абсолютний захист</span>
+            </span>
+            <span className="hero-title__row">вашого автомобіля</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -95,9 +105,13 @@ export default function Hero() {
         {/* Visual Showcase: Luxury Car */}
         <motion.div
           className="hero-visual"
-          initial={{ opacity: 0, y: 24 }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          transition={
+            shouldReduceMotion
+              ? { duration: 0 }
+              : { duration: 0.75, delay: 0.2, ease: [0.16, 1, 0.3, 1] }
+          }
         >
           <div className="car-frame">
             <img
@@ -110,14 +124,18 @@ export default function Hero() {
             {/* Floating Quality Badges */}
             <motion.div
               className="floating-badge floating-badge--top"
-              initial={{ opacity: 0, x: -16 }}
+              initial={shouldReduceMotion ? false : { opacity: 0, x: -14 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.45 }}
+              transition={
+                shouldReduceMotion
+                  ? { duration: 0 }
+                  : { duration: 0.5, delay: 0.35 }
+              }
             >
               <div className="floating-badge__icon">
-                <ShieldCheckIcon size={18} />
+                <ShieldCheckIcon size={15} />
               </div>
-              <div>
+              <div className="floating-badge__content">
                 <span className="floating-badge__title">Кераміка 9H Pro</span>
                 <span className="floating-badge__desc">Гідрофобний ефект до 36 міс</span>
               </div>
@@ -125,14 +143,18 @@ export default function Hero() {
 
             <motion.div
               className="floating-badge floating-badge--bottom"
-              initial={{ opacity: 0, x: 16 }}
+              initial={shouldReduceMotion ? false : { opacity: 0, x: 14 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.55 }}
+              transition={
+                shouldReduceMotion
+                  ? { duration: 0 }
+                  : { duration: 0.5, delay: 0.45 }
+              }
             >
               <div className="floating-badge__icon">
-                <SparkleIcon size={18} />
+                <SparkleIcon size={15} />
               </div>
-              <div>
+              <div className="floating-badge__content">
                 <span className="floating-badge__title">Глянцевий блиск 100%</span>
                 <span className="floating-badge__desc">Усунення рисок та голограм</span>
               </div>

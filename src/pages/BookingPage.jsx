@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { createBooking } from '../api/bookingApi';
-import { InfoIcon, AlertTriangleIcon, LockIcon, SparkleIcon } from '../components/Icons';
+import { InfoIcon, AlertTriangleIcon, LockIcon, SparkleIcon, ArrowRightIcon } from '../components/Icons';
 import './PagesCommon.css';
 import './BookingPage.css';
 
@@ -287,8 +287,10 @@ export default function BookingPage() {
                   type="submit"
                   className="btn-gold booking-submit-btn"
                   disabled={isSubmitting}
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                 >
-                  {isSubmitting ? 'Реєстрація бронювання...' : 'Забронювати бокс онлайн →'}
+                  <span>{isSubmitting ? 'Реєстрація бронювання...' : 'Забронювати бокс онлайн'}</span>
+                  {!isSubmitting && <ArrowRightIcon size={16} />}
                 </button>
 
                 <p className="booking-privacy" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>

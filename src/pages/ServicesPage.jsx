@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Services from '../components/Services';
+import { ArrowRightIcon } from '../components/Icons';
 import './PagesCommon.css';
 
 const processSteps = [
@@ -118,8 +119,9 @@ export default function ServicesPage() {
                 Запишіться на безкоштовну 15-хвилинну дефектовку ЛФП із технологом у нашій студії.
               </p>
             </div>
-            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0 }}>
-              Записатися на огляд →
+            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <span>Записатися на огляд</span>
+              <ArrowRightIcon size={16} />
             </Link>
           </div>
         </div>
