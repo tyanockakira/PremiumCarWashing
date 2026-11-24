@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { CloseIcon, LogoEmblem, MenuIcon, PhoneIcon } from './Icons';
+import { ArrowRightIcon, CalendarIcon, CloseIcon, MenuIcon } from './Icons';
 import './Header.css';
 
 const navigation = [
@@ -75,9 +75,9 @@ export default function Header() {
     };
   }, [mobileMenuOpen]);
 
-  const closeAfterNavigation = () => {
+  const closeAfterNavigation = (event) => {
     setMobileMenuOpen(false);
-    menuToggle.current.focus();
+    if (event.detail === 0) menuToggle.current.focus();
   };
 
   const handleHeaderBlur = (event) => {
@@ -88,11 +88,11 @@ export default function Header() {
 
   return (
     <header className="header" onBlur={handleHeaderBlur}>
-      <div className="container header__container" ref={headerRow}>
-        <Link to="/" className="header__logo" onClick={() => setMobileMenuOpen(false)}>
-          <LogoEmblem />
+      <div className="cinema-container header__container" ref={headerRow}>
+        <Link to="/" className="brand-lockup header__logo" onClick={() => setMobileMenuOpen(false)}>
+          <img src="/brand/mark.svg" alt="" width="70" height="46" />
           <span className="header__brand">
-            <span className="header__wordmark">PremiumWash</span>
+            <span className="brand-lockup__wordmark">PREMIUMWASH</span>
             <span className="header__subtitle">Демо-вітрина</span>
           </span>
         </Link>
@@ -106,11 +106,11 @@ export default function Header() {
         </nav>
 
         <div className="header__actions">
-          <a href="tel:+380440000000" className="header__phone" aria-label="Демонстраційний номер +380 (44) 000-00-00">
-            <PhoneIcon />
-            <span>+380 (44) 000-00-00</span>
-          </a>
-          <NavLink to="/booking" end className="btn-platinum header__cta">Записатися</NavLink>
+          <NavLink to="/booking" end className="btn-outline cinema-button header__cta">
+            <CalendarIcon />
+            Записатися
+            <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
+          </NavLink>
         </div>
 
         <span className="header__indicator" aria-hidden="true" />
@@ -135,7 +135,7 @@ export default function Header() {
         data-open={mobileMenuOpen}
         inert={!mobileMenuOpen}
       >
-        <div className="container mobile-menu__content">
+        <div className="cinema-container mobile-menu__content">
           <ul className="mobile-menu__list">
             {navigation.map(({ path, label }) => (
               <li key={path}>
@@ -146,12 +146,9 @@ export default function Header() {
             ))}
           </ul>
           <div className="mobile-menu__actions">
-            <a href="tel:+380440000000" className="mobile-menu__phone" title="Демонстраційний номер">
-              <PhoneIcon />
-              +380 (44) 000-00-00
-            </a>
-            <NavLink to="/booking" end className="btn-platinum" onClick={closeAfterNavigation}>
+            <NavLink to="/booking" end className="btn-platinum cinema-button" onClick={closeAfterNavigation}>
               Онлайн-запис
+              <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
             </NavLink>
           </div>
         </div>
