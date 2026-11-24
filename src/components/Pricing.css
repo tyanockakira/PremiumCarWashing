@@ -37,7 +37,7 @@
   align-items: center;
   padding: 12px 28px;
   border-radius: var(--radius-full);
-  transition: all var(--transition-normal);
+  transition: background-color var(--transition-normal), box-shadow var(--transition-normal);
   white-space: nowrap;
 }
 

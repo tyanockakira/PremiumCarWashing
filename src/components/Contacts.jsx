@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { createConsultation } from '../api/bookingApi';
 import { bookingMode } from '../lib/supabase';
 import {
@@ -18,6 +18,8 @@ import {
 import './Contacts.css';
 
 export default function Contacts({ onOpenBooking, hideHeader = false }) {
+  const shouldReduceMotion = useReducedMotion();
+
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -69,10 +71,10 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
         {!hideHeader && (
           <motion.div
             className="section-header"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="tech-sub-title">ЯК НАС ЗНАЙТИ</div>
             <h2 className="section-title">
@@ -89,10 +91,10 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
           {/* Info Card */}
           <motion.div
             className="contacts-info"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="contact-item">
               <div className="contact-item__icon">
@@ -169,10 +171,10 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
           {/* Quick Contact Form */}
           <motion.div
             className="contacts-form-card"
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, x: 20 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <h3 className="form-card__title">Задати питання технологу</h3>
             <p className="form-card__subtitle">

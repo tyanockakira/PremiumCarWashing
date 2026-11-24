@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { getPricingData } from '../api/bookingApi';
 import { CheckIcon } from './Icons';
 import './Pricing.css';
@@ -70,6 +70,7 @@ export default function Pricing({ onSelectPackage, hideHeader = false }) {
   const [packagesList, setPackagesList] = useState(defaultPackages);
   const [selectedClass, setSelectedClass] = useState('sedan');
   const navigate = useNavigate();
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     let isMounted = true;
@@ -130,10 +131,10 @@ export default function Pricing({ onSelectPackage, hideHeader = false }) {
         {!hideHeader && (
           <motion.div
             className="section-header"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="tech-sub-title">ПРОЗОРИЙ ПРАЙС-ЛИСТ</div>
             <h2 className="section-title">
@@ -170,10 +171,10 @@ export default function Pricing({ onSelectPackage, hideHeader = false }) {
             <motion.div
               key={pkg.id}
               className={`pricing-card ${pkg.featured ? 'pricing-card--featured' : ''}`}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
+              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-30px' }}
-              transition={{ duration: 0.5, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.5, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
               {pkg.featured && (
                 <div className="pricing-badge">РЕКОМЕНДУЄМО</div>

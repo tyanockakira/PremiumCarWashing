@@ -55,6 +55,7 @@ function AnimatedRoutes() {
 
 function App() {
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     const checkScroll = () => {
@@ -65,7 +66,7 @@ function App() {
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: shouldReduceMotion ? 'auto' : 'smooth' });
   };
 
   return (

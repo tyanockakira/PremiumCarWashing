@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { getServices } from '../api/bookingApi';
 import { CheckIcon, ArrowRightIcon, ClockIcon } from './Icons';
 import './Services.css';
@@ -76,6 +76,7 @@ const defaultServicesData = [
 export default function Services({ onSelectService, hideHeader = false }) {
   const [services, setServices] = useState(defaultServicesData);
   const navigate = useNavigate();
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     let isMounted = true;
@@ -116,10 +117,10 @@ export default function Services({ onSelectService, hideHeader = false }) {
         {!hideHeader && (
           <motion.div
             className="section-header"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="tech-sub-title">ЕКСКЛЮЗИВНІ ПОСЛУГИ</div>
             <h2 className="section-title">
@@ -138,10 +139,10 @@ export default function Services({ onSelectService, hideHeader = false }) {
             <motion.article
               key={service.id}
               className={`service-card ${service.featured ? 'service-card--featured' : ''}`}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
+              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-30px' }}
-              transition={{ duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
               {service.featured && (
                 <div className="card-popular-pill">

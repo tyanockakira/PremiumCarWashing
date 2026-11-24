@@ -73,7 +73,7 @@ export default function PricingPage() {
                   borderRadius: 'var(--radius-md)',
                   padding: '22px 26px',
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease'
+                  transition: 'border-color 0.3s ease'
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

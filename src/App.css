@@ -40,7 +40,7 @@ main {
   opacity: 0;
   visibility: hidden;
   transform: translateY(20px);
-  transition: all var(--transition-normal);
+  transition: opacity var(--transition-normal), visibility var(--transition-normal), transform var(--transition-normal);
 }
 
 .floating-controls--visible {
@@ -61,7 +61,7 @@ main {
   border-radius: var(--radius-full);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  transition: all var(--transition-fast);
+  transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -89,7 +89,7 @@ main {
   justify-content: center;
   backdrop-filter: blur(10px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .btn-scroll-top:hover {

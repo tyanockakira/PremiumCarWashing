@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { LogoEmblem, PhoneIcon } from './Icons';
 import './Header.css';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -113,11 +114,11 @@ export default function Header() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            className="mobile-menu mobile-menu--open"
-            initial={{ opacity: 0, y: -20 }}
+            className="mobile-menu"
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : -20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -20 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: [0.16, 1, 0.3, 1] }}
           >
             <ul className="mobile-menu__list">
               <li>

@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import {
   ZapIcon,
   ShieldIcon,
@@ -43,16 +43,18 @@ const advantages = [
 ];
 
 export default function Advantages({ hideHeader = false }) {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <section id="advantages" className="advantages-section">
       <div className="container">
         {!hideHeader && (
           <motion.div
             className="section-header"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="tech-sub-title">ЧОМУ ОБИРАЮТЬ НАС</div>
             <h2 className="section-title">
@@ -69,10 +71,10 @@ export default function Advantages({ hideHeader = false }) {
             <motion.div
               key={idx}
               className="advantage-card"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-30px' }}
-              transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
+              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.5, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
             >
               <div className="advantage-card__icon">{item.icon}</div>
               <h3 className="advantage-card__title">{item.title}</h3>
