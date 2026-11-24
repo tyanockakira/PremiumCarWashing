@@ -1,189 +1,161 @@
-import { useState, useEffect } from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { LogoEmblem, PhoneIcon } from './Icons';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { CloseIcon, LogoEmblem, MenuIcon, PhoneIcon } from './Icons';
 import './Header.css';
 
+const navigation = [
+  { path: '/', label: 'Головна' },
+  { path: '/services', label: 'Послуги' },
+  { path: '/pricing', label: 'Ціни' },
+  { path: '/advantages', label: 'Переваги' },
+  { path: '/contacts', label: 'Контакти' },
+];
+
 export default function Header() {
-  const [scrolled, setScrolled] = useState(false);
+  const { pathname } = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const shouldReduceMotion = useReducedMotion();
+  const headerRow = useRef(null);
+  const menuToggle = useRef(null);
+
+  useLayoutEffect(() => {
+    const row = headerRow.current;
+    const activeLink = row.querySelector('.nav__link[aria-current="page"], .header__cta[aria-current="page"]');
+    const previousRoute = row.dataset.activeRoute;
+    row.toggleAttribute('data-slide-indicator', Boolean(previousRoute && previousRoute !== pathname));
+
+    if (!activeLink) {
+      row.removeAttribute('data-active-route');
+      return;
+    }
+
+    const positionIndicator = () => {
+      const link = activeLink.getBoundingClientRect();
+      if (!link.width) return;
+
+      row.style.setProperty('--indicator-offset', (link.left - row.getBoundingClientRect().left) + 'px');
+      row.style.setProperty('--indicator-scale', link.width);
+      row.dataset.activeRoute = pathname;
+    };
+
+    positionIndicator();
+    const observer = new ResizeObserver(positionIndicator);
+    observer.observe(row);
+    row.querySelectorAll('.nav__link, .header__cta').forEach((link) => observer.observe(link));
+
+    return () => observer.disconnect();
+  }, [pathname]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    if (!mobileMenuOpen) return;
 
-  const closeMobileMenu = () => {
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const closeMenu = () => setMobileMenuOpen(false);
+    const closeFromHistory = () => {
+      if (document.activeElement?.closest('#mobile-navigation')) menuToggle.current.focus();
+      closeMenu();
+    };
+    const handleResize = (event) => {
+      if (event.matches) closeMenu();
+    };
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        closeMenu();
+        menuToggle.current.focus();
+      }
+    };
+
+    desktop.addEventListener('change', handleResize);
+    window.addEventListener('popstate', closeFromHistory);
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      desktop.removeEventListener('change', handleResize);
+      window.removeEventListener('popstate', closeFromHistory);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [mobileMenuOpen]);
+
+  const closeAfterNavigation = () => {
     setMobileMenuOpen(false);
+    menuToggle.current.focus();
+  };
+
+  const handleHeaderBlur = (event) => {
+    if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) {
+      setMobileMenuOpen(false);
+    }
   };
 
   return (
-    <header className={`header ${scrolled ? 'header--scrolled' : ''}`}>
-      <div className="container header__container">
-        {/* Brand Logo with Demo Tag */}
-        <Link to="/" className="header__logo" onClick={closeMobileMenu}>
-          <div className="logo-emblem">
-            <span className="logo-symbol">
-              <LogoEmblem size={20} />
-            </span>
-          </div>
-          <div className="logo-text">
-            <span className="logo-brand">PREMIUM<span className="logo-gold">WASH</span></span>
-            <span className="logo-sub">DETAILING STUDIO • ДЕМО</span>
-          </div>
+    <header className="header" onBlur={handleHeaderBlur}>
+      <div className="container header__container" ref={headerRow}>
+        <Link to="/" className="header__logo" onClick={() => setMobileMenuOpen(false)}>
+          <LogoEmblem />
+          <span className="header__brand">
+            <span className="header__wordmark">PremiumWash</span>
+            <span className="header__subtitle">Демо-вітрина</span>
+          </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="header__nav">
+        <nav className="header__nav" aria-label="Головна навігація">
           <ul className="nav__list">
-            <li>
-              <NavLink
-                to="/"
-                end
-                className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
-              >
-                Головна
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/services"
-                className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
-              >
-                Послуги
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/pricing"
-                className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
-              >
-                Ціни
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/advantages"
-                className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
-              >
-                Переваги
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/contacts"
-                className={({ isActive }) => `nav__link ${isActive ? 'nav__link--active' : ''}`}
-              >
-                Контакти
-              </NavLink>
-            </li>
+            {navigation.map(({ path, label }) => (
+              <li key={path}><NavLink to={path} end className="nav__link">{label}</NavLink></li>
+            ))}
           </ul>
         </nav>
 
-        {/* Action button & Phone */}
         <div className="header__actions">
-          <a href="tel:+380440000000" className="header__phone" title="Демонстраційний номер">
-            <span className="phone-icon" style={{ display: 'flex', alignItems: 'center' }}>
-              <PhoneIcon size={16} />
-            </span>
-            <span className="phone-number">+380 (44) 000-00-00</span>
+          <a href="tel:+380440000000" className="header__phone" aria-label="Демонстраційний номер +380 (44) 000-00-00">
+            <PhoneIcon />
+            <span>+380 (44) 000-00-00</span>
           </a>
-          <Link to="/booking" className="btn-platinum header__cta">
-            Записатися
-          </Link>
+          <NavLink to="/booking" end className="btn-platinum header__cta">Записатися</NavLink>
         </div>
 
-        {/* Mobile Hamburger Button */}
+        <span className="header__indicator" aria-hidden="true" />
+
         <button
+          ref={menuToggle}
           type="button"
-          className={`hamburger ${mobileMenuOpen ? 'hamburger--active' : ''}`}
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Відкрити меню"
+          className="header__toggle"
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-navigation"
+          aria-label={mobileMenuOpen ? 'Закрити меню' : 'Відкрити меню'}
+          onClick={() => setMobileMenuOpen((open) => !open)}
         >
-          <span className="hamburger__line"></span>
-          <span className="hamburger__line"></span>
-          <span className="hamburger__line"></span>
+          {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
         </button>
       </div>
 
-      {/* Mobile Drawer Menu with AnimatePresence */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            className="mobile-menu"
-            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -20 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <ul className="mobile-menu__list">
-              <li>
-                <NavLink
-                  to="/"
-                  end
-                  onClick={closeMobileMenu}
-                  className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
-                >
-                  Головна
+      <nav
+        id="mobile-navigation"
+        className="mobile-menu"
+        aria-label="Мобільна навігація"
+        data-open={mobileMenuOpen}
+        inert={!mobileMenuOpen}
+      >
+        <div className="container mobile-menu__content">
+          <ul className="mobile-menu__list">
+            {navigation.map(({ path, label }) => (
+              <li key={path}>
+                <NavLink to={path} end className="mobile-menu__link" onClick={closeAfterNavigation}>
+                  {label}
                 </NavLink>
               </li>
-              <li>
-                <NavLink
-                  to="/services"
-                  onClick={closeMobileMenu}
-                  className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
-                >
-                  Послуги
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/pricing"
-                  onClick={closeMobileMenu}
-                  className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
-                >
-                  Ціни
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/advantages"
-                  onClick={closeMobileMenu}
-                  className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
-                >
-                  Переваги
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/contacts"
-                  onClick={closeMobileMenu}
-                  className={({ isActive }) => `mobile-menu__link ${isActive ? 'mobile-menu__link--active' : ''}`}
-                >
-                  Контакти
-                </NavLink>
-              </li>
-            </ul>
-            <div className="mobile-menu__footer">
-              <span className="mobile-menu__demo-tag">Демонстраційний сайт</span>
-              <a href="tel:+380440000000" className="mobile-menu__phone">
-                +380 (44) 000-00-00
-              </a>
-              <Link
-                to="/booking"
-                className="btn-platinum mobile-menu__cta"
-                onClick={closeMobileMenu}
-              >
-                Онлайн-запис
-              </Link>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            ))}
+          </ul>
+          <div className="mobile-menu__actions">
+            <a href="tel:+380440000000" className="mobile-menu__phone" title="Демонстраційний номер">
+              <PhoneIcon />
+              +380 (44) 000-00-00
+            </a>
+            <NavLink to="/booking" end className="btn-platinum" onClick={closeAfterNavigation}>
+              Онлайн-запис
+            </NavLink>
+          </div>
+        </div>
+      </nav>
     </header>
   );
 }

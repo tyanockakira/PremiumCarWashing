@@ -1,12 +1,5 @@
 import { Link } from 'react-router-dom';
-import {
-  LogoEmblem,
-  AlertTriangleIcon,
-  PinIcon,
-  PhoneIcon,
-  ClockIcon,
-  MailIcon
-} from './Icons';
+import { LogoEmblem, MailIcon, PhoneIcon, PinIcon } from './Icons';
 import './Footer.css';
 
 export default function Footer() {
@@ -15,94 +8,50 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="container">
-        {/* Prominent Demo Notice */}
-        <div className="footer-demo-alert">
-          <span className="footer-demo-alert__icon">
-            <AlertTriangleIcon size={20} />
-          </span>
-          <div className="footer-demo-alert__text">
-            <strong>Демонстраційний сайт.</strong> Усі послуги, ціни, контактні дані та форми наведені виключно для прикладу й не є реальними комерційними пропозиціями.
-          </div>
-        </div>
-
-        <div className="footer-top">
-          {/* Brand info */}
-          <div className="footer-brand">
-            <Link to="/" className="footer-logo">
-              <span className="footer-logo__symbol">
-                <LogoEmblem size={22} />
-              </span>
-              <span className="footer-logo__text">PREMIUM<span className="gold-text">WASH</span></span>
+        <div className="layout-grid footer__grid">
+          <div className="footer__brand">
+            <Link to="/" className="footer__logo">
+              <LogoEmblem />
+              <span>PremiumWash</span>
             </Link>
-            <p className="footer-desc">
-              Ексклюзивний догляд за преміальними автомобілями, спорткарами та колекційними моделями.
-              Стандарти провідних європейських дітейлінг-ательє.
+            <p className="footer__notice">
+              Демонстраційна вітрина. Послуги, ціни та контактні дані наведено для прикладу.
             </p>
-            <div className="footer-badges">
-              <span className="brand-pill">Gyeon</span>
-              <span className="brand-pill">Rupes</span>
-              <span className="brand-pill">Koch Chemie</span>
-            </div>
           </div>
 
-          {/* Nav links */}
-          <div className="footer-col">
-            <h4 className="footer-col__title">Навігація</h4>
-            <ul className="footer-nav">
+          <nav aria-label="Розділи сайту">
+            <h2 className="footer__title">Розділи</h2>
+            <ul className="footer__list">
               <li><Link to="/">Головна</Link></li>
-              <li><Link to="/services">Послуги дітейлінгу</Link></li>
+              <li><Link to="/services">Послуги</Link></li>
               <li><Link to="/pricing">Калькулятор цін</Link></li>
               <li><Link to="/advantages">Переваги</Link></li>
               <li><Link to="/contacts">Контакти</Link></li>
               <li><Link to="/booking">Онлайн-запис</Link></li>
             </ul>
-          </div>
+          </nav>
 
-          {/* Services quick links */}
-          <div className="footer-col">
-            <h4 className="footer-col__title">Послуги</h4>
-            <ul className="footer-nav">
+          <nav aria-label="Послуги дітейлінгу">
+            <h2 className="footer__title">Послуги</h2>
+            <ul className="footer__list">
               <li><Link to="/services">Відновлювальне полірування</Link></li>
-              <li><Link to="/services">Нанокераміка 9H / 10H</Link></li>
-              <li><Link to="/services">Детейлінг-хімчистка</Link></li>
+              <li><Link to="/services">Керамічні покриття</Link></li>
+              <li><Link to="/services">Хімчистка салону</Link></li>
               <li><Link to="/services">Антигравійний захист PPF</Link></li>
               <li><Link to="/pricing">Комплексні пакети</Link></li>
             </ul>
-          </div>
+          </nav>
 
-          {/* Contact Details */}
-          <div className="footer-col">
-            <h4 className="footer-col__title">Зв’язок з нами</h4>
-            <div className="footer-contact-list">
-              <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <PinIcon size={14} />
-                <span>м. Київ, вул. Автомобільна, 1 (демо-адреса)</span>
-              </p>
-              <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <PhoneIcon size={14} />
-                <a href="tel:+380440000000">+380 (44) 000-00-00</a>
-              </p>
-              <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ClockIcon size={14} />
-                <span>Працюємо цілодобово 24/7</span>
-              </p>
-              <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <MailIcon size={14} />
-                <a href="mailto:demo@premiumwash.example">demo@premiumwash.example</a>
-              </p>
-            </div>
+          <div className="footer__contacts">
+            <h2 className="footer__title">Демонстраційні контакти</h2>
+            <address className="footer__list">
+              <span><PinIcon />м. Київ, вул. Автомобільна, 1</span>
+              <a href="tel:+380440000000"><PhoneIcon />+380 (44) 000-00-00</a>
+              <a href="mailto:demo@premiumwash.example"><MailIcon />demo@premiumwash.example</a>
+            </address>
           </div>
         </div>
-
-        {/* Bottom Bar */}
-        <div className="footer-bottom">
-          <p className="footer-copy">
-            © {currentYear} Premium Car Wash Studio. Демонстраційний вітринний проєкт.
-          </p>
-          <p className="footer-craft">
-            Створено з турботою про бездоганну якість та естетику
-          </p>
-        </div>
+        <p className="footer__copyright">© {currentYear} PremiumWash</p>
       </div>
     </footer>
   );

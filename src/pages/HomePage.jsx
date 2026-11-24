@@ -1,100 +1,64 @@
 import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
-import { SparkleIcon, CreditCardIcon, ShieldIcon, PinIcon, ArrowRightIcon } from '../components/Icons';
-import './PagesCommon.css';
+import { ArrowRightIcon } from '../components/Icons';
+import './HomePage.css';
 
-const hubSections = [
+const sections = [
   {
-    Icon: SparkleIcon,
-    subtitle: 'КАТАЛОГ',
+    path: '/services',
     title: 'Послуги дітейлінгу',
-    desc: 'Багатоетапне полірування, кераміка 9H Pro, обклеювання поліуретаном PPF та преміальний догляд за шкірою салону.',
-    link: '/services',
-    linkText: 'Перейти до послуг'
+    description: 'Полірування, керамічні покриття, захисна плівка та хімчистка салону.',
   },
   {
-    Icon: CreditCardIcon,
-    subtitle: 'ПРАЙС-ЛИСТ',
+    path: '/pricing',
     title: 'Калькулятор цін',
-    desc: '3 збалансовані комплекси догляду з миттєвим автоматичним розрахунком під клас вашого автомобіля.',
-    link: '/pricing',
-    linkText: 'Розрахувати вартість'
+    description: 'Порівняйте пакети для свого класу автомобіля.',
   },
   {
-    Icon: ShieldIcon,
-    subtitle: 'СТАНДАРТИ',
-    title: 'Переваги студії',
-    desc: 'Стерильні бокси з клімат-контролем 22°C, інспекційне світло Scangrip та страхування відповідальності.',
-    link: '/advantages',
-    linkText: 'Про наші стандарти'
+    path: '/advantages',
+    title: 'Обладнання й контроль якості',
+    description: 'Дізнайтеся, яке обладнання використовують і як перевіряють результат.',
   },
   {
-    Icon: PinIcon,
-    subtitle: 'ЛОКАЦІЯ',
-    title: 'Контакти та візит',
-    desc: 'Зручний заїзд, цілодобовий прийом 24/7, закритий паркінг і затишна VIP-лаундж зона.',
-    link: '/contacts',
-    linkText: 'Контакти та проїзд'
-  }
+    path: '/contacts',
+    title: 'Контакти та проїзд',
+    description: 'Адреса, контактні дані та форма консультації.',
+  },
 ];
 
 export default function HomePage() {
   return (
     <div className="home-page">
-      {/* 1. Головний екран (Hero) */}
       <Hero />
 
-      {/* 2. Навігаційний хаб по ключових розділах */}
-      <section className="home-hub-section">
-        <div className="container">
-          <div className="section-header">
-            <div className="gold-sub-title">PREMIUM CAR WASH STUDIO • ДЕМО-ВІТРИНА</div>
-            <h2 className="section-title">
-              Досконалість у <span className="gold-text">кожній деталі</span>
-            </h2>
-            <p className="section-desc">
-              Оберіть потрібний розділ, щоб ознайомитися з повним каталогом послуг,
-              розрахувати вартість або оформити демонстраційний запис на візит.
-            </p>
+      <section className="home-directory" aria-labelledby="home-directory-title">
+        <div className="container layout-grid home-directory__layout">
+          <div className="home-directory__intro">
+            <h2 id="home-directory-title">Догляд за автомобілем</h2>
+            <p>Оберіть послугу, перегляньте склад робіт і розрахуйте вартість.</p>
           </div>
 
-          <div className="home-hub-grid">
-            {hubSections.map((item, idx) => (
-              <Link to={item.link} key={idx} className="home-hub-card">
-                <div className="home-hub-card__icon"><item.Icon size={22} /></div>
-                <span className="home-hub-card__sub">{item.subtitle}</span>
-                <h3 className="home-hub-card__title">{item.title}</h3>
-                <p className="home-hub-card__desc">{item.desc}</p>
-                <div className="home-hub-card__link">
-                  <span>{item.linkText}</span>
-                  <span className="hub-arrow" style={{ display: 'inline-flex', alignItems: 'center' }}>
-                    <ArrowRightIcon size={14} />
+          <ul className="home-directory__list">
+            {sections.map(({ path, title, description }) => (
+              <li key={path}>
+                <Link to={path} className="home-directory__link">
+                  <span>
+                    <span className="home-directory__title">{title}</span>
+                    <span className="home-directory__description">{description}</span>
                   </span>
-                </div>
-              </Link>
+                  <ArrowRightIcon />
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
-      {/* 3. Фінальний банер швидкого онлайн-запису */}
-      <section className="page-cta-banner" style={{ marginTop: '40px', marginBottom: '100px' }}>
-        <div className="container">
-          <div className="cta-banner-box">
-            <div>
-              <h3 className="cta-banner__title">
-                Готові подарувати вашому авто <span className="gold-text">бездоганний блиск?</span>
-              </h3>
-              <p className="cta-banner__desc">
-                Залиште заявку на зручний час візиту. Деталі обслуговування можна узгодити окремо.
-              </p>
-            </div>
-            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-              <span>Записатися онлайн</span>
-              <ArrowRightIcon size={16} />
-            </Link>
-          </div>
-        </div>
+      <section className="container home-booking" aria-labelledby="home-booking-title">
+        <h2 id="home-booking-title">Запис на дітейлінг</h2>
+        <Link to="/booking" className="btn-platinum">
+          Обрати дату й час <ArrowRightIcon />
+        </Link>
       </section>
     </div>
   );

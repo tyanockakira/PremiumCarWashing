@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-import { SparkleIcon, ArrowUpIcon } from './components/Icons';
+import { CalendarIcon, ArrowUpIcon } from './components/Icons';
 
 import HomePage from './pages/HomePage';
 import ServicesPage from './pages/ServicesPage';
@@ -15,23 +15,12 @@ import BookingPage from './pages/BookingPage';
 
 import './App.css';
 
-function PageWrapper({ children }) {
-  const shouldReduceMotion = useReducedMotion();
-
+function PageWrapper({ children, animate = true }) {
   return (
-    <motion.div
-      className="page-transition-wrapper"
-      initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -8 }}
-      transition={{
-        duration: shouldReduceMotion ? 0 : 0.24,
-        ease: [0.16, 1, 0.3, 1]
-      }}
-    >
+    <div className={animate ? 'page-transition-wrapper page-transition-wrapper--enter' : 'page-transition-wrapper'}>
       <ScrollToTop />
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -39,17 +28,15 @@ function AnimatedRoutes() {
   const location = useLocation();
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
-        <Route path="/services" element={<PageWrapper><ServicesPage /></PageWrapper>} />
-        <Route path="/pricing" element={<PageWrapper><PricingPage /></PageWrapper>} />
-        <Route path="/advantages" element={<PageWrapper><AdvantagesPage /></PageWrapper>} />
-        <Route path="/contacts" element={<PageWrapper><ContactsPage /></PageWrapper>} />
-        <Route path="/booking" element={<PageWrapper><BookingPage /></PageWrapper>} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </AnimatePresence>
+    <Routes location={location} key={location.pathname}>
+      <Route path="/" element={<PageWrapper animate={false}><HomePage /></PageWrapper>} />
+      <Route path="/services" element={<PageWrapper><ServicesPage /></PageWrapper>} />
+      <Route path="/pricing" element={<PageWrapper><PricingPage /></PageWrapper>} />
+      <Route path="/advantages" element={<PageWrapper><AdvantagesPage /></PageWrapper>} />
+      <Route path="/contacts" element={<PageWrapper><ContactsPage /></PageWrapper>} />
+      <Route path="/booking" element={<PageWrapper><BookingPage /></PageWrapper>} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
@@ -87,21 +74,19 @@ function App() {
         <AnimatePresence>
           {showScrollTop && (
             <motion.div
-              className="floating-controls floating-controls--visible"
-              initial={{ opacity: 0, y: 16 }}
+              className="floating-controls"
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 16 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              exit={{ opacity: 0, y: shouldReduceMotion ? 0 : 4 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.12, ease: [0.16, 1, 0.3, 1] }}
             >
               <Link
                 to="/booking"
-                className="btn-floating-cta"
+                className="btn-platinum btn-floating-cta"
                 title="Записатися онлайн"
                 aria-label="Записатися онлайн"
               >
-                <span className="floating-sparkle">
-                  <SparkleIcon size={16} />
-                </span>
+                <CalendarIcon />
                 <span className="floating-text">Записатися</span>
               </Link>
 
@@ -112,7 +97,7 @@ function App() {
                 title="Вгору"
                 aria-label="Вгору"
               >
-                <ArrowUpIcon size={18} />
+                <ArrowUpIcon />
               </button>
             </motion.div>
           )}

@@ -1,0 +1,122 @@
+.home-directory {
+  padding-block: var(--space-64);
+  border-block: 1px solid var(--color-divider);
+  background: var(--bg-surface);
+}
+
+.home-directory__intro {
+  grid-column: span 4;
+  padding-right: var(--space-24);
+}
+
+.home-directory h2,
+.home-booking h2 {
+  font-size: clamp(1.75rem, 3.1vw, 2.75rem);
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.home-directory__intro p {
+  max-width: 28ch;
+  margin-top: var(--space-16);
+}
+
+.home-directory__list {
+  grid-column: 6 / -1;
+  border-top: 1px solid var(--color-divider);
+  list-style: none;
+}
+
+.home-directory__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  min-height: var(--control-height);
+  padding: var(--space-16) var(--space-8);
+  border-bottom: 1px solid var(--color-divider);
+  transition: background-color var(--transition-fast);
+}
+
+.home-directory__link:hover {
+  background-color: var(--bg-selected);
+}
+
+.home-directory__link svg {
+  flex: none;
+  color: var(--color-accent);
+  transition: transform var(--transition-fast);
+}
+
+.home-directory__link:hover svg {
+  transform: translateX(3px);
+}
+
+.home-directory__title,
+.home-directory__description {
+  display: block;
+}
+
+.home-directory__title {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.home-directory__description {
+  margin-top: var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: var(--font-caption-size);
+  line-height: var(--font-caption-leading);
+}
+
+.home-booking {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16) var(--space-24);
+  padding-block: var(--space-48);
+}
+
+.home-booking svg {
+  flex: none;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .home-directory__intro {
+    grid-column: span 3;
+  }
+
+  .home-directory__list {
+    grid-column: 4 / -1;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-directory {
+    padding-block: var(--space-32);
+  }
+
+  .home-directory__layout {
+    row-gap: var(--space-24);
+  }
+
+  .home-directory__intro,
+  .home-directory__list {
+    grid-column: 1 / -1;
+  }
+
+  .home-directory__intro {
+    padding-right: 0;
+  }
+
+  .home-booking {
+    padding-block: var(--space-32);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-directory__link:hover svg {
+    transform: none;
+  }
+}
