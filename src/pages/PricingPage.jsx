@@ -1,119 +1,85 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import Pricing from '../components/Pricing';
-import { PlusIcon, MinusIcon, ArrowRightIcon } from '../components/Icons';
-import './PagesCommon.css';
+import { DetailDisclosure, DetailHero, DetailReveal } from '../components/DetailPageParts';
+import { ArrowRightIcon, MinusIcon, PlusIcon } from '../components/Icons';
+import headlightPhoto from '../assets/premiumwash/booking-headlight.webp';
 
 const faqs = [
   {
-    q: 'Що входить в офіційну гарантію на кераміку?',
-    a: 'Гарантія покриває збереження гідрофобного ефекту та стійкість дзеркального глянцю. Кожні 6 місяців ми запрошуємо на безкоштовний контрольний огляд та оновлення захисного шару (Top Coat).'
+    question: 'Як уточнити умови догляду за керамічним покриттям?',
+    answer: 'Під час підбору покриття уточніть рекомендований догляд, умови гарантії та час наступного огляду.',
   },
   {
-    q: 'Скільки часу триває повний комплекс дітейлінгу?',
-    a: 'Якісне відновлювальне полірування та нанесення 2–3 шарів кераміки з полімеризацією в ІЧ-сушці тривають від 2 до 3 днів. Ми не прискорюємо технологічні інтервали на шкоду довговічності.'
+    question: 'Скільки часу триває повний комплекс дітейлінгу?',
+    answer: 'Тривалість залежить від обсягу робіт. Орієнтовний час зазначено для кожного пакета.',
   },
   {
-    q: 'Чи можна приїхати на огляд перед вибором тарифу?',
-    a: 'Так! Огляд лакофарбового покриття товщиноміром і складання індивідуального плану робіт безкоштовні та ні до чого вас не зобов’язують.'
+    question: 'Чи можна приїхати на огляд перед вибором тарифу?',
+    answer: 'Так. Під час огляду можна перевірити стан лакофарбового покриття й узгодити індивідуальний перелік робіт.',
   },
   {
-    q: 'Як здійснюється оплата послуг?',
-    a: 'Оплата проводиться після завершення всіх робіт та підписання акта прийому. Приймаємо банківські картки, безготівковий розрахунок для юридичних осіб та готівку.'
-  }
+    question: 'Як здійснюється оплата послуг?',
+    answer: 'Оплата після завершення робіт і підписання акта приймання. Доступні оплата карткою, готівкою та безготівковий розрахунок для юридичних осіб.',
+  },
 ];
 
 export default function PricingPage() {
   const [openFaq, setOpenFaq] = useState(null);
 
-  const toggleFaq = (index) => {
-    setOpenFaq(openFaq === index ? null : index);
-  };
-
   return (
-    <div className="pricing-page">
-      {/* Page Hero Header */}
-      <section className="page-hero">
-        <div className="container">
-          <div className="page-hero__breadcrumbs">
-            <Link to="/">Головна</Link>
-            <span className="page-hero__sep">/</span>
-            <span>Тарифи та калькулятор</span>
-          </div>
-          <h1 className="page-hero__title">
-            Вартість послуг та <span className="gold-text">комплексні пакети</span>
-          </h1>
-          <p className="page-hero__desc">
-            Прозоре ціноутворення без прихованих доплат. Оберіть категорію вашого автомобіля для точного розрахунку вартості.
-          </p>
-        </div>
-      </section>
+    <div className="pricing-page detail-page">
+      <DetailHero
+        number="03"
+        label="Тарифні комплекси"
+        lines={['Ціни на', 'дітейлінг']}
+        description="Порівняйте пакети: від регулярного догляду до відновлення й захисту кузова та салону."
+        photo={headlightPhoto}
+      />
 
-      {/* Pricing Calculator */}
-      <Pricing hideHeader={true} />
+      <Pricing />
 
-      {/* Pricing FAQ */}
-      <section style={{ padding: '80px 0', backgroundColor: '#0b0c10' }}>
-        <div className="container" style={{ maxWidth: '860px' }}>
-          <div className="section-header">
-            <div className="gold-sub-title">ВІДПОВІДІ НА ЗАПИТАННЯ</div>
-            <h2 className="section-title">
-              Поширені <span className="gold-text">запитання</span>
-            </h2>
-          </div>
+      <section className="cinema-container pricing-faq detail-section" aria-labelledby="pricing-faq-heading">
+        <DetailReveal>
+          <h2 id="pricing-faq-heading" className="cinema-heading detail-section__title">Поширені запитання</h2>
+        </DetailReveal>
+        <DetailReveal className="pricing-faq__list">
+          {faqs.map(({ question, answer }, index) => {
+            const open = openFaq === index;
+            const panelId = `pricing-faq-${index}`;
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            {faqs.map((faq, idx) => (
-              <div
-                key={idx}
-                onClick={() => toggleFaq(idx)}
-                style={{
-                  background: 'var(--bg-card)',
-                  border: openFaq === idx ? '1px solid var(--border-gold)' : '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '22px 26px',
-                  cursor: 'pointer',
-                  transition: 'border-color 0.3s ease'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h4 style={{ fontSize: '1.05rem', fontWeight: '700', color: openFaq === idx ? 'var(--color-gold-light)' : '#ffffff' }}>
-                    {faq.q}
-                  </h4>
-                  <span style={{ color: 'var(--color-gold)', display: 'flex', alignItems: 'center' }}>
-                    {openFaq === idx ? <MinusIcon size={18} /> : <PlusIcon size={18} />}
-                  </span>
-                </div>
-                {openFaq === idx && (
-                  <p style={{ marginTop: '14px', fontSize: '0.92rem', color: 'var(--color-text-secondary)', lineHeight: '1.6' }}>
-                    {faq.a}
-                  </p>
-                )}
+            return (
+              <div className="pricing-faq__item" data-open={open} key={question}>
+                <h3>
+                  <button
+                    type="button"
+                    aria-expanded={open}
+                    aria-controls={panelId}
+                    onClick={() => setOpenFaq((current) => current === index ? null : index)}
+                  >
+                    {question}
+                    {open ? <MinusIcon size={16} /> : <PlusIcon size={16} />}
+                  </button>
+                </h3>
+                <DetailDisclosure id={panelId} open={open}>
+                  <p>{answer}</p>
+                </DetailDisclosure>
               </div>
-            ))}
-          </div>
-        </div>
+            );
+          })}
+        </DetailReveal>
       </section>
 
-      {/* CTA Banner */}
-      <section className="page-cta-banner">
-        <div className="container">
-          <div className="cta-banner-box">
-            <div>
-              <h3 className="cta-banner__title">
-                Бажаєте індивідуальний <span className="gold-text">розрахунок під ваше авто?</span>
-              </h3>
-              <p className="cta-banner__desc">
-              Залиште онлайн-заявку для подальшого узгодження оптимального пакета догляду.
-              </p>
-            </div>
-            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-              <span>Забронювати візит</span>
-              <ArrowRightIcon size={16} />
-            </Link>
-          </div>
+      <DetailReveal as={motion.section} className="cinema-container detail-cta" aria-labelledby="pricing-cta-heading">
+        <div>
+          <h2 id="pricing-cta-heading" className="cinema-heading detail-cta__title">Потрібен індивідуальний розрахунок?</h2>
+          <p>Під час запису можна залишити коментар щодо стану авто й бажаних робіт.</p>
         </div>
-      </section>
+        <Link to="/booking" className="btn-outline cinema-button">
+          Забронювати візит <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
+        </Link>
+      </DetailReveal>
     </div>
   );
 }

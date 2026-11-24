@@ -1,118 +1,77 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import Services from '../components/Services';
+import { DetailHero, DetailReveal } from '../components/DetailPageParts';
 import { ArrowRightIcon } from '../components/Icons';
-import './PagesCommon.css';
+import rearPhoto from '../assets/premiumwash/contacts-rear.webp';
 
 const processSteps = [
   {
-    num: '01',
-    title: 'Прийом та сканування ЛФП',
-    desc: 'Вимірюємо товщину заводського лаку на кожному елементі за допомогою ультразвукового товщиноміра та складаємо карту дефектів.'
+    title: 'Огляд покриття',
+    description: 'Вимірюємо товщину лаку та визначаємо ділянки, які потребують корекції.',
   },
   {
-    num: '02',
-    title: '3-фазне миття та деконтамінація',
-    desc: 'Глибоке очищення кузова від бітуму, гальмівного пилу та органічних смол із застосуванням нейтральної синтетичної глини.'
+    title: 'Миття й підготовка',
+    description: 'Миємо кузов у три фази, видаляємо бітум, гальмівний пил і смоли.',
   },
   {
-    num: '03',
-    title: 'Багатоетапне полірування',
-    desc: 'Філігранне усунення рисок, мікроподряпин і голограм пастами Rupes без критичного стоншення захисного шару лаку.'
+    title: 'Полірування',
+    description: 'Коригуємо дрібні подряпини й голограми, добираючи пасти та круги під стан лаку.',
   },
   {
-    num: '04',
-    title: 'Нанесення кераміки або PPF',
-    desc: 'Багатошарова консервація покриття в чистому боксі з контролем вологості й температури та сушкою в інфрачервоній камері.'
+    title: 'Нанесення захисту',
+    description: 'Наносимо керамічне покриття або обклеюємо кузов плівкою PPF.',
   },
   {
-    num: '05',
-    title: 'Інспекційний контроль Scangrip',
-    desc: 'Фінальна перевірка технологом під професійним студійним світлом із високим індексом кольоропередачі CRI 96+.'
-  }
+    title: 'Фінальна інспекція',
+    description: 'Перевіряємо покриття під інспекційним світлом.',
+  },
 ];
 
 export default function ServicesPage() {
   return (
-    <div className="services-page">
-      {/* Page Hero Header */}
-      <section className="page-hero">
-        <div className="container">
-          <div className="page-hero__breadcrumbs">
-            <Link to="/">Головна</Link>
-            <span className="page-hero__sep">/</span>
-            <span>Послуги дітейлінгу</span>
-          </div>
-          <h1 className="page-hero__title">
-            Ексклюзивні послуги <span className="gold-text">дітейлінгу</span>
-          </h1>
-          <p className="page-hero__desc">
-            Повний спектр високотехнологічних процедур з догляду за кузовом, склом, оптикою та інтер’єром автомобілів преміум і суперкар-сегмента.
-          </p>
+    <div className="services-page detail-page">
+      <DetailHero
+        number="02"
+        label="Наші послуги"
+        lines={['Послуги', 'дітейлінгу']}
+        description="Полірування й захист кузова, хімчистка та догляд за салоном."
+        photo={rearPhoto}
+      >
+        <div className="detail-hero__actions">
+          <Link to="/booking" className="btn-platinum cinema-button">
+            Записатися на догляд <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
+          </Link>
+          <Link to="/pricing" className="btn-outline cinema-button">Розрахувати вартість</Link>
         </div>
+      </DetailHero>
+
+      <Services />
+
+      <section className="cinema-container service-process detail-section" aria-labelledby="process-heading">
+        <DetailReveal>
+          <h2 id="process-heading" className="cinema-heading detail-section__title">Як ми працюємо з кузовом</h2>
+        </DetailReveal>
+        <ol className="service-process__steps" role="list">
+          {processSteps.map(({ title, description }, index) => (
+            <DetailReveal as={motion.li} key={title} delay={index * 0.045}>
+              <span className="service-process__number" aria-hidden="true">0{index + 1}</span>
+              <h3>{title}</h3>
+              <p>{description}</p>
+            </DetailReveal>
+          ))}
+        </ol>
       </section>
 
-      {/* Services Grid */}
-      <Services hideHeader={true} />
-
-      {/* Process Workflow Section */}
-      <section className="process-section" style={{ padding: '80px 0', backgroundColor: '#0b0c10' }}>
-        <div className="container">
-          <div className="section-header">
-            <div className="gold-sub-title">ТЕХНОЛОГІЧНИЙ ПРОЦЕС</div>
-            <h2 className="section-title">
-              5 етапів досконалості <span className="gold-text">в нашій студії</span>
-            </h2>
-            <p className="section-desc">
-              Ми суворо дотримуємося регламентів європейських дітейлінг-ательє, виключаючи поспіх і компроміси з якістю.
-            </p>
-          </div>
-
-          <div className="process-grid">
-            {processSteps.map((step) => (
-              <div
-                key={step.num}
-                className="process-step-card"
-              >
-                <span style={{
-                  fontSize: '2rem',
-                  fontWeight: '900',
-                  color: 'var(--color-gold)',
-                  fontFamily: 'var(--font-serif)',
-                  lineHeight: '1'
-                }}>
-                  {step.num}
-                </span>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#ffffff' }}>
-                  {step.title}
-                </h3>
-                <p style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
-                  {step.desc}
-                </p>
-              </div>
-            ))}
-          </div>
+      <DetailReveal as={motion.section} className="cinema-container detail-cta" aria-labelledby="service-cta-heading">
+        <div>
+          <h2 id="service-cta-heading" className="cinema-heading detail-cta__title">Потрібна допомога з вибором?</h2>
+          <p>Огляд покриття допоможе визначити, які роботи потрібні вашому авто.</p>
         </div>
-      </section>
-
-      {/* CTA Banner */}
-      <section className="page-cta-banner">
-        <div className="container">
-          <div className="cta-banner-box">
-            <div>
-              <h3 className="cta-banner__title">
-                Не впевнені, яка процедура <span className="gold-text">підійде вашому авто?</span>
-              </h3>
-              <p className="cta-banner__desc">
-                Запишіться на безкоштовну 15-хвилинну дефектовку ЛФП із технологом у нашій студії.
-              </p>
-            </div>
-            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-              <span>Записатися на огляд</span>
-              <ArrowRightIcon size={16} />
-            </Link>
-          </div>
-        </div>
-      </section>
+        <Link to="/booking" className="btn-outline cinema-button">
+          Записатися на огляд <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
+        </Link>
+      </DetailReveal>
     </div>
   );
 }
