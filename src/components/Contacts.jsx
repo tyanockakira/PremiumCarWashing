@@ -1,276 +1,165 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, useReducedMotion } from 'motion/react';
+import { useRef, useState } from 'react';
 import { createConsultation } from '../api/bookingApi';
 import { bookingMode } from '../lib/supabase';
-import {
-  PinIcon,
-  ClockIcon,
-  PhoneIcon,
-  MessageSquareIcon,
-  SendIcon,
-  SparkleIcon,
-  ArrowRightIcon,
-  CheckIcon,
-  LockIcon,
-  AlertTriangleIcon
-} from './Icons';
+import { ArrowRightIcon, CarIcon, CheckIcon, MessageSquareIcon, ShieldIcon } from './Icons';
 import './Contacts.css';
 
-export default function Contacts({ onOpenBooking, hideHeader = false }) {
-  const shouldReduceMotion = useReducedMotion();
+const emptyForm = { name: '', phone: '', carModel: '', question: '' };
+const topics = [
+  { value: 'Дітейлінг', icon: CarIcon },
+  { value: 'Захист кузова', icon: ShieldIcon },
+  { value: 'Догляд за салоном', icon: SeatIcon },
+  { value: 'Інше', icon: MessageSquareIcon },
+];
+const contactFields = [
+  { name: 'name', label: 'Ваше ім’я', placeholder: 'Як до вас звертатися?', type: 'text', autoComplete: 'given-name', error: 'Вкажіть ваше ім’я.' },
+  { name: 'phone', label: 'Номер телефону', placeholder: '+380 00 000 00 00', type: 'tel', autoComplete: 'tel', error: 'Вкажіть номер телефону.' },
+  { name: 'carModel', label: 'Марка та модель авто', placeholder: 'Наприклад, Audi A6', type: 'text' },
+  { name: 'question', label: 'Ваше запитання', placeholder: 'Коротко опишіть стан авто або потрібну послугу' },
+];
 
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    carModel: '',
-    question: ''
-  });
-  const [submitted, setSubmitted] = useState(false);
+function SeatIcon({ size }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="m5.5 3 2.1 8.2a2 2 0 0 0 1.9 1.6H16a1.5 1.5 0 0 1 0 3H8a3.4 3.4 0 0 1-3.2-2.4L2.5 4a1.5 1.5 0 1 1 3-1ZM8 15.8V18m7-2.2V18" />
+    </svg>
+  );
+}
+
+export default function Contacts() {
+  const [formData, setFormData] = useState(emptyForm);
+  const [invalidFields, setInvalidFields] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [consultationResult, setConsultationResult] = useState(null);
+  const [topic, setTopic] = useState('');
+  const pending = useRef(false);
   const isDemoMode = bookingMode === 'demo';
-  const navigate = useNavigate();
+  const selectedIndex = topics.findIndex(({ value }) => value === topic);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.name || !formData.phone) return;
+  async function handleSubmit(event) {
+    event.preventDefault();
+    if (pending.current) return;
 
+    const request = {
+      name: formData.name.trim(),
+      phone: formData.phone.trim(),
+      carModel: formData.carModel.trim(),
+      question: [topic && 'Тема консультації: ' + topic, formData.question.trim()].filter(Boolean).join('\n'),
+    };
+
+    if (!request.name || !request.phone) {
+      setInvalidFields({ name: !request.name, phone: !request.phone });
+      event.currentTarget.elements.namedItem(request.name ? 'phone' : 'name').focus();
+      return;
+    }
+
+    pending.current = true;
     setIsSubmitting(true);
     setErrorMsg('');
-
+    setConsultationResult(null);
     try {
-      const result = await createConsultation(formData);
+      const result = await createConsultation(request);
       setConsultationResult(result);
-      setSubmitted(true);
-      setTimeout(() => {
-        setSubmitted(false);
-        setFormData({ name: '', phone: '', carModel: '', question: '' });
-        setConsultationResult(null);
-      }, 4000);
-    } catch (err) {
-      console.error('Помилка відправлення форми:', err);
-      setErrorMsg(err instanceof Error ? err.message : 'Не вдалося надіслати заявку. Будь ласка, зателефонуйте нам або спробуйте пізніше.');
+      setFormData(emptyForm);
+      setTopic('');
+    } catch {
+      setErrorMsg('Не вдалося надіслати запит. Спробуйте ще раз.');
     } finally {
+      pending.current = false;
       setIsSubmitting(false);
     }
-  };
+  }
 
-  const handleBookingClick = () => {
-    if (onOpenBooking) {
-      onOpenBooking();
-    } else {
-      navigate('/booking');
-    }
-  };
+  function updateField(event) {
+    const { name, value } = event.currentTarget;
+    setFormData((current) => ({ ...current, [name]: value }));
+    setInvalidFields((current) => ({ ...current, [name]: current[name] && !value.trim() }));
+    setConsultationResult(null);
+  }
+
+  function selectTopic(event) {
+    setTopic(event.currentTarget.value);
+    setConsultationResult(null);
+  }
 
   return (
-    <section id="contacts" className="contacts-section">
-      <div className="container">
-        {!hideHeader && (
-          <motion.div
-            className="section-header"
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
-            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="tech-sub-title">ЯК НАС ЗНАЙТИ</div>
-            <h2 className="section-title">
-              Контакти та <span className="platinum-text">локація студії</span>
-            </h2>
-            <p className="section-desc">
-              Чекаємо на вас у зручній локації із власною охоронюваною територією,
-              лаундж-зоною з добірною кавою та швидкісним Wi-Fi.
-            </p>
-          </motion.div>
-        )}
+    <>
+      <header className="contacts-panel__header contacts-enter">
+        <h2 id="consultation-title" className="cinema-heading contacts-panel__title">Запит на консультацію</h2>
+        <p>Залиште контакти й опишіть, що вас цікавить.</p>
+      </header>
+      <form className="consultation-form" onSubmit={handleSubmit} noValidate aria-describedby="consultation-mode">
+        <fieldset className="consultation-topics contacts-enter" disabled={isSubmitting}>
+          <legend>Тема консультації <span>необов’язково</span></legend>
+          <div className="consultation-topics__grid">
+            {topics.map(({ value, icon: TopicIcon }) => (
+              <label key={value} className="consultation-topic">
+                <input type="radio" name="consultation-topic" value={value} checked={topic === value} onChange={selectTopic} />
+                <TopicIcon size={18} />
+                <span>{value}</span>
+              </label>
+            ))}
+            <span
+              className="consultation-topics__indicator"
+              data-visible={selectedIndex >= 0}
+              style={{
+                '--topic-index': Math.max(selectedIndex, 0),
+                '--topic-column': Math.max(selectedIndex, 0) % 2,
+                '--topic-row': selectedIndex >= 2 ? 1 : 0,
+              }}
+              aria-hidden="true"
+            />
+          </div>
+        </fieldset>
 
-        <div className="contacts-grid">
-          {/* Info Card */}
-          <motion.div
-            className="contacts-info"
-            initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
-            whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="contact-item">
-              <div className="contact-item__icon">
-                <PinIcon size={20} />
-              </div>
-              <div className="contact-item__content">
-                <span className="contact-item__label">Адреса студії</span>
-                <p className="contact-item__value">м. Київ, вул. Автомобільна, 1</p>
-                <span className="contact-item__hint">Закритий в&apos;їзд під охороною (демонстраційна адреса)</span>
-              </div>
-            </div>
-
-            <div className="contact-item">
-              <div className="contact-item__icon">
-                <ClockIcon size={20} />
-              </div>
-              <div className="contact-item__content">
-                <span className="contact-item__label">Графік роботи</span>
-                <p className="contact-item__value">Цілодобово — 24/7</p>
-                <span className="contact-item__hint">Прийом та видача авто за попереднім записом</span>
-              </div>
-            </div>
-
-            <div className="contact-item">
-              <div className="contact-item__icon">
-                <PhoneIcon size={20} />
-              </div>
-              <div className="contact-item__content">
-                <span className="contact-item__label">Телефон для бронювання</span>
-                <a href="tel:+380440000000" className="contact-item__value contact-item__value--link">
-                  +380 (44) 000-00-00
-                </a>
-                <span className="contact-item__hint">Консьєрж-сервіс (демонстраційний номер)</span>
-              </div>
-            </div>
-
-            <div className="contact-item">
-              <div className="contact-item__icon">
-                <MessageSquareIcon size={20} />
-              </div>
-              <div className="contact-item__content">
-                <span className="contact-item__label">Месенджери</span>
-                <div className="social-links">
-                  <a href="https://t.me" target="_blank" rel="noreferrer" className="social-pill">
-                    <SendIcon size={14} />
-                    <span>Telegram</span>
-                  </a>
-                  <a href="https://whatsapp.com" target="_blank" rel="noreferrer" className="social-pill">
-                    <MessageSquareIcon size={14} />
-                    <span>WhatsApp</span>
-                  </a>
+        <div className="consultation-fields contacts-enter">
+          {contactFields.map(({ name, label, placeholder, type, autoComplete, error }) => {
+            const id = 'contact-' + name;
+            const invalid = Boolean(invalidFields[name]);
+            const filled = Boolean(formData[name].trim()) && !invalid;
+            const controlProps = { id, name, placeholder, value: formData[name], disabled: isSubmitting, onChange: updateField };
+            return (
+              <div key={name} className="consultation-field" data-wide={!error}>
+                <label htmlFor={id}>{label}{error && <span aria-hidden="true"> *</span>}</label>
+                <div className="consultation-control" data-filled={filled}>
+                  {type ? (
+                    <input
+                      {...controlProps}
+                      type={type}
+                      autoComplete={autoComplete}
+                      required={Boolean(error)}
+                      aria-invalid={invalid || undefined}
+                      aria-describedby={invalid ? id + '-error' : undefined}
+                    />
+                  ) : <textarea {...controlProps} rows={3} />}
+                  <CheckIcon size={18} className="consultation-control__check" />
                 </div>
+                {invalid && <p id={id + '-error'} className="consultation-field__error">{error}</p>}
               </div>
-            </div>
-
-            <div className="lounge-perk">
-              <span className="lounge-perk__star">
-                <SparkleIcon size={16} />
-              </span>
-              <div className="lounge-perk__body">
-                <p>Для гостей доступна VIP-лаундж зона з кавою, Wi-Fi та прямою трансляцією процесу робіт із боксу.</p>
-                <button
-                  type="button"
-                  className="lounge-perk__btn"
-                  onClick={handleBookingClick}
-                >
-                  <span>Забронювати VIP-візит</span>
-                  <ArrowRightIcon size={14} />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Quick Contact Form */}
-          <motion.div
-            className="contacts-form-card"
-            initial={shouldReduceMotion ? false : { opacity: 0, x: 20 }}
-            whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <h3 className="form-card__title">Задати питання технологу</h3>
-            <p className="form-card__subtitle">
-              Залиште запит на діагностику стану ЛФП та професійний підбір програми догляду.
-            </p>
-
-            {errorMsg && (
-              <div className="contact-error-banner" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <AlertTriangleIcon size={16} />
-                <span>{errorMsg}</span>
-              </div>
-            )}
-
-            {submitted ? (
-              <div className="form-success">
-                <div className="success-icon">
-                  <CheckIcon size={24} />
-                </div>
-                <h4>Запит успішно прийнято!</h4>
-                <p>
-                  {consultationResult?.demo
-                    ? 'Це лише імітація надсилання. Реальний запит не створено.'
-                    : 'Запит збережено. Деталі консультації потрібно узгодити окремо.'}
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="contact-form">
-                <div className="form-group">
-                  <label htmlFor="contact-name">Ваше ім&apos;я *</label>
-                  <input
-                    id="contact-name"
-                    type="text"
-                    required
-                    placeholder="Олександр"
-                    value={formData.name}
-                    disabled={isSubmitting}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="contact-phone">Номер телефону *</label>
-                  <input
-                    id="contact-phone"
-                    type="tel"
-                    required
-                    placeholder="+380 (__) ___-__-__"
-                    value={formData.phone}
-                    disabled={isSubmitting}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="contact-car">Марка та модель автомобіля</label>
-                  <input
-                    id="contact-car"
-                    type="text"
-                    placeholder="Наприклад: Porsche Macan GTS"
-                    value={formData.carModel}
-                    disabled={isSubmitting}
-                    onChange={(e) => setFormData({ ...formData, carModel: e.target.value })}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="contact-msg">Бажана послуга або запитання</label>
-                  <textarea
-                    id="contact-msg"
-                    rows="3"
-                    placeholder="Цікавить нанесення кераміки та хімчистка..."
-                    value={formData.question}
-                    disabled={isSubmitting}
-                    onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                  ></textarea>
-                </div>
-
-                <button
-                  type="submit"
-                  className="btn-platinum form-submit-btn"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Надсилання...' : 'Надіслати запит'}
-                </button>
-
-                <p className="form-privacy" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                  <LockIcon size={12} />
-                  <span>{isDemoMode
-                    ? 'Демонстраційний режим. Реальні запити не створюються.'
-                    : 'Запит передається захищеним з’єднанням для збереження на сервері.'}</span>
-                </p>
-              </form>
-            )}
-          </motion.div>
+            );
+          })}
         </div>
-      </div>
-    </section>
+
+        <div className="consultation-form__actions contacts-enter">
+          <button type="submit" className="btn-platinum cinema-button consultation-form__submit" aria-disabled={isSubmitting}>
+            {isSubmitting ? 'Надсилаємо запит…' : isDemoMode ? 'Спробувати надсилання' : 'Надіслати запит'}
+            <ArrowRightIcon size={18} className="cinema-arrow cinema-arrow--diagonal" />
+          </button>
+          <p id="consultation-mode">
+            {isDemoMode ? 'Демонстраційний режим. Реальний запит не створюється.' : 'Ім’я та номер телефону передаються разом із запитом.'}
+          </p>
+          {errorMsg && <p className="consultation-form__feedback consultation-form__feedback--error" role="alert">{errorMsg}</p>}
+          <div className="consultation-form__status" role="status">
+            {consultationResult && (
+              <p className="consultation-form__feedback">
+                <CheckIcon size={18} />
+                {consultationResult.demo ? 'Імітацію надсилання завершено. Реальний запит не створено.' : 'Запит збережено. Деталі консультації потрібно узгодити окремо.'}
+              </p>
+            )}
+          </div>
+        </div>
+      </form>
+    </>
   );
 }
