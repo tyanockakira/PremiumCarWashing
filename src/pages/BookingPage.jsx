@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { createBooking } from '../api/bookingApi';
+import { bookingMode } from '../lib/supabase';
 import { InfoIcon, AlertTriangleIcon, LockIcon, SparkleIcon, ArrowRightIcon } from '../components/Icons';
 import './PagesCommon.css';
 import './BookingPage.css';
@@ -41,6 +42,7 @@ export default function BookingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingResult, setBookingResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
+  const isDemoMode = bookingMode === 'demo';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,7 +57,7 @@ export default function BookingPage() {
       window.scrollTo({ top: 100, behavior: 'smooth' });
     } catch (err) {
       console.error('Помилка бронювання:', err);
-      setErrorMsg('Не вдалося зберегти запис онлайн. Будь ласка, зателефонуйте нам за номером +380 (44) 000-00-00.');
+      setErrorMsg(err instanceof Error ? err.message : 'Не вдалося зберегти запис онлайн. Будь ласка, зателефонуйте нам за номером +380 (44) 000-00-00.');
     } finally {
       setIsSubmitting(false);
     }
@@ -88,7 +90,7 @@ export default function BookingPage() {
             Онлайн-бронювання <span className="gold-text">бокса</span>
           </h1>
           <p className="page-hero__desc">
-            Забронюйте індивідуальний чистий бокс із персональним майстром-технологом. Усі заявки миттєво реєструються в системі.
+            Залиште заявку на візит до індивідуального чистого бокса. Деталі візиту можна узгодити окремо після збереження заявки.
           </p>
         </div>
       </section>
@@ -99,10 +101,16 @@ export default function BookingPage() {
           {bookingResult ? (
             <div className="booking-confirmation-card">
               <div className="confirmation-icon"><SparkleIcon size={28} /></div>
-              <h2 className="confirmation-title">Запис успішно підтверджено!</h2>
+              <h2 className="confirmation-title">
+                {bookingResult.demo ? 'Демонстраційна заявка сформована' : 'Заявку збережено'}
+              </h2>
               <p className="confirmation-desc">
-                Щиро дякуємо, <strong>{formData.name}</strong>! Персональний консьєрж зв’яжеться з вами за номером{' '}
-                <strong className="gold-text">{formData.phone}</strong> для підтвердження броні та оформлення гостьової перепустки на автомобіль.
+                {bookingResult.demo ? (
+                  <>Це лише імітація надсилання. Реальний запис не створено.</>
+                ) : (
+                  <>Дякуємо, <strong>{formData.name}</strong>! Заявку збережено. Деталі візиту потрібно узгодити окремо за номером{' '}
+                    <strong className="gold-text">{formData.phone}</strong>.</>
+                )}
               </p>
 
               <div className="confirmation-details">
@@ -146,10 +154,12 @@ export default function BookingPage() {
           ) : (
             <div className="booking-card">
               <div className="booking-card__header">
-                <span className="booking-badge">ЕКСКЛЮЗИВНИЙ СЕРВІС • ДЕМО-ВІТРИНА</span>
+                <span className="booking-badge">
+                  {isDemoMode ? 'ЕКСКЛЮЗИВНИЙ СЕРВІС • ДЕМО-ВІТРИНА' : 'ЕКСКЛЮЗИВНИЙ СЕРВІС • ОНЛАЙН-ЗАПИС'}
+                </span>
                 <h2 className="booking-card__title">Заповніть дані для візиту</h2>
                 <p className="booking-card__desc">
-                  Вкажіть бажану програму догляду та зручний час. Ми зв’яжемося з вами протягом 10 хвилин.
+                  Вкажіть бажану програму догляду та зручний час для заявки.
                 </p>
               </div>
 
@@ -166,7 +176,11 @@ export default function BookingPage() {
               }}>
                 <span style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                   <span style={{ flexShrink: 0, marginTop: '1px' }}><InfoIcon size={16} /></span>
-                  <span><strong>Демонстраційний режим:</strong> цей сайт є вітринним портфоліо-проєктом. Форма демонструє повноцінне підключення до бази даних Supabase PostgreSQL.</span>
+                  <span>
+                    {isDemoMode
+                      ? <><strong>Демонстраційний режим:</strong> форма імітує надсилання. Реальні заявки не створюються.</>
+                      : <><strong>Робочий режим:</strong> заявка буде збережена лише після успішного підтвердження сервером.</>}
+                  </span>
                 </span>
               </div>
 
@@ -294,7 +308,9 @@ export default function BookingPage() {
                 </button>
 
                 <p className="booking-privacy" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <LockIcon size={14} /> Демонстраційний захист даних. Контакти не передаються третім особам.
+                  <LockIcon size={14} /> {isDemoMode
+                    ? 'Демонстраційний режим. Реальні заявки не створюються.'
+                    : 'Заявка передається захищеним з’єднанням для збереження на сервері.'}
                 </p>
               </form>
             </div>

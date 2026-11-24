@@ -1,11 +1,24 @@
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { supabase, bookingMode, isSupabaseConfigured } from '../lib/supabase';
+
+function ensureLiveSupabase() {
+  if (bookingMode === 'live' && (!isSupabaseConfigured || !supabase)) {
+    throw new Error('Реальний режим недоступний: Supabase не налаштовано.');
+  }
+}
+
+function validateBookingResponse(data, fallbackMessage) {
+  if (data?.success !== true || !data.booking_id) {
+    throw new Error(data?.message || fallbackMessage);
+  }
+
+  return data;
+}
 
 /**
  * Відправлення заявки на дітейлінг через модальне вікно або сторінку бронювання
  */
 export async function createBooking({ name, phone, car, service, date, timeSlot, comment }) {
-  if (!isSupabaseConfigured || !supabase) {
-    // Режим розробки без підключеного бекенду: емуляція мережевого запиту
+  if (bookingMode === 'demo') {
     await new Promise((resolve) => setTimeout(resolve, 800));
     return {
       success: true,
@@ -13,6 +26,8 @@ export async function createBooking({ name, phone, car, service, date, timeSlot,
       message: 'Заявку прийнято в демо-режимі (Supabase не налаштовано)'
     };
   }
+
+  ensureLiveSupabase();
 
   const { data, error } = await supabase.rpc('submit_booking', {
     p_name: name,
@@ -29,14 +44,14 @@ export async function createBooking({ name, phone, car, service, date, timeSlot,
     throw new Error(error.message || 'Помилка під час надсилання заявки');
   }
 
-  return data;
+  return validateBookingResponse(data, 'Сервер не підтвердив збереження заявки.');
 }
 
 /**
  * Відправлення запитання / запиту на консультацію з блоку контактів
  */
 export async function createConsultation({ name, phone, carModel, question }) {
-  if (!isSupabaseConfigured || !supabase) {
+  if (bookingMode === 'demo') {
     await new Promise((resolve) => setTimeout(resolve, 800));
     return {
       success: true,
@@ -44,6 +59,8 @@ export async function createConsultation({ name, phone, carModel, question }) {
       message: 'Запит на консультацію прийнято в демо-режимі'
     };
   }
+
+  ensureLiveSupabase();
 
   const { data, error } = await supabase.rpc('submit_consultation', {
     p_name: name,
@@ -57,7 +74,7 @@ export async function createConsultation({ name, phone, carModel, question }) {
     throw new Error(error.message || 'Помилка під час надсилання форми');
   }
 
-  return data;
+  return validateBookingResponse(data, 'Сервер не підтвердив збереження запиту.');
 }
 
 /**

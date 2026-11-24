@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { createConsultation } from '../api/bookingApi';
+import { bookingMode } from '../lib/supabase';
 import {
   PinIcon,
   ClockIcon,
@@ -26,6 +27,8 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [consultationResult, setConsultationResult] = useState(null);
+  const isDemoMode = bookingMode === 'demo';
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -36,15 +39,17 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
     setErrorMsg('');
 
     try {
-      await createConsultation(formData);
+      const result = await createConsultation(formData);
+      setConsultationResult(result);
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
         setFormData({ name: '', phone: '', carModel: '', question: '' });
+        setConsultationResult(null);
       }, 4000);
     } catch (err) {
       console.error('Помилка відправлення форми:', err);
-      setErrorMsg('Не вдалося надіслати заявку. Будь ласка, зателефонуйте нам або спробуйте пізніше.');
+      setErrorMsg(err instanceof Error ? err.message : 'Не вдалося надіслати заявку. Будь ласка, зателефонуйте нам або спробуйте пізніше.');
     } finally {
       setIsSubmitting(false);
     }
@@ -187,7 +192,11 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
                   <CheckIcon size={24} />
                 </div>
                 <h4>Запит успішно прийнято!</h4>
-                <p>Наш майстер-технолог зв&apos;яжеться з вами протягом 10 хвилин (демо-режим).</p>
+                <p>
+                  {consultationResult?.demo
+                    ? 'Це лише імітація надсилання. Реальний запит не створено.'
+                    : 'Запит збережено. Деталі консультації потрібно узгодити окремо.'}
+                </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="contact-form">
@@ -251,7 +260,9 @@ export default function Contacts({ onOpenBooking, hideHeader = false }) {
 
                 <p className="form-privacy" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
                   <LockIcon size={12} />
-                  <span>Демонстраційний сайт. Дані обробляються виключно в навчальних цілях.</span>
+                  <span>{isDemoMode
+                    ? 'Демонстраційний режим. Реальні запити не створюються.'
+                    : 'Запит передається захищеним з’єднанням для збереження на сервері.'}</span>
                 </p>
               </form>
             )}

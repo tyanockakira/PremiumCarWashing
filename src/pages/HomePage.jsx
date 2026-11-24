@@ -86,7 +86,7 @@ export default function HomePage() {
                 Готові подарувати вашому авто <span className="gold-text">бездоганний блиск?</span>
               </h3>
               <p className="cta-banner__desc">
-                Забронюйте зручний час візиту онлайн. Ми підготуємо індивідуальний чистий бокс і персонального майстра-технолога.
+                Залиште заявку на зручний час візиту. Деталі обслуговування можна узгодити окремо.
               </p>
             </div>
             <Link to="/booking" className="btn-gold" style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>

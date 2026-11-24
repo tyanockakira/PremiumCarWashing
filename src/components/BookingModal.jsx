@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createBooking } from '../api/bookingApi';
+import { bookingMode } from '../lib/supabase';
 import { InfoIcon, AlertTriangleIcon, CloseIcon, SparkleIcon } from './Icons';
 import './BookingModal.css';
 
@@ -26,6 +27,8 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [bookingResult, setBookingResult] = useState(null);
+  const isDemoMode = bookingMode === 'demo';
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -47,7 +50,8 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
     setErrorMsg('');
 
     try {
-      await createBooking(formData);
+      const result = await createBooking(formData);
+      setBookingResult(result);
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
@@ -61,10 +65,11 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
           timeSlot: '10:00 — 12:00',
           comment: ''
         });
+        setBookingResult(null);
       }, 3500);
     } catch (err) {
       console.error('Помилка запису:', err);
-      setErrorMsg('Не вдалося зберегти запис онлайн. Будь ласка, зателефонуйте нам за номером +380 (44) 000-00-00.');
+      setErrorMsg(err instanceof Error ? err.message : 'Не вдалося зберегти запис онлайн. Будь ласка, зателефонуйте нам за номером +380 (44) 000-00-00.');
     } finally {
       setIsSubmitting(false);
     }
@@ -90,20 +95,26 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
         {submitted ? (
           <div className="modal-success">
             <div className="modal-success__icon"><SparkleIcon size={28} /></div>
-            <h3 className="modal-success__title">Запис підтверджено!</h3>
+            <h3 className="modal-success__title">
+              {bookingResult?.demo ? 'Демонстраційна заявка сформована' : 'Заявку збережено'}
+            </h3>
             <p className="modal-success__text">
-              Дякуємо, <strong>{formData.name}</strong>! Персональний консьєрж зв’яжеться з вами за номером{' '}
-              <strong>{formData.phone}</strong> для уточнення деталей.
+              {bookingResult?.demo
+                ? 'Це лише імітація надсилання. Реальний запис не створено.'
+                : <>Дякуємо, <strong>{formData.name}</strong>! Заявку збережено. Деталі візиту потрібно узгодити окремо за номером{' '}
+                  <strong>{formData.phone}</strong>.</>}
             </p>
             <div className="modal-success__bar"></div>
           </div>
         ) : (
           <>
             <div className="modal-header">
-              <span className="modal-tag">ОНЛАЙН-БРОНЮВАННЯ • ДЕМО</span>
+              <span className="modal-tag">
+                {isDemoMode ? 'ОНЛАЙН-БРОНЮВАННЯ • ДЕМО' : 'ОНЛАЙН-БРОНЮВАННЯ'}
+              </span>
               <h3 className="modal-title">Запис на дітейлінг</h3>
               <p className="modal-subtitle">
-                Заповніть форму, і ми забронюємо індивідуальний чистий бокс для вашого авто.
+                Залиште заявку, щоб узгодити індивідуальний чистий бокс для вашого авто.
               </p>
             </div>
 
@@ -118,7 +129,11 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
             }}>
               <span style={{ display: 'flex', alignItems: 'flex-start', gap: '7px' }}>
                 <span style={{ flexShrink: 0, marginTop: '1px' }}><InfoIcon size={15} /></span>
-                <span><strong>Демо-режим:</strong> форма демонструє взаємодію з базою даних. Усі дані наведені для прикладу.</span>
+                <span>
+                  {isDemoMode
+                    ? <><strong>Демо-режим:</strong> форма імітує надсилання. Реальний запис не створюється.</>
+                    : <><strong>Робочий режим:</strong> заявка буде збережена лише після успішного підтвердження сервером.</>}
+                </span>
               </span>
             </div>
 

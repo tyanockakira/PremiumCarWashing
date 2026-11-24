@@ -104,7 +104,7 @@ export default function PricingPage() {
                 Бажаєте індивідуальний <span className="gold-text">розрахунок під ваше авто?</span>
               </h3>
               <p className="cta-banner__desc">
-                Залиште онлайн-заявку — майстер зв’яжеться з вами та запропонує оптимальний пакет догляду.
+              Залиште онлайн-заявку для подальшого узгодження оптимального пакета догляду.
               </p>
             </div>
             <Link to="/booking" className="btn-gold" style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
