@@ -1,130 +1,145 @@
+import { useRef, useState } from 'react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Link } from 'react-router-dom';
-import Advantages from '../components/Advantages';
-import { BuildingIcon, SnowflakeIcon, ArrowRightIcon } from '../components/Icons';
-import './PagesCommon.css';
+import { ArrowRightIcon } from '../components/Icons';
+import './AdvantagesPage.css';
 
-const partnerBrands = [
-  { name: 'Rupes BigFoot', country: 'Італія', desc: 'Професійне ексцентрикове полірувальне обладнання преміум-класу номер один у світі.' },
-  { name: 'Gyeon Quartz', country: 'Південна Корея', desc: 'Еталонні нанокерамічні захисні покриття на основі діоксиду кремнію (SiO2).' },
-  { name: 'Koch Chemie', country: 'Німеччина', desc: 'Преміальна автохімія, схвалена концернами Mercedes-Benz, BMW та Audi.' },
-  { name: 'Scangrip Detailing', country: 'Данія', desc: 'Спеціалізоване студійне інспекційне світло з індексом передачі кольору CRI 96+.' },
-  { name: 'LeTech Leather Lab', country: 'Велика Британія', desc: 'Елітні формули реставрації, живлення та захисту натуральної автомобільної шкіри.' }
+const inspectionPhoto = 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80';
+const paintPhoto = 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=800&q=80';
+
+const exteriorCare = [
+  { title: 'Підготовка поверхні', description: 'Після миття з кузова видаляють бітум і металеві вкраплення. На чистому лаку легше оцінити стан покриття.' },
+  { title: 'Полірування', description: 'Пасту та круг підбирають під стан лаку. Спочатку перевіряють результат на невеликій ділянці.' },
+  { title: 'Захисні покриття', description: 'Покриття наносять на підготовлену поверхню. Склад і спосіб нанесення підбирають за матеріалом та потребами авто.' },
 ];
 
-export default function AdvantagesPage() {
+const equipment = [
+  { brand: 'Rupes', purpose: 'Полірувальне обладнання' },
+  { brand: 'Gyeon', purpose: 'Захисні покриття' },
+  { brand: 'Koch Chemie', purpose: 'Автомобільна хімія' },
+  { brand: 'Scangrip', purpose: 'Інспекційне освітлення' },
+  { brand: 'LeTech', purpose: 'Догляд за шкірою' },
+];
+
+const viewport = { once: true, amount: 0.15 };
+const sequence = { visible: { transition: { staggerChildren: 0.07 } } };
+const reveal = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.42, ease: [0.16, 1, 0.3, 1] } },
+};
+const revealItem = { variants: reveal, 'data-advantages-reveal': '' };
+
+function DetailPhoto({ src, alt, caption, variant, priority = false }) {
+  const frame = useRef(null);
+  const [loaded, setLoaded] = useState(false);
+  const inView = useInView(frame, viewport);
+
   return (
-    <div className="advantages-page">
-      {/* Page Hero */}
-      <section className="page-hero">
-        <div className="container">
-          <div className="page-hero__breadcrumbs">
-            <Link to="/">Головна</Link>
-            <span className="page-hero__sep">/</span>
-            <span>Переваги та стандарти</span>
-          </div>
-          <h1 className="page-hero__title">
-            Стандарти дітейлінгу <span className="gold-text">найвищої проби</span>
-          </h1>
-          <p className="page-hero__desc">
-            Наша студія спроєктована як чиста лабораторія. Ми поєднуємо передове обладнання, стерильний мікроклімат і сертифікованих майстрів.
-          </p>
+    <figure className={`advantages-photo advantages-photo--${variant}`}>
+      <div ref={frame} className="advantages-photo__frame" data-reveal-photo={loaded && inView}>
+        <img
+          src={src}
+          alt={alt}
+          loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : undefined}
+          onLoad={() => setLoaded(true)}
+        />
+      </div>
+      <figcaption>{caption}</figcaption>
+    </figure>
+  );
+}
+
+export default function AdvantagesPage() {
+  const reduceMotion = useReducedMotion();
+  const onScroll = reduceMotion
+    ? { initial: false }
+    : { initial: 'hidden', whileInView: 'visible', viewport };
+
+  return (
+    <div className="advantages-editorial">
+      <section className="container advantages-intro" aria-labelledby="advantages-title">
+        <motion.div
+          className="advantages-intro__copy"
+          variants={sequence}
+          initial={reduceMotion ? false : 'hidden'}
+          animate="visible"
+        >
+          <motion.h1 id="advantages-title" {...revealItem}>Точність у кожній деталі</motion.h1>
+          <motion.p {...revealItem}>Обладнання, матеріали та контроль якості</motion.p>
+        </motion.div>
+        <DetailPhoto
+          src={inspectionPhoto}
+          alt="Фронтальний вигляд темного автомобіля з відблисками на кузові"
+          caption="Ілюстративне фото · відблиски на темному кузові"
+          variant="intro"
+          priority
+        />
+      </section>
+
+      <section className="advantages-quality" aria-labelledby="advantages-quality-title">
+        <div className="container advantages-quality__layout">
+          <motion.div className="advantages-quality__copy" variants={sequence} {...onScroll}>
+            <motion.h2 id="advantages-quality-title" {...revealItem}>Контроль якості</motion.h2>
+            <motion.p className="advantages-quality__lead" {...revealItem}>
+              Інспекційне світло виявляє дрібні подряпини, голограми та сліди полірування на лаку.
+            </motion.p>
+            <motion.p {...revealItem}>
+              Світло спрямовують під різними кутами. До роботи так визначають ділянки, що потребують уваги, а після полірування перевіряють рівномірність результату.
+            </motion.p>
+          </motion.div>
+          <DetailPhoto
+            src={paintPhoto}
+            alt="Відблиски на капоті та фарі автомобіля"
+            caption="Ілюстративне фото · відбиття світла на лаку"
+            variant="paint"
+          />
         </div>
       </section>
 
-      {/* Main Grid */}
-      <Advantages hideHeader={true} />
-
-      {/* Brands & Technologies Showcase */}
-      <section style={{ padding: '80px 0', backgroundColor: '#090a0e' }}>
-        <div className="container">
-          <div className="section-header">
-            <div className="gold-sub-title">ОБЛАДНАННЯ ТА МАТЕРІАЛИ</div>
-            <h2 className="section-title">
-              Працюємо тільки зі <span className="gold-text">світовими лідерами</span>
-            </h2>
-            <p className="section-desc">
-              Жодних безіменних складів. Кожен флакон сертифікований і постачається офіційними дистриб’юторами.
-            </p>
+      <section className="container advantages-care" aria-labelledby="advantages-care-title">
+        <motion.h2 id="advantages-care-title" {...revealItem} {...onScroll}>Технології догляду</motion.h2>
+        <div className="advantages-care__layout">
+          <div className="advantages-care__body">
+            <h3>Кузов</h3>
+            <motion.ul className="advantages-care__list" variants={sequence} {...onScroll}>
+              {exteriorCare.map(({ title, description }) => (
+                <motion.li key={title} {...revealItem}>
+                  <h4>{title}</h4>
+                  <p>{description}</p>
+                </motion.li>
+              ))}
+            </motion.ul>
           </div>
+          <motion.div className="advantages-care__interior" {...revealItem} {...onScroll}>
+            <h3>Салон</h3>
+            <p>Для шкіри, текстилю й пластику підбирають окремі засоби. Делікатні поверхні спершу перевіряють на непомітній ділянці.</p>
+          </motion.div>
+        </div>
+      </section>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '24px',
-            marginTop: '40px'
-          }}>
-            {partnerBrands.map((brand, idx) => (
-              <div
-                key={idx}
-                style={{
-                  background: 'var(--bg-card)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '30px 24px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px'
-                }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#ffffff', lineHeight: '1.2' }}>
-                    {brand.name}
-                  </h3>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--color-gold)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                    {brand.country}
-                  </span>
-                </div>
-                <p style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', marginTop: '6px' }}>
-                  {brand.desc}
-                </p>
-              </div>
+      <section className="advantages-equipment" aria-labelledby="advantages-equipment-title">
+        <div className="container advantages-equipment__layout">
+          <motion.div variants={sequence} {...onScroll}>
+            <motion.h2 id="advantages-equipment-title" {...revealItem}>Обладнання та матеріали</motion.h2>
+            <motion.p {...revealItem}>Приклади брендів і засобів для різних етапів дітейлінгу.</motion.p>
+          </motion.div>
+          <motion.ol className="advantages-equipment__list" variants={sequence} {...onScroll}>
+            {equipment.map(({ brand, purpose }) => (
+              <motion.li key={brand} {...revealItem}>
+                <span className="advantages-equipment__brand">{brand}</span>
+                <span className="advantages-equipment__purpose">{purpose}</span>
+              </motion.li>
             ))}
-          </div>
+          </motion.ol>
         </div>
       </section>
 
-      {/* Security & Warranty Banner */}
-      <section style={{ padding: '60px 0', backgroundColor: '#111217', borderTop: '1px solid var(--border-subtle)' }}>
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
-          <div style={{ padding: '24px', background: 'rgba(212, 175, 55, 0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-gold-subtle)' }}>
-            <span style={{ display: 'flex', alignItems: 'center', color: 'var(--color-gold)', width: '2rem', height: '2rem' }}><BuildingIcon size={28} /></span>
-            <h4 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#ffffff', margin: '10px 0 6px' }}>
-              Страхування на 50 000 000 грн
-            </h4>
-            <p style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
-              Кожен прийнятий автомобіль на весь час проведення робіт застрахований у провідній страховій компанії.
-            </p>
-          </div>
-
-          <div style={{ padding: '24px', background: 'rgba(212, 175, 55, 0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-gold-subtle)' }}>
-            <span style={{ display: 'flex', alignItems: 'center', color: 'var(--color-gold)', width: '2rem', height: '2rem' }}><SnowflakeIcon size={28} /></span>
-            <h4 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#ffffff', margin: '10px 0 6px' }}>
-              Клімат-контроль 22°C
-            </h4>
-            <p style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
-              Стерильні бокси з постійною температурою, вологістю 50% та багатоступеневим очищенням повітря від пилу.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Banner */}
-      <section className="page-cta-banner">
-        <div className="container">
-          <div className="cta-banner-box">
-            <div>
-              <h3 className="cta-banner__title">
-                Довірте автомобіль <span className="gold-text">професіоналам</span>
-              </h3>
-              <p className="cta-banner__desc">
-                Забронюйте візит онлайн та переконайтеся у найвищих стандартах преміального сервісу.
-              </p>
-            </div>
-            <Link to="/booking" className="btn-gold" style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-              <span>Записатися в студію</span>
-              <ArrowRightIcon size={16} />
-            </Link>
-          </div>
+      <section className="container advantages-next" aria-labelledby="advantages-next-title">
+        <motion.h2 id="advantages-next-title" {...revealItem} {...onScroll}>Оберіть догляд для свого авто</motion.h2>
+        <div className="advantages-next__links">
+          <Link to="/services" className="advantages-next__secondary">Переглянути послуги <ArrowRightIcon /></Link>
+          <Link to="/booking" className="btn-platinum">Записатися на дітейлінг <ArrowRightIcon /></Link>
         </div>
       </section>
     </div>
