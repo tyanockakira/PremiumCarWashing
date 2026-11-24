@@ -1,17 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, motion } from 'motion/react';
 import { getPricingData } from '../api/bookingApi';
+import { defaultCarClasses } from '../data/carClasses';
 import { ArrowRightIcon, CheckIcon, ClockIcon } from './Icons';
-import { DetailReveal } from './DetailPageParts';
 import { useDetailReducedMotion } from './useDetailReducedMotion';
+import { duration, easeGlide } from '../lib/motion';
 import './Pricing.css';
-
-const defaultCarClasses = [
-  { id: 'sedan', label: 'Седан / Купе', multiplier: 1, example: 'BMW 3/5, Porsche 911, Mercedes E-Class' },
-  { id: 'crossover', label: 'Кросовер', multiplier: 1.2, example: 'BMW X3/X5, Porsche Macan/Cayenne' },
-  { id: 'suv', label: 'Позашляховик / SUV', multiplier: 1.4, example: 'Mercedes G-Class, Range Rover, GLS' }
-];
 
 const defaultPackages = [
   {
@@ -68,33 +62,51 @@ const defaultPackages = [
 ];
 
 const numberFormat = new Intl.NumberFormat('uk-UA');
-const ease = [0.16, 1, 0.3, 1];
+const priceTiming = { duration: duration.price * 1000, easing: `cubic-bezier(${easeGlide.join(', ')})` };
 
-function formatPrice(base, multiplier) {
-  const total = Math.round((base * multiplier) / 500) * 500;
-  return `${numberFormat.format(total)} грн`;
+function calculatePrice(base, multiplier) {
+  return Math.round((base * multiplier) / 500) * 500;
 }
 
-function PackagePrice({ value, reduceMotion }) {
+function PackagePrice({ amount, widthSample, reduceMotion }) {
+  const previousAmount = useRef(amount);
+  const current = useRef(null);
+  const outgoing = useRef(null);
+  const formatted = numberFormat.format(amount);
+
+  useLayoutEffect(() => {
+    const previous = previousAmount.current;
+    previousAmount.current = amount;
+
+    if (reduceMotion || previous === amount) return;
+
+    const offset = amount > previous ? '100%' : '-100%';
+    const exit = amount > previous ? '-100%' : '100%';
+    outgoing.current.textContent = numberFormat.format(previous);
+
+    const enterAnimation = current.current.animate(
+      [{ transform: `translateY(${offset})` }, { transform: 'translateY(0)' }],
+      priceTiming,
+    );
+    const exitAnimation = outgoing.current.animate(
+      [{ transform: 'translateY(0)', visibility: 'visible' }, { transform: `translateY(${exit})`, visibility: 'visible' }],
+      priceTiming,
+    );
+
+    return () => {
+      enterAnimation.cancel();
+      exitAnimation.cancel();
+    };
+  }, [amount, reduceMotion]);
+
   return (
     <span className="pricing-plan__amount">
-      <span className="detail-sr-only">{value}</span>
-      {reduceMotion ? (
-        <span aria-hidden="true">{value}</span>
-      ) : (
-        <AnimatePresence initial={false}>
-          <motion.span
-            key={value}
-            aria-hidden="true"
-            initial={{ opacity: 0, y: '38%' }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: '-38%' }}
-            transition={{ duration: 0.27, ease }}
-          >
-            {value}
-          </motion.span>
-        </AnimatePresence>
-      )}
+      <span className="detail-sr-only">{formatted} грн</span>
+      <span className="pricing-plan__digits" data-width={widthSample} aria-hidden="true">
+        <span className="pricing-plan__previous" ref={outgoing} />
+        <span ref={current}>{formatted}</span>
+      </span>
+      <span aria-hidden="true">грн</span>
     </span>
   );
 }
@@ -145,7 +157,10 @@ export default function Pricing() {
   const indicatorOffset = `${currentClassIndex * 100}%`;
   const packages = packagesList.map((pkg) => ({
     ...pkg,
-    price: formatPrice(pkg.basePrice, currentClass.multiplier),
+    amount: calculatePrice(pkg.basePrice, currentClass.multiplier),
+    widthSample: carClassesList
+      .map(({ multiplier }) => numberFormat.format(calculatePrice(pkg.basePrice, multiplier)))
+      .reduce((longest, price) => price.length > longest.length ? price : longest, ''),
   }));
 
   return (
@@ -154,13 +169,10 @@ export default function Pricing() {
         <legend>Клас автомобіля</legend>
         <div className="pricing-classes__layout">
           <div className="pricing-classes__options" style={{ '--class-count': carClassesList.length }}>
-            <motion.span
+            <span
               className="pricing-classes__indicator"
               aria-hidden="true"
-              initial={false}
               style={{ '--indicator-offset': indicatorOffset }}
-              animate={{ x: indicatorOffset }}
-              transition={{ duration: reduceMotion ? 0 : 0.38, ease }}
             />
             {carClassesList.map((item) => (
               <label key={item.id}>
@@ -181,17 +193,15 @@ export default function Pricing() {
       </fieldset>
 
       <p className="detail-sr-only" role="status">
-        {packages.map(({ title, price }) => `${title} — ${price}`).join('. ')}
+        {packages.map(({ title, amount }) => `${title} — ${numberFormat.format(amount)} грн`).join('. ')}
       </p>
       <div className="pricing-comparison">
         {packages.map((pkg, index) => (
-          <DetailReveal
-            as={motion.article}
+          <article
             key={pkg.id}
             aria-labelledby={`package-title-${index}`}
             className="pricing-plan"
             data-featured={pkg.featured}
-            delay={Math.min(index, 2) * 0.07}
           >
             <header className="pricing-plan__header">
               <p className="pricing-plan__tag">{pkg.featured ? 'Рекомендуємо' : pkg.tag}</p>
@@ -209,7 +219,7 @@ export default function Pricing() {
             <div className="pricing-plan__footer">
               <div>
                 <p className="pricing-plan__estimate">Орієнтовно</p>
-                <PackagePrice value={pkg.price} reduceMotion={reduceMotion} />
+                <PackagePrice amount={pkg.amount} widthSample={pkg.widthSample} reduceMotion={reduceMotion} />
               </div>
               <Link
                 to="/booking"
@@ -220,19 +230,9 @@ export default function Pricing() {
                 Обрати <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
               </Link>
             </div>
-          </DetailReveal>
+          </article>
         ))}
       </div>
-
-      <DetailReveal as={motion.section} className="pricing-calculator__guide" aria-labelledby="calculator-heading">
-        <div>
-          <h2 id="calculator-heading" className="cinema-heading detail-section__title">Калькулятор вартості</h2>
-          <p>Виберіть клас авто, щоб перерахувати ціни всіх пакетів. Суми округлюються до найближчих 500 грн.</p>
-        </div>
-        <a href="#car-class" className="btn-outline cinema-button">
-          Змінити клас авто <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
-        </a>
-      </DetailReveal>
     </section>
   );
 }

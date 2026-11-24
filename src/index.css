@@ -105,11 +105,16 @@
 
   /* Transitions */
   --easing-editorial: cubic-bezier(0.16, 1, 0.3, 1);
-  --motion-nav: 240ms;
-  --motion-page: 240ms;
-  --motion-photo: 420ms;
-  --motion-menu: 180ms;
-  --transition-fast: 120ms var(--easing-editorial);
+  --easing-glide: cubic-bezier(0.22, 1, 0.36, 1);
+  --easing-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --motion-nav: 330ms;
+  --motion-photo: 680ms;
+  --motion-heading: 580ms;
+  --motion-menu: 220ms;
+  --motion-disclosure: 360ms;
+  --motion-stagger: 55ms;
+  --motion-press: 120ms;
+  --transition-fast: 220ms var(--easing-glide);
   --transition-normal: 300ms var(--easing-editorial);
   --transition-smooth: 500ms var(--easing-editorial);
   --display-slant: -11deg;
@@ -288,9 +293,29 @@ button {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  a:is(:hover, :focus-visible) .cinema-arrow {
+  a:focus-visible .cinema-arrow {
     transform: translateX(4px);
   }
+
+  :is(.btn-primary, .btn-platinum, .btn-gold, .btn-outline):active:not(:disabled, [aria-disabled='true']) {
+    scale: 0.985;
+  }
+
+  .motion-check path {
+    stroke-dasharray: 1;
+    animation: draw-check 420ms var(--easing-glide) backwards;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a:hover .cinema-arrow {
+      transform: translateX(4px);
+    }
+  }
+}
+
+@keyframes draw-check {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
 }
 
 img {
@@ -384,12 +409,10 @@ img {
   font-weight: 500;
   line-height: 1.25;
   text-align: center;
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  transition: background-color var(--transition-fast), color var(--transition-fast), scale var(--motion-press) var(--easing-glide);
 }
 
-.btn-primary:hover,
-.btn-platinum:hover,
-.btn-gold:hover {
+:is(.btn-primary, .btn-platinum, .btn-gold):focus-visible {
   background: var(--color-accent-hover);
 }
 
@@ -408,20 +431,37 @@ img {
   text-align: center;
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-input-border);
-  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), scale var(--motion-press) var(--easing-glide);
 }
 
-.btn-outline:hover {
+.btn-outline:focus-visible {
   border-color: var(--color-accent);
   background: var(--bg-selected);
 }
 
+@media (hover: hover) and (pointer: fine) {
+  :is(.btn-primary, .btn-platinum, .btn-gold):hover:not(:disabled) {
+    background: var(--color-accent-hover);
+  }
+
+  .btn-outline:hover:not(:disabled) {
+    border-color: var(--color-accent);
+    background: var(--bg-selected);
+  }
+}
+
 /* Accessibility: Support for Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
+  [data-photo-reveal] {
+    clip-path: none !important;
+  }
+
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
 }

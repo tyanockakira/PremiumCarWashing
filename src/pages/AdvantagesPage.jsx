@@ -1,8 +1,8 @@
-import { motion } from 'motion/react';
-import { Link } from 'react-router-dom';
-import { DetailHero, DetailReveal } from '../components/DetailPageParts';
-import { ArrowRightIcon } from '../components/Icons';
+import { useRef } from 'react';
+import { motion, useInView } from 'motion/react';
+import { DetailHero } from '../components/DetailPageParts';
 import { useDetailReducedMotion } from '../components/useDetailReducedMotion';
+import { easeOut, photoWipe } from '../lib/motion';
 import rearPhoto from '../assets/premiumwash/contacts-rear.webp';
 import polishingPhoto from '../assets/premiumwash/polishing.webp';
 import ceramicPhoto from '../assets/premiumwash/ceramic.webp';
@@ -46,27 +46,41 @@ const equipment = [
   ['LeTech', 'Догляд за шкірою'],
 ];
 
-const ease = [0.16, 1, 0.3, 1];
+const editorialPhoto = {
+  left: photoWipe(),
+  right: photoWipe('right'),
+  bottom: photoWipe('bottom'),
+};
 
-function ApproachPhoto({ photo, alt, delay = 0 }) {
-  const reduceMotion = useDetailReducedMotion();
+const editorialCopy = {
+  hidden: { opacity: 0.65 },
+  visible: { opacity: 1, transition: { duration: 0.42, delay: 0.12, ease: easeOut } },
+};
 
+function ApproachPhoto({ photo, alt, from }) {
   return (
     <div className="advantages-frame">
       <motion.div
         className="advantages-frame__reveal"
-        initial={reduceMotion ? false : { clipPath: 'polygon(0 0, 62% 0, 44% 100%, 0 100%)' }}
-        whileInView={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: reduceMotion ? 0 : 0.78, delay: reduceMotion ? 0 : delay, ease }}
+        data-photo-reveal
+        variants={editorialPhoto[from]}
       >
-        <img src={photo} alt={alt} loading="lazy" />
+        <img src={photo} alt={alt} loading="lazy" width={1672} height={941} />
       </motion.div>
     </div>
   );
 }
 
 export default function AdvantagesPage() {
+  const reduceMotion = useDetailReducedMotion();
+  const equipmentList = useRef(null);
+  const showEquipment = useInView(equipmentList, { once: true, amount: 'some' });
+  const entrance = {
+    initial: reduceMotion ? false : 'hidden',
+    whileInView: reduceMotion ? undefined : 'visible',
+    viewport: { once: true, amount: 0.18 },
+  };
+
   return (
     <div className="detail-page advantages-editorial">
       <DetailHero
@@ -80,61 +94,47 @@ export default function AdvantagesPage() {
       <section className="advantages-approaches" aria-label="Технології дітейлінгу">
         <div className="cinema-container advantages-approaches__layout">
           {approaches.map(({ title, description, photo, alt }, index) => (
-            <article className="advantages-approach" key={title}>
-              <ApproachPhoto photo={photo} alt={alt} delay={(index % 2) * 0.08} />
-              <div className="advantages-approach__copy">
-                <DetailReveal delay={(index % 2) * 0.08}>
+            <motion.article className="advantages-approach" key={title} {...entrance}>
+              <ApproachPhoto photo={photo} alt={alt} from={index % 2 ? 'right' : 'left'} />
+              <motion.div className="advantages-approach__copy" variants={editorialCopy}>
+                <div>
                   <span className="advantages-approach__number" aria-hidden="true">0{index + 1}</span>
                   <h2>{title}</h2>
-                </DetailReveal>
-                <DetailReveal as={motion.p} delay={0.08 + (index % 2) * 0.08}>{description}</DetailReveal>
-              </div>
-            </article>
+                </div>
+                <p>{description}</p>
+              </motion.div>
+            </motion.article>
           ))}
         </div>
       </section>
 
-      <section className="cinema-container advantages-inspection" aria-labelledby="advantages-quality-title">
-        <div className="advantages-inspection__copy">
-          <DetailReveal>
-            <h2 id="advantages-quality-title" className="cinema-heading">Контроль якості</h2>
-          </DetailReveal>
-          <DetailReveal as={motion.p} delay={0.08}>
+      <motion.section className="cinema-container advantages-inspection" aria-labelledby="advantages-quality-title" {...entrance}>
+        <motion.div className="advantages-inspection__copy" variants={editorialCopy}>
+          <h2 id="advantages-quality-title" className="cinema-heading">Контроль якості</h2>
+          <p>
             Інспекційне світло під різними кутами допомагає помітити дрібні подряпини, голограми й залишки пасти.
-          </DetailReveal>
-          <DetailReveal as={motion.p} delay={0.16}>
+          </p>
+          <p>
             До полірування оглядають стан лаку. Після обробки перевіряють рівномірність поверхні та складні ділянки біля країв.
-          </DetailReveal>
-        </div>
-        <ApproachPhoto photo={inspectionPhoto} alt="Майстер оглядає лак під ручною інспекційною лампою" />
-      </section>
+          </p>
+        </motion.div>
+        <ApproachPhoto photo={inspectionPhoto} alt="Майстер оглядає лак під ручною інспекційною лампою" from="bottom" />
+      </motion.section>
 
       <section className="cinema-container advantages-equipment" aria-labelledby="advantages-equipment-title">
-        <DetailReveal>
+        <div>
           <h2 id="advantages-equipment-title" className="cinema-heading">Обладнання та матеріали</h2>
           <p>Приклади для різних етапів дітейлінгу.</p>
-        </DetailReveal>
-        <dl className="advantages-equipment__list">
+        </div>
+        <dl className="advantages-equipment__list" ref={equipmentList} data-revealed={showEquipment}>
           {equipment.map(([brand, purpose], index) => (
-            <DetailReveal key={brand} className="advantages-equipment__item" delay={index * 0.045}>
+            <div key={brand} className="advantages-equipment__item" style={{ '--equipment-index': index }}>
               <dt>{brand}</dt>
               <dd>{purpose}</dd>
-            </DetailReveal>
+            </div>
           ))}
         </dl>
       </section>
-
-      <DetailReveal as={motion.section} className="cinema-container advantages-next" aria-labelledby="advantages-next-title">
-        <h2 id="advantages-next-title" className="cinema-heading">Оберіть догляд для свого авто</h2>
-        <div className="advantages-next__links">
-          <Link to="/services" className="advantages-next__secondary">
-            Переглянути послуги <ArrowRightIcon size={16} className="cinema-arrow" />
-          </Link>
-          <Link to="/booking" className="btn-platinum cinema-button">
-            Записатися <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
-          </Link>
-        </div>
-      </DetailReveal>
     </div>
   );
 }

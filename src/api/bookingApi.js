@@ -1,5 +1,7 @@
 import { supabase, bookingMode, isSupabaseConfigured } from '../lib/supabase';
 
+export const phoneOnlyConsultationUnavailable = 'Наразі онлайн-запит на консультацію лише за номером телефону недоступний.';
+
 function ensureLiveSupabase() {
   if (bookingMode === 'live' && (!isSupabaseConfigured || !supabase)) {
     throw new Error('Реальний режим недоступний: Supabase не налаштовано.');
@@ -48,7 +50,7 @@ export async function createBooking({ name, phone, car, service, date, timeSlot,
 }
 
 /**
- * Відправлення запитання / запиту на консультацію з блоку контактів
+ * Submit a consultation request through the configured booking mode.
  */
 export async function createConsultation({ name, phone, carModel, question }) {
   if (bookingMode === 'demo') {
@@ -60,6 +62,7 @@ export async function createConsultation({ name, phone, carModel, question }) {
     };
   }
 
+  if (!name?.trim()) throw new Error(phoneOnlyConsultationUnavailable);
   ensureLiveSupabase();
 
   const { data, error } = await supabase.rpc('submit_consultation', {

@@ -1,8 +1,6 @@
-import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import Services from '../components/Services';
 import { DetailHero, DetailReveal } from '../components/DetailPageParts';
-import { ArrowRightIcon } from '../components/Icons';
 import rearPhoto from '../assets/premiumwash/contacts-rear.webp';
 
 const processSteps = [
@@ -37,14 +35,7 @@ export default function ServicesPage() {
         lines={['Послуги', 'дітейлінгу']}
         description="Полірування й захист кузова, хімчистка та догляд за салоном."
         photo={rearPhoto}
-      >
-        <div className="detail-hero__actions">
-          <Link to="/booking" className="btn-platinum cinema-button">
-            Записатися на догляд <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
-          </Link>
-          <Link to="/pricing" className="btn-outline cinema-button">Розрахувати вартість</Link>
-        </div>
-      </DetailHero>
+      />
 
       <Services />
 
@@ -62,16 +53,6 @@ export default function ServicesPage() {
           ))}
         </ol>
       </section>
-
-      <DetailReveal as={motion.section} className="cinema-container detail-cta" aria-labelledby="service-cta-heading">
-        <div>
-          <h2 id="service-cta-heading" className="cinema-heading detail-cta__title">Потрібна допомога з вибором?</h2>
-          <p>Огляд покриття допоможе визначити, які роботи потрібні вашому авто.</p>
-        </div>
-        <Link to="/booking" className="btn-outline cinema-button">
-          Записатися на огляд <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
-        </Link>
-      </DetailReveal>
     </div>
   );
 }

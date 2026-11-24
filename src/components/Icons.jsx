@@ -26,7 +26,7 @@ export function SparkleIcon(props) {
 }
 
 export function CheckIcon(props) {
-  return <Icon {...props}><path d="m3.5 10 4 4 9-9" /></Icon>;
+  return <Icon {...props}><path pathLength="1" d="m3.5 10 4 4 9-9" /></Icon>;
 }
 
 export function CheckCircleIcon(props) {
@@ -39,10 +39,6 @@ export function CheckCircleIcon(props) {
 
 export function ArrowRightIcon(props) {
   return <Icon {...props}><path d="M3.5 10h13m-5.5-5.5L16.5 10 11 15.5" /></Icon>;
-}
-
-export function ArrowUpIcon(props) {
-  return <Icon {...props}><path d="M10 16.5v-13M4.5 9 10 3.5 15.5 9" /></Icon>;
 }
 
 export function PhoneIcon(props) {
@@ -132,7 +128,7 @@ export function CloseIcon(props) {
 }
 
 export function PlusIcon(props) {
-  return <Icon {...props}><path d="M10 4v12M4 10h12" /></Icon>;
+  return <Icon {...props}><path d="M4 10h12" /><path d="M10 4v12" /></Icon>;
 }
 
 export function MinusIcon(props) {

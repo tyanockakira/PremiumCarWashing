@@ -5,6 +5,7 @@ import { getServices } from '../api/bookingApi';
 import { ArrowRightIcon, CheckIcon, ClockIcon } from './Icons';
 import { DetailDisclosure } from './DetailPageParts';
 import { useDetailReducedMotion } from './useDetailReducedMotion';
+import { duration, easeOut, photoWipe } from '../lib/motion';
 import polishingPhoto from '../assets/premiumwash/polishing.webp';
 import ceramicPhoto from '../assets/premiumwash/ceramic.webp';
 import interiorPhoto from '../assets/premiumwash/interior.webp';
@@ -12,6 +13,11 @@ import ppfPhoto from '../assets/premiumwash/ppf.webp';
 import './Services.css';
 
 const numberFormat = new Intl.NumberFormat('uk-UA');
+const servicePhoto = photoWipe('left', 0.055);
+const titleReveal = {
+  hidden: { y: '105%' },
+  visible: { y: 0, transition: { duration: duration.selector, ease: easeOut } },
+};
 
 const directions = {
   polishing: {
@@ -96,7 +102,14 @@ function ServiceRow({ service, index, open, onToggle }) {
   const panelId = `service-details-${index}`;
 
   return (
-    <li className="service-row" data-service={service.id} data-open={open}>
+    <motion.li
+      className="service-row"
+      data-service={service.id}
+      data-open={open}
+      initial={reduceMotion ? false : 'hidden'}
+      whileInView={reduceMotion ? undefined : 'visible'}
+      viewport={{ once: true, amount: 'some' }}
+    >
       <h2 className="service-row__heading">
         <button
           type="button"
@@ -109,24 +122,17 @@ function ServiceRow({ service, index, open, onToggle }) {
         >
           <span className="service-row__number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
           <span className="service-row__intro">
-            <span id={`${panelId}-title`} className="service-row__title">{title}</span>
+            <span id={`${panelId}-title`} className="service-row__title">
+              <motion.span variants={titleReveal}>{title}</motion.span>
+            </span>
             <span id={`${panelId}-summary`} className="service-row__summary">{direction?.summary ?? service.description}</span>
             <span id={`${panelId}-price`} className="service-row__price">від {numberFormat.format(service.basePrice)} грн</span>
           </span>
           <span className="service-row__frame">
             <motion.span
               className="service-row__photo"
-              initial={reduceMotion ? false : {
-                clipPath: 'polygon(0 0, 62% 0, 46% 100%, 0 100%)',
-                opacity: 0.65,
-              }}
-              whileInView={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)', opacity: 1 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{
-                duration: reduceMotion ? 0 : 0.62,
-                delay: reduceMotion ? 0 : Math.min(index, 3) * 0.055,
-                ease: [0.16, 1, 0.3, 1],
-              }}
+              data-photo-reveal
+              variants={servicePhoto}
             >
               <img src={direction?.photo ?? polishingPhoto} alt="" width={1672} height={941} loading="lazy" />
             </motion.span>
@@ -159,7 +165,7 @@ function ServiceRow({ service, index, open, onToggle }) {
           </Link>
         </div>
       </DetailDisclosure>
-    </li>
+    </motion.li>
   );
 }
 

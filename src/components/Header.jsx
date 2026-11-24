@@ -8,10 +8,9 @@ const navigation = [
   { path: '/services', label: 'Послуги' },
   { path: '/pricing', label: 'Ціни' },
   { path: '/advantages', label: 'Переваги' },
-  { path: '/contacts', label: 'Контакти' },
 ];
 
-export default function Header() {
+export default function Header({ onOpenBooking }) {
   const { pathname } = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const headerRow = useRef(null);
@@ -19,7 +18,7 @@ export default function Header() {
 
   useLayoutEffect(() => {
     const row = headerRow.current;
-    const activeLink = row.querySelector('.nav__link[aria-current="page"], .header__cta[aria-current="page"]');
+    const activeLink = row.querySelector('.nav__link[aria-current="page"], .header__cta[data-booking-page]');
     const previousRoute = row.dataset.activeRoute;
     row.toggleAttribute('data-slide-indicator', Boolean(previousRoute && previousRoute !== pathname));
 
@@ -40,7 +39,8 @@ export default function Header() {
     positionIndicator();
     const observer = new ResizeObserver(positionIndicator);
     observer.observe(row);
-    row.querySelectorAll('.nav__link, .header__cta').forEach((link) => observer.observe(link));
+    row.querySelectorAll('.header__logo, .header__nav, .nav__link, .header__cta')
+      .forEach((element) => observer.observe(element));
 
     return () => observer.disconnect();
   }, [pathname]);
@@ -76,8 +76,9 @@ export default function Header() {
   }, [mobileMenuOpen]);
 
   const closeAfterNavigation = (event) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     setMobileMenuOpen(false);
-    if (event.detail === 0) menuToggle.current.focus();
+    menuToggle.current.focus({ preventScroll: true });
   };
 
   const handleHeaderBlur = (event) => {
@@ -106,11 +107,18 @@ export default function Header() {
         </nav>
 
         <div className="header__actions">
-          <NavLink to="/booking" end className="btn-outline cinema-button header__cta">
+          <button
+            type="button"
+            className="btn-outline cinema-button header__cta"
+            data-booking-page={pathname === '/booking' || undefined}
+            aria-haspopup="dialog"
+            aria-controls="booking-entry-dialog"
+            onClick={(event) => onOpenBooking(event.currentTarget)}
+          >
             <CalendarIcon />
             Записатися
             <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
-          </NavLink>
+          </button>
         </div>
 
         <span className="header__indicator" aria-hidden="true" />
@@ -137,19 +145,29 @@ export default function Header() {
       >
         <div className="cinema-container mobile-menu__content">
           <ul className="mobile-menu__list">
-            {navigation.map(({ path, label }) => (
-              <li key={path}>
+            {navigation.map(({ path, label }, index) => (
+              <li key={path} style={{ '--menu-item': index }}>
                 <NavLink to={path} end className="mobile-menu__link" onClick={closeAfterNavigation}>
                   {label}
                 </NavLink>
               </li>
             ))}
           </ul>
-          <div className="mobile-menu__actions">
-            <NavLink to="/booking" end className="btn-platinum cinema-button" onClick={closeAfterNavigation}>
-              Онлайн-запис
+          <div className="mobile-menu__actions" style={{ '--menu-item': navigation.length }}>
+            <button
+              type="button"
+              className="btn-platinum cinema-button mobile-menu__booking"
+              aria-haspopup="dialog"
+              aria-controls="booking-entry-dialog"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                menuToggle.current.focus({ preventScroll: true });
+                onOpenBooking(menuToggle.current);
+              }}
+            >
+              Записатися
               <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
-            </NavLink>
+            </button>
           </div>
         </div>
       </nav>

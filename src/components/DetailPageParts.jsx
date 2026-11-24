@@ -1,22 +1,23 @@
-import { Fragment } from 'react';
+import { Fragment, useId } from 'react';
 import { motion } from 'motion/react';
 import { useDetailReducedMotion } from './useDetailReducedMotion';
+import { duration, easeOut, photoWipe } from '../lib/motion';
 import './DetailPageParts.css';
 
-const ease = [0.16, 1, 0.3, 1];
-const photoStart = 'polygon(0 0, 78% 0, 58% 100%, 0 100%)';
-const photoEnd = 'polygon(0 0, 100% 0, 100% 100%, 0 100%)';
+const heroWipe = photoWipe();
 
-export function DetailHero({ number, label, lines, description, photo, children }) {
+export function DetailHero({ number, label, lines, description, photo }) {
   const reduceMotion = useDetailReducedMotion();
+  const titleId = useId();
 
   return (
-    <section className="detail-hero" aria-labelledby="detail-page-title">
+    <section className="detail-hero" aria-labelledby={titleId}>
       <motion.div
         className="detail-hero__photo"
-        initial={reduceMotion ? false : { clipPath: photoStart, opacity: 0.55 }}
-        animate={{ clipPath: photoEnd, opacity: 1 }}
-        transition={{ duration: reduceMotion ? 0 : 0.72, ease }}
+        data-photo-reveal
+        variants={heroWipe}
+        initial={reduceMotion ? false : 'hidden'}
+        animate={reduceMotion ? undefined : 'visible'}
       >
         <img src={photo} alt="" width={1672} height={941} fetchPriority="high" />
       </motion.div>
@@ -24,7 +25,7 @@ export function DetailHero({ number, label, lines, description, photo, children 
         <p className="cinema-label detail-hero__label">
           <span aria-hidden="true">{number} / </span>{label}
         </p>
-        <h1 id="detail-page-title" className="detail-hero__title">
+        <h1 id={titleId} className="detail-hero__title">
           {lines.map((line, index) => (
             <Fragment key={line}>
               {index > 0 && ' '}
@@ -32,7 +33,7 @@ export function DetailHero({ number, label, lines, description, photo, children 
                 <motion.span
                   initial={reduceMotion ? false : { y: '110%' }}
                   animate={{ y: 0 }}
-                  transition={{ duration: reduceMotion ? 0 : 0.6, delay: reduceMotion ? 0 : 0.07 + index * 0.09, ease }}
+                  transition={{ duration: reduceMotion ? 0 : duration.heading, delay: reduceMotion ? 0 : 0.06 + index * 0.075, ease: easeOut }}
                 >
                   {line}
                   {index === lines.length - 1 && <i className="detail-hero__slash" aria-hidden="true" />}
@@ -42,7 +43,6 @@ export function DetailHero({ number, label, lines, description, photo, children 
           ))}
         </h1>
         <p className="detail-hero__description">{description}</p>
-        {children}
       </div>
     </section>
   );
@@ -55,10 +55,10 @@ export function DetailReveal({ as: Tag = motion.div, className, delay = 0, child
     <Tag
       {...props}
       className={className ? `detail-reveal ${className}` : 'detail-reveal'}
-      initial={reduceMotion ? false : { opacity: 0.65, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={reduceMotion ? false : { opacity: 0.72 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.13 }}
-      transition={{ duration: reduceMotion ? 0 : 0.46, delay: reduceMotion ? 0 : delay, ease }}
+      transition={{ duration: reduceMotion ? 0 : 0.4, delay: reduceMotion ? 0 : delay, ease: easeOut }}
     >
       {children}
     </Tag>

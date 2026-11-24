@@ -26,7 +26,7 @@
   pointer-events: none;
 }
 
-.service-row:has(.service-row__toggle:is(:hover, :focus-visible))::before,
+.service-row:has(.service-row__toggle:focus-visible)::before,
 .service-row[data-open='true']::before {
   transform: scaleX(1);
 }
@@ -59,7 +59,7 @@
   transition: color var(--transition-normal);
 }
 
-.service-row__toggle:is(:hover, :focus-visible) .service-row__number,
+.service-row__toggle:focus-visible .service-row__number,
 .service-row[data-open='true'] .service-row__number {
   color: var(--color-accent);
 }
@@ -72,7 +72,17 @@
 
 .service-row__title {
   display: block;
+  overflow: clip;
+  overflow-clip-margin: 0.12em;
   font: 600 clamp(1.44rem, 2.15vw, 2.4rem)/1.04 var(--font-display);
+}
+
+.service-row__title > span {
+  display: block;
+}
+
+.service-row__toggle:focus-visible .service-row__title > span {
+  transform: none !important;
 }
 
 .service-row__summary {
@@ -109,7 +119,7 @@
   object-fit: cover;
   object-position: 50% 52%;
   filter: brightness(0.84);
-  transition: transform var(--transition-smooth), filter var(--transition-normal);
+  transition: transform var(--motion-photo) var(--easing-glide);
 }
 
 .service-row[data-service='ceramic'] .service-row__photo img {
@@ -124,18 +134,13 @@
   object-position: 50% 44%;
 }
 
-.service-row__toggle:is(:hover, :focus-visible) img,
-.service-row[data-open='true'] .service-row__photo img {
-  filter: brightness(1.02);
-}
-
 .service-row__arrow {
   justify-self: center;
   color: var(--color-accent);
   transition: transform var(--transition-normal), color var(--transition-fast);
 }
 
-.service-row__toggle:is(:hover, :focus-visible) .service-row__arrow {
+.service-row__toggle:focus-visible .service-row__arrow {
   color: var(--color-text-primary);
 }
 
@@ -209,13 +214,27 @@
   line-height: 1.42;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .service-row__toggle:is(:hover, :focus-visible) img {
-    transform: scale(1.055);
+@media (hover: hover) and (pointer: fine) {
+  .service-row:has(.service-row__toggle:hover)::before {
+    transform: scaleX(1);
   }
 
-  .service-row[data-open='false'] .service-row__toggle:is(:hover, :focus-visible) .service-row__arrow {
-    transform: translateX(5px);
+  .service-row__toggle:hover .service-row__number {
+    color: var(--color-accent);
+  }
+
+  .service-row__toggle:hover .service-row__arrow {
+    color: var(--color-text-primary);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .service-row__toggle:hover img {
+      transform: translateX(1%) scale(1.055);
+    }
+
+    .service-row[data-open='false'] .service-row__toggle:hover .service-row__arrow {
+      transform: translateX(5px);
+    }
   }
 }
 
@@ -291,6 +310,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .service-row__title > span {
+    transform: none !important;
+  }
+
   .service-row::before,
   .service-row__number,
   .service-row__photo img,

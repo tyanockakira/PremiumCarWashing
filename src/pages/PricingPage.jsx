@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'motion/react';
 import Pricing from '../components/Pricing';
 import { DetailDisclosure, DetailHero, DetailReveal } from '../components/DetailPageParts';
-import { ArrowRightIcon, MinusIcon, PlusIcon } from '../components/Icons';
+import { PlusIcon } from '../components/Icons';
 import headlightPhoto from '../assets/premiumwash/booking-headlight.webp';
 
 const faqs = [
@@ -44,7 +42,7 @@ export default function PricingPage() {
         <DetailReveal>
           <h2 id="pricing-faq-heading" className="cinema-heading detail-section__title">Поширені запитання</h2>
         </DetailReveal>
-        <DetailReveal className="pricing-faq__list">
+        <div className="pricing-faq__list">
           {faqs.map(({ question, answer }, index) => {
             const open = openFaq === index;
             const panelId = `pricing-faq-${index}`;
@@ -59,7 +57,7 @@ export default function PricingPage() {
                     onClick={() => setOpenFaq((current) => current === index ? null : index)}
                   >
                     {question}
-                    {open ? <MinusIcon size={16} /> : <PlusIcon size={16} />}
+                    <PlusIcon size={16} />
                   </button>
                 </h3>
                 <DetailDisclosure id={panelId} open={open}>
@@ -68,18 +66,8 @@ export default function PricingPage() {
               </div>
             );
           })}
-        </DetailReveal>
-      </section>
-
-      <DetailReveal as={motion.section} className="cinema-container detail-cta" aria-labelledby="pricing-cta-heading">
-        <div>
-          <h2 id="pricing-cta-heading" className="cinema-heading detail-cta__title">Потрібен індивідуальний розрахунок?</h2>
-          <p>Під час запису можна залишити коментар щодо стану авто й бажаних робіт.</p>
         </div>
-        <Link to="/booking" className="btn-outline cinema-button">
-          Забронювати візит <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
-        </Link>
-      </DetailReveal>
+      </section>
     </div>
   );
 }

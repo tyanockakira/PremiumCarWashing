@@ -8,7 +8,7 @@
 .header__container {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.24fr) auto minmax(0, 0.76fr);
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: clamp(12px, 2vw, 32px);
   height: var(--header-height);
@@ -46,11 +46,17 @@
   color: var(--color-text-secondary);
   font-weight: 500;
   white-space: nowrap;
-  transition: color var(--transition-fast), transform var(--transition-fast);
+  transition: color var(--transition-fast);
 }
 
-.nav__link:is(:hover, :focus-visible, [aria-current="page"]) {
+.nav__link:is(:focus-visible, [aria-current="page"]) {
   color: var(--color-text-primary);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav__link:hover {
+    color: var(--color-text-primary);
+  }
 }
 
 .header__indicator {
@@ -66,7 +72,7 @@
 }
 
 .header__container[data-slide-indicator] .header__indicator {
-  transition: transform var(--motion-nav) var(--easing-editorial);
+  transition: transform var(--motion-nav) var(--easing-glide);
 }
 
 .header__container[data-active-route] .header__indicator {
@@ -84,19 +90,25 @@
   white-space: nowrap;
 }
 
-.header__cta[aria-current="page"] {
+.header__cta[data-booking-page] {
   border-color: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(.header__cta, .mobile-menu__booking):focus-visible .cinema-arrow {
+    transform: translateX(4px);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    :is(.header__cta, .mobile-menu__booking):hover .cinema-arrow {
+      transform: translateX(4px);
+    }
+  }
 }
 
 .header__toggle,
 .mobile-menu {
   display: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .nav__link:hover {
-    transform: translateY(-2px);
-  }
 }
 
 @media (min-width: 1024px) and (max-width: 1199px) {
@@ -152,7 +164,7 @@
     transition: background-color var(--transition-fast);
   }
 
-  .header__toggle:is(:hover, [aria-expanded="true"]) {
+  .header__toggle:is(:active, :focus-visible, [aria-expanded="true"]) {
     background-color: var(--bg-selected);
   }
 
@@ -166,7 +178,8 @@
     border-bottom: 1px solid var(--color-divider);
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-4px);
+    transform: translateY(-8px);
+    overscroll-behavior: contain;
     transition:
       opacity var(--motion-menu) var(--easing-editorial),
       transform var(--motion-menu) var(--easing-editorial),
@@ -201,6 +214,23 @@
   .mobile-menu__actions {
     margin-top: var(--space-16);
   }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mobile-menu[data-open="true"] :is(.mobile-menu__list > li, .mobile-menu__actions) {
+      animation: mobile-menu-entry var(--motion-menu) var(--easing-editorial) backwards;
+      animation-delay: calc(var(--menu-item) * var(--motion-stagger));
+    }
+
+    .mobile-menu:focus-within :is(.mobile-menu__list > li, .mobile-menu__actions) {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+}
+
+@keyframes mobile-menu-entry {
+  from { opacity: 0.45; transform: translateX(-8px); }
+  to { opacity: 1; transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
