@@ -39,8 +39,8 @@ export default function Footer() {
               Стандарти провідних європейських дітейлінг-ательє.
             </p>
             <div className="footer-badges">
-              <span className="brand-pill">Gyeon Certified</span>
-              <span className="brand-pill">Rupes Authorized</span>
+              <span className="brand-pill">Gyeon</span>
+              <span className="brand-pill">Rupes</span>
               <span className="brand-pill">Koch Chemie</span>
             </div>
           </div>

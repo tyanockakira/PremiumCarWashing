@@ -67,24 +67,11 @@ export default function ServicesPage() {
             </p>
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '24px',
-            marginTop: '40px'
-          }}>
+          <div className="process-grid">
             {processSteps.map((step) => (
               <div
                 key={step.num}
-                style={{
-                  background: 'var(--bg-card)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '28px 22px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px'
-                }}
+                className="process-step-card"
               >
                 <span style={{
                   fontSize: '2rem',

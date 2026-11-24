@@ -88,8 +88,8 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 38px 30px;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr) auto;
   transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
   position: relative;
 }
@@ -192,7 +192,6 @@
   flex-direction: column;
   gap: 12px;
   margin-bottom: 34px;
-  flex-grow: 1;
 }
 
 .pricing-list-item {

@@ -86,7 +86,17 @@
   font-family: inherit;
   font-size: 0.95rem;
   outline: none;
-  transition: all var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.booking-input[type='date'] {
+  color-scheme: dark;
+}
+
+.booking-input[type='date']::-webkit-calendar-picker-indicator {
+  opacity: 0.9;
+  filter: invert(1);
+  cursor: pointer;
 }
 
 .booking-select {
@@ -117,7 +127,7 @@
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: border-color var(--transition-fast), color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .slot-pill:hover {
@@ -143,7 +153,7 @@
 .booking-privacy {
   text-align: center;
   font-size: 0.78rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   margin-top: 6px;
 }
 

@@ -66,11 +66,11 @@ export default function AdvantagesPage() {
                   gap: '8px'
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#ffffff' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#ffffff', lineHeight: '1.2' }}>
                     {brand.name}
                   </h3>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--color-gold)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--color-gold)', textTransform: 'uppercase', letterSpacing: '1px' }}>
                     {brand.country}
                   </span>
                 </div>
