@@ -17,6 +17,8 @@ const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const PricingPage = lazy(() => import('./pages/PricingPage'));
 const AdvantagesPage = lazy(() => import('./pages/AdvantagesPage'));
 const LazyBookingPage = lazy(() => import('./pages/BookingPage'));
+const LazyAdminLoginPage = lazy(() => import('./pages/AdminLoginPage'));
+const LazyAdminPage = lazy(() => import('./pages/AdminPage'));
 
 const bookingHeadingSelector = '.page-transition-wrapper:not([inert]) #booking-title';
 
@@ -75,6 +77,8 @@ const PageFrame = forwardRef(function PageFrame({ location, reduce, onOpenConsul
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/advantages" element={<AdvantagesPage />} />
           <Route path="/booking" element={<LazyBookingPage onOpenConsultation={onOpenConsultation} />} />
+          <Route path="/admin/login" element={<LazyAdminLoginPage />} />
+          <Route path="/admin" element={<LazyAdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </RouteErrorBoundary>
@@ -120,6 +124,7 @@ function AppShell({ initialPage, initialRoute }) {
   const mainContent = useRef(null);
   const normalizedPath = location.pathname.toLowerCase().replace(/\/$/, '') || '/';
   const isBooking = normalizedPath === '/booking';
+  const isAdminRoute = normalizedPath === '/admin' || normalizedPath === '/admin/login';
   const isInitialRoute = normalizedPath === initialRoute;
   const routeReady = !isInitialRoute || initialPage;
   const params = new URLSearchParams(location.search);
@@ -179,7 +184,7 @@ function AppShell({ initialPage, initialRoute }) {
         <a className="skip-link btn-platinum cinema-button" href="#main-content" onClick={skipToContent}>
           Перейти до основного вмісту
         </a>
-        <Header onOpenBooking={(opener) => openEntry('choice', opener)} />
+        {!isAdminRoute && <Header onOpenBooking={(opener) => openEntry('choice', opener)} />}
         <main id="main-content" tabIndex={-1} ref={mainContent}>
           {routeReady && (
             <Suspense fallback={null}>
@@ -187,7 +192,7 @@ function AppShell({ initialPage, initialRoute }) {
             </Suspense>
           )}
         </main>
-        {routeReady && <Footer />}
+        {routeReady && !isAdminRoute && <Footer />}
       </div>
       <BookingEntryModal
         session={session}

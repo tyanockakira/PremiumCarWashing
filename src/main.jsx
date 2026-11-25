@@ -36,6 +36,8 @@ const initialRouteLoaders = {
   '/pricing': () => import('./pages/PricingPage'),
   '/advantages': () => import('./pages/AdvantagesPage'),
   '/booking': () => import('./pages/BookingPage'),
+  '/admin/login': () => import('./pages/AdminLoginPage'),
+  '/admin': () => import('./pages/AdminPage'),
 }
 
 function renderApp(initialPage, initialRoute) {
