@@ -1,73 +1,122 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { getPricingData } from '../api/bookingApi';
+import { defaultCarClasses } from '../data/carClasses';
+import { bookingPackages } from '../data/bookingOptions';
+import { ArrowRightIcon, CheckIcon, ClockIcon } from './Icons';
+import { useDetailReducedMotion } from './useDetailReducedMotion';
+import { duration, easeGlide } from '../lib/motion';
 import './Pricing.css';
-
-const defaultCarClasses = [
-  { id: 'sedan', label: 'Седан / Купе', multiplier: 1, example: 'BMW 3/5, Porsche 911, Mercedes E-Class' },
-  { id: 'crossover', label: 'Кроссовер', multiplier: 1.2, example: 'BMW X3/X5, Porsche Macan/Cayenne' },
-  { id: 'suv', label: 'Внедорожник / SUV', multiplier: 1.4, example: 'Mercedes G-Class, Range Rover, GLS' }
-];
 
 const defaultPackages = [
   {
-    id: 'pkg-light',
-    title: 'Executive Care',
-    tag: 'РЕГУЛЯРНЫЙ УХОД',
-    basePrice: 9500,
-    time: '4–6 часов',
+    id: bookingPackages[0].id,
+    title: bookingPackages[0].title,
+    tag: 'Регулярний догляд',
+    basePrice: 4500,
+    time: '4–6 годин',
     featured: false,
-    description: 'Идеальный комплекс для поддержания безупречной чистоты кузова и уюта в салоне.',
+    description: 'Миття кузова, кварцовий захист лаку та догляд за салоном.',
     items: [
-      '3-фазная детейлинг-мойка с кистями',
-      'Очистка дисков от тормозной пыли',
-      'Гидрофобное кварцевое покрытие ЛКП',
-      'Деликатная уборка салона пылесосом и кистями',
-      'Кондиционер для кожи с матовым эффектом',
-      'Матовое чернение резины премиум-составом'
+      '3-фазне дітейлінг-миття з пензлями',
+      'Очищення дисків від гальмівного пилу',
+      'Гідрофобне кварцове покриття ЛФП',
+      'Делікатне прибирання салону пилососом і пензлями',
+      'Кондиціонер для шкіри з матовим ефектом',
+      'Матове чорніння гуми преміум-складом'
     ]
   },
   {
-    id: 'pkg-ceramic',
-    title: 'Ceramic Elite',
-    tag: 'АБСОЛЮТНЫЙ ХИТ',
-    basePrice: 48000,
-    time: '2 дня',
+    id: bookingPackages[1].id,
+    title: bookingPackages[1].title,
+    tag: 'Керамічний захист',
+    basePrice: 22000,
+    time: '2 дні',
     featured: true,
-    description: 'Максимальный глянец, устранение рисок и многослойная защита керамикой 9H.',
+    description: 'Корекція дрібних рисок і багатошаровий захист керамікою 9H Pro.',
     items: [
-      'Полная деконтаминация ЛКП синтетической глиной',
-      'Мягкая полировка с удалением до 90% паутинки',
-      '2 слоя керамического покрытия 9H Pro',
-      'Гидрофобный слой «Антидождь» на все стёкла',
-      'Термосушка в ИК-камере для закрепления',
-      'Защитная пропитка кожаных элементов салона'
+      'Повна деконтамінація ЛФП синтетичною глиною',
+      'М’яке полірування з усуненням до 90% павутинки',
+      '2 шари керамічного покриття 9H Pro',
+      'Гідрофобний шар «Антидощ» на всі вікна',
+      'Термосушка в ІЧ-камері для закріплення',
+      'Захисне просочення шкіряних елементів салону'
     ]
   },
   {
-    id: 'pkg-royal',
-    title: 'Royal Perfection',
-    tag: 'ЭКСКЛЮЗИВНЫЙ КОМПЛЕКС',
-    basePrice: 115000,
-    time: '3–4 дня',
+    id: bookingPackages[2].id,
+    title: bookingPackages[2].title,
+    tag: 'Комплексний захист',
+    basePrice: 55000,
+    time: '3–4 дні',
     featured: false,
-    description: 'Бескомпромиссная реставрация, бронирование зон риска и музейный уровень блеска.',
+    description: 'Відновлення кузова, захист зон ризику плівкою та глибоке очищення салону.',
     items: [
-      'Глубокая восстановительная полировка кузова',
-      '3 слоя нанокерамики 10H + гидрофобный Top Coat',
-      'Оклейка зон риска полиуретановой пленкой PPF',
-      'Полная химчистка салона со снятием сидений',
-      'Озонирование и дезинфекция системы кондиционирования',
-      'Сертификат и гарантийная книжка на 3 года'
+      'Глибоке відновлювальне полірування кузова',
+      '3 шари нанокераміки 10H + гідрофобний Top Coat',
+      'Обклеювання зон ризику поліуретановою плівкою PPF',
+      'Повна хімчистка салону зі зняттям сидінь',
+      'Озонування та дезінфекція системи кондиціонування',
+      'Сертифікат та гарантійна книжка на 3 роки'
     ]
   }
 ];
 
-export default function Pricing({ onSelectPackage, hideHeader = false }) {
+const numberFormat = new Intl.NumberFormat('uk-UA');
+const priceTiming = { duration: duration.price * 1000, easing: `cubic-bezier(${easeGlide.join(', ')})` };
+
+function calculatePrice(base, multiplier) {
+  return Math.round((base * multiplier) / 500) * 500;
+}
+
+function PackagePrice({ amount, widthSample, reduceMotion }) {
+  const previousAmount = useRef(amount);
+  const current = useRef(null);
+  const outgoing = useRef(null);
+  const formatted = numberFormat.format(amount);
+
+  useLayoutEffect(() => {
+    const previous = previousAmount.current;
+    previousAmount.current = amount;
+
+    if (reduceMotion || previous === amount) return;
+
+    const offset = amount > previous ? '100%' : '-100%';
+    const exit = amount > previous ? '-100%' : '100%';
+    outgoing.current.textContent = numberFormat.format(previous);
+
+    const enterAnimation = current.current.animate(
+      [{ transform: `translateY(${offset})` }, { transform: 'translateY(0)' }],
+      priceTiming,
+    );
+    const exitAnimation = outgoing.current.animate(
+      [{ transform: 'translateY(0)', visibility: 'visible' }, { transform: `translateY(${exit})`, visibility: 'visible' }],
+      priceTiming,
+    );
+
+    return () => {
+      enterAnimation.cancel();
+      exitAnimation.cancel();
+    };
+  }, [amount, reduceMotion]);
+
+  return (
+    <span className="pricing-plan__amount">
+      <span className="detail-sr-only">{formatted} грн</span>
+      <span className="pricing-plan__digits" data-width={widthSample} aria-hidden="true">
+        <span className="pricing-plan__previous" ref={outgoing} />
+        <span ref={current}>{formatted}</span>
+      </span>
+      <span aria-hidden="true">грн</span>
+    </span>
+  );
+}
+
+export default function Pricing() {
   const [carClassesList, setCarClassesList] = useState(defaultCarClasses);
   const [packagesList, setPackagesList] = useState(defaultPackages);
   const [selectedClass, setSelectedClass] = useState('sedan');
-  const navigate = useNavigate();
+  const reduceMotion = useDetailReducedMotion();
 
   useEffect(() => {
     let isMounted = true;
@@ -88,7 +137,7 @@ export default function Pricing({ onSelectPackage, hideHeader = false }) {
             res.packages.map((p) => ({
               id: p.id,
               title: p.title,
-              tag: p.tag || 'ТАРИФ',
+              tag: p.tag || 'Пакет догляду',
               basePrice: p.base_price,
               time: p.time_text || '',
               featured: Boolean(p.is_featured),
@@ -104,104 +153,90 @@ export default function Pricing({ onSelectPackage, hideHeader = false }) {
     };
   }, []);
 
-  const currentClassObj = carClassesList.find((c) => c.id === selectedClass) || carClassesList[0];
-  const multiplier = currentClassObj ? currentClassObj.multiplier : 1;
-
-  const formatPrice = (base) => {
-    const total = Math.round((base * multiplier) / 500) * 500;
-    return new Intl.NumberFormat('ru-RU').format(total) + ' ₽';
-  };
-
-  const handleSelect = (pkgTitle) => {
-    const fullTitle = `${pkgTitle} (${currentClassObj?.label})`;
-    if (onSelectPackage) {
-      onSelectPackage(fullTitle);
-    } else {
-      navigate('/booking', { state: { service: fullTitle } });
-    }
-  };
+  const currentClassIndex = Math.max(0, carClassesList.findIndex(({ id }) => id === selectedClass));
+  const currentClass = carClassesList[currentClassIndex];
+  const indicatorOffset = `${currentClassIndex * 100}%`;
+  const packages = packagesList.map((pkg) => ({
+    ...pkg,
+    amount: calculatePrice(pkg.basePrice, currentClass.multiplier),
+    widthSample: carClassesList
+      .map(({ multiplier }) => numberFormat.format(calculatePrice(pkg.basePrice, multiplier)))
+      .reduce((longest, price) => price.length > longest.length ? price : longest, ''),
+  }));
 
   return (
-    <section id="pricing" className="pricing-section">
-      <div className="container">
-        {/* Section Header */}
-        {!hideHeader && (
-          <div className="section-header">
-            <div className="gold-sub-title">ПРОЗРАЧНЫЙ ПРАЙС-ЛИСТ</div>
-            <h2 className="section-title">
-              Пакеты услуг и <span className="gold-text">калькулятор стоимости</span>
-            </h2>
-            <p className="section-desc">
-              Выберите класс вашего автомобиля, чтобы увидеть точную расчетную стоимость
-              готовых комплексов детейлинга.
-            </p>
-          </div>
-        )}
-
-        {/* Car Class Selector Tabs */}
-        <div className="class-selector">
-          <span className="class-selector__label">Класс автомобиля:</span>
-          <div className="class-selector__tabs">
+    <section id="pricing" className="cinema-container pricing-calculator" aria-label="Тарифи та калькулятор вартості">
+      <fieldset id="car-class" className="pricing-classes" tabIndex={-1}>
+        <legend>Клас автомобіля</legend>
+        <div className="pricing-classes__layout">
+          <div className="pricing-classes__options" style={{ '--class-count': carClassesList.length }}>
+            <span
+              className="pricing-classes__indicator"
+              aria-hidden="true"
+              style={{ '--indicator-offset': indicatorOffset }}
+            />
             {carClassesList.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={`class-tab ${selectedClass === item.id ? 'class-tab--active' : ''}`}
-                onClick={() => setSelectedClass(item.id)}
-              >
-                <span className="class-tab__title">{item.label}</span>
-                <span className="class-tab__example">{item.example}</span>
-              </button>
+              <label key={item.id}>
+                <input
+                  type="radio"
+                  name="car-class"
+                  value={item.id}
+                  checked={currentClass.id === item.id}
+                  aria-describedby={currentClass.id === item.id && item.example ? 'car-class-example' : undefined}
+                  onChange={() => setSelectedClass(item.id)}
+                />
+                <span>{item.label === 'Седан / Купе' ? 'Седан / купе' : item.label}</span>
+              </label>
             ))}
           </div>
+          <p id="car-class-example" className="pricing-classes__example">{currentClass.example}</p>
         </div>
+      </fieldset>
 
-        {/* Packages Cards */}
-        <div className="pricing-grid">
-          {packagesList.map((pkg) => (
-            <div
-              key={pkg.id}
-              className={`pricing-card ${pkg.featured ? 'pricing-card--featured' : ''}`}
-            >
-              {pkg.featured && (
-                <div className="pricing-badge">РЕКОМЕНДУЕМ</div>
-              )}
-
-              <div className="pricing-card__header">
-                <span className="pricing-tag">{pkg.tag}</span>
-                <h3 className="pricing-card__title">{pkg.title}</h3>
-                <p className="pricing-card__desc">{pkg.description}</p>
-                {pkg.time && (
-                  <div className="pricing-time">Срок выполнения: <strong>{pkg.time}</strong></div>
-                )}
-              </div>
-
-              <div className="pricing-card__cost">
-                <span className="cost-from">Стоимость:</span>
-                <div className="cost-amount gold-text">
-                  {formatPrice(pkg.basePrice)}
-                </div>
-              </div>
-
-              <ul className="pricing-card__list">
-                {pkg.items.map((item, idx) => (
-                  <li key={idx} className="pricing-list-item">
-                    <span className="pricing-check">✓</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <button
-                type="button"
-                className={pkg.featured ? 'btn-gold pricing-btn' : 'btn-outline pricing-btn'}
-                onClick={() => handleSelect(pkg.title)}
-              >
-                Выбрать комплекс
-              </button>
+      <p className="detail-sr-only" role="status">
+        {packages.map(({ title, amount }) => `${title} — ${numberFormat.format(amount)} грн`).join('. ')}
+      </p>
+      <div className="pricing-comparison">
+        {packages.map((pkg, index) => (
+          <article
+            key={pkg.id}
+            aria-labelledby={`package-title-${index}`}
+            className="pricing-plan"
+            data-featured={pkg.featured}
+          >
+            <header className="pricing-plan__header">
+              <p className="pricing-plan__tag">{pkg.featured ? 'Рекомендуємо' : pkg.tag}</p>
+              <h2 id={`package-title-${index}`} lang="en">{pkg.title}</h2>
+              <p className="pricing-plan__description">{pkg.description}</p>
+            </header>
+            <ul className="detail-checklist pricing-plan__items" aria-label="Що входить у пакет">
+              {pkg.items.map((item, index) => (
+                <li key={index}><CheckIcon size={16} /><span>{item}</span></li>
+              ))}
+            </ul>
+            <div className="pricing-plan__meta">
+              {pkg.time && <p><ClockIcon size={16} /><span className="detail-sr-only">Тривалість </span>{pkg.time}</p>}
             </div>
-          ))}
-        </div>
+            <div className="pricing-plan__footer">
+              <div>
+                <p className="pricing-plan__estimate">Орієнтовно</p>
+                <PackagePrice amount={pkg.amount} widthSample={pkg.widthSample} reduceMotion={reduceMotion} />
+              </div>
+              <Link
+                to="/booking"
+                state={{
+                  service: `${pkg.title} (${currentClass.label})`,
+                  selection: { kind: 'package', id: pkg.id },
+                  carClass: { id: currentClass.id, label: currentClass.label, example: currentClass.example },
+                }}
+                className={`cinema-button ${pkg.featured ? 'btn-platinum' : 'btn-outline'}`}
+                aria-label={`Обрати комплекс ${pkg.title}`}
+              >
+                Обрати <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
+              </Link>
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   );

@@ -1,193 +1,219 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { getServices } from '../api/bookingApi';
+import { ArrowRightIcon, CheckIcon, ClockIcon } from './Icons';
+import { DetailDisclosure } from './DetailPageParts';
+import { useDetailReducedMotion } from './useDetailReducedMotion';
+import { duration, easeOut, photoWipe } from '../lib/motion';
+import polishingPhoto from '../assets/premiumwash/polishing.webp';
+import ceramicPhoto from '../assets/premiumwash/ceramic.webp';
+import interiorPhoto from '../assets/premiumwash/interior.webp';
+import ppfPhoto from '../assets/premiumwash/ppf.webp';
+import { getResponsiveImage } from '../data/responsiveImages';
 import './Services.css';
 
-const defaultServicesData = [
+const numberFormat = new Intl.NumberFormat('uk-UA');
+const servicePhoto = photoWipe('left', 0.055);
+const titleReveal = {
+  hidden: { y: '105%' },
+  visible: { y: 0, transition: { duration: duration.selector, ease: easeOut } },
+};
+
+const directions = {
+  polishing: {
+    title: 'Полірування кузова',
+    summary: 'Корекція дрібних дефектів лаку та відновлення глибини кольору й блиску.',
+    photo: polishingPhoto,
+  },
+  ceramic: {
+    title: 'Захисні покриття',
+    summary: 'Багатошарове керамічне покриття з водовідштовхувальним ефектом.',
+    photo: ceramicPhoto,
+  },
+  interior: {
+    title: 'Догляд за салоном',
+    summary: 'Хімчистка та догляд за шкірою, пластиком і текстилем.',
+    photo: interiorPhoto,
+  },
+  ppf: {
+    title: 'Обклеювання PPF',
+    summary: 'Прозора поліуретанова плівка для захисту кузова від сколів і подряпин.',
+    photo: ppfPhoto,
+  },
+};
+
+const defaultServices = [
   {
     id: 'polishing',
-    title: 'Восстановительная полировка',
-    tag: 'ГЛУБОКИЙ ГЛЯНЕЦ',
-    price: 'от 18 000 ₽',
-    duration: '1–2 дня',
-    image: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=800&q=80',
-    description: 'Многоэтапное удаление царапин, паутинок и оксидного слоя с сохранением максимальной толщины заводского лака.',
+    title: 'Відновлювальне полірування',
+    basePrice: 8500,
+    duration: '1–2 дні',
+    description: 'Багатоетапна корекція подряпин, слідів від миття та окиснення з контролем товщини заводського лаку.',
     features: [
-      'Устранение до 98% дефектов и рисок',
-      'Пасты и полировальные круги Rupes & Koch Chemie',
-      'Контроль толщины ЛКП ультразвуковым сканером',
-      'Финишная антиголограммная обработка'
+      'Корекція дрібних подряпин і рисок',
+      'Пасти та полірувальні круги Rupes і Koch Chemie',
+      'Контроль товщини лакофарбового покриття',
+      'Фінішна антиголограмна обробка',
     ],
-    badgeColor: 'gold'
   },
   {
     id: 'ceramic',
-    title: 'Нанокерамика 9H Pro',
-    tag: 'ХИТ ЗАЩИТЫ',
-    featured: true,
-    price: 'от 35 000 ₽',
-    duration: '2–3 дня',
-    image: 'https://images.unsplash.com/photo-1619405399517-d7fce0f13302?auto=format&fit=crop&w=800&q=80',
-    description: 'Нанесение многослойной керамической брони Gyeon Quartz с гидрофобным эффектом и зеркальной глубиной цвета.',
+    title: 'Нанокераміка 9H Pro',
+    basePrice: 16000,
+    duration: '2–3 дні',
+    description: 'Нанесення багатошарового керамічного покриття Gyeon Quartz на підготовлений кузов.',
     features: [
-      'Защита от реагентов, смол и выгорания цвета',
-      'Экстремальный водо- и грязеотталкивающий эффект',
-      'Нанесение 2–4 слоёв с ИК-сушкой',
-      'Сертификат и гарантия на стойкость 24–36 месяцев'
+      'Захист від реагентів, смол і бруду',
+      'Водовідштовхувальне покриття',
+      'Нанесення 2–4 шарів з інфрачервоним сушінням',
     ],
-    badgeColor: 'gold-solid'
   },
   {
     id: 'interior',
-    title: 'Премиум-химчистка салона',
-    tag: 'СПА ДЛЯ САЛОНА',
-    price: 'от 16 000 ₽',
-    duration: '1–2 дня',
-    image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80',
-    description: 'Деликатная химчистка всех поверхностей с озонированием и консервацией кожи натуральными швейцарскими составами.',
+    title: 'Преміум-хімчистка салону',
+    basePrice: 7500,
+    duration: '1–2 дні',
+    description: 'Делікатне очищення поверхонь салону, озонування та догляд за шкірою.',
     features: [
-      'Глубокая очистка кожи, алькантары и текстиля',
-      'Антибактериальная обработка и озонирование',
-      'Питание и защита кожи кремами LeTech',
-      'Безопасная эко-химия без резких запахов'
+      'Глибоке очищення шкіри, алькантари та текстилю',
+      'Антибактеріальна обробка й озонування',
+      'Догляд за шкірою засобами LeTech',
+      'Очищення засобами без різкого запаху',
     ],
-    badgeColor: 'gold'
   },
   {
     id: 'ppf',
-    title: 'Оклейка полиуретаном PPF',
-    tag: 'БРОНЕПЛЕНКА',
-    price: 'от 65 000 ₽',
-    duration: '2–4 дня',
-    image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80',
-    description: 'Невидимый барьер от сколов, гравия, царапин и притёртостей пленками премиум-сегмента SunTek и Stek.',
+    title: 'Обклеювання поліуретаном PPF',
+    basePrice: 32000,
+    duration: '2–4 дні',
+    description: 'Захист лаку плівками SunTek і Stek від гравію, сколів та дрібних пошкоджень.',
     features: [
-      'Эффект самозатягивания царапин при нагреве',
-      'Толщина полиуретана до 220 микрон',
-      'Идеальный раскрой по фирменным лекалам',
-      'Официальная гарантия производителя 7 лет'
+      'Самовідновлення поверхні плівки під час нагрівання',
+      'Товщина поліуретану до 220 мікронів',
+      'Розкрій плівки за лекалами',
     ],
-    badgeColor: 'gold'
-  }
+  },
 ];
 
-export default function Services({ onSelectService, hideHeader = false }) {
-  const [services, setServices] = useState(defaultServicesData);
-  const navigate = useNavigate();
+function ServiceRow({ service, index, open, onToggle }) {
+  const reduceMotion = useDetailReducedMotion();
+  const direction = directions[service.id];
+  const title = direction?.title ?? service.title;
+  const panelId = `service-details-${index}`;
+
+  return (
+    <motion.li
+      className="service-row"
+      data-service={service.id}
+      data-open={open}
+      initial={reduceMotion ? false : 'hidden'}
+      whileInView={reduceMotion ? undefined : 'visible'}
+      viewport={{ once: true, amount: 'some' }}
+    >
+      <h2 className="service-row__heading">
+        <button
+          type="button"
+          className="service-row__toggle"
+          aria-expanded={open}
+          aria-controls={panelId}
+          aria-labelledby={`${panelId}-title`}
+          aria-describedby={`${panelId}-summary ${panelId}-price`}
+          onClick={onToggle}
+        >
+          <span className="service-row__number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+          <span className="service-row__intro">
+            <span id={`${panelId}-title`} className="service-row__title">
+              <motion.span variants={titleReveal}>{title}</motion.span>
+            </span>
+            <span id={`${panelId}-summary`} className="service-row__summary">{direction?.summary ?? service.description}</span>
+            <span id={`${panelId}-price`} className="service-row__price">від {numberFormat.format(service.basePrice)} грн</span>
+          </span>
+          <span className="service-row__frame">
+            <motion.span
+              className="service-row__photo"
+              data-photo-reveal
+              variants={servicePhoto}
+            >
+              <img
+                src={direction?.photo ?? polishingPhoto}
+                srcSet={getResponsiveImage(direction?.photo ?? polishingPhoto)?.srcSet}
+                sizes="(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 520px"
+                alt=""
+                width={1672}
+                height={941}
+                loading="lazy"
+              />
+            </motion.span>
+          </span>
+          <ArrowRightIcon size={24} className="service-row__arrow" />
+        </button>
+      </h2>
+      <DetailDisclosure id={panelId} open={open}>
+        <div className="service-row__details">
+          <div>
+            <h3>{service.title}</h3>
+            {service.description && <p>{service.description}</p>}
+            {service.duration && (
+              <p className="service-row__duration"><ClockIcon size={16} /> {service.duration}</p>
+            )}
+          </div>
+          {service.features.length > 0 && (
+            <ul className="detail-checklist">
+              {service.features.map((feature, index) => (
+                <li key={index}><CheckIcon size={16} /><span>{feature}</span></li>
+              ))}
+            </ul>
+          )}
+          <Link
+            to="/booking"
+            state={{ service: service.title, selection: { kind: 'service', slug: service.id } }}
+            className="btn-platinum cinema-button"
+          >
+            Записатися <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
+          </Link>
+        </div>
+      </DetailDisclosure>
+    </motion.li>
+  );
+}
+
+export default function Services() {
+  const [services, setServices] = useState(defaultServices);
+  const [openService, setOpenService] = useState(null);
 
   useEffect(() => {
-    let isMounted = true;
+    let active = true;
     getServices().then((data) => {
-      if (isMounted && data && data.length > 0) {
-        setServices(
-          data.map((item) => ({
-            id: item.slug || item.id,
-            title: item.title,
-            tag: item.tag || 'ПРЕМИУМ',
-            featured: Boolean(item.is_featured),
-            price: `от ${new Intl.NumberFormat('ru-RU').format(item.base_price)} ₽`,
-            duration: item.duration_text || '',
-            image: item.image_url || defaultServicesData[0].image,
-            description: item.description,
-            features: item.features || []
-          }))
-        );
+      if (active && data?.length) {
+        setServices(data.map((item) => ({
+          id: item.slug,
+          title: item.title,
+          basePrice: item.base_price,
+          duration: item.duration_text,
+          description: item.description,
+          features: item.features || [],
+        })));
       }
     });
     return () => {
-      isMounted = false;
+      active = false;
     };
   }, []);
 
-  const handleBook = (title) => {
-    if (onSelectService) {
-      onSelectService(title);
-    } else {
-      navigate('/booking', { state: { service: title } });
-    }
-  };
-
   return (
-    <section id="services" className="services-section">
-      <div className="container">
-        {/* Section Header */}
-        {!hideHeader && (
-          <div className="section-header">
-            <div className="gold-sub-title">ЭКСКЛЮЗИВНЫЕ УСЛУГИ</div>
-            <h2 className="section-title">
-              Индивидуальные программы <span className="gold-text">детейлинга</span>
-            </h2>
-            <p className="section-desc">
-              Мы объединяем передовое оборудование, проверенные европейские составы
-              и филигранную ручную работу для безукоризненного результата.
-            </p>
-          </div>
-        )}
-
-        {/* Services Grid */}
-        <div className="services-grid">
-          {services.map((service) => (
-            <article
-              key={service.id}
-              className={`service-card ${service.featured ? 'service-card--featured' : ''}`}
-            >
-              {service.featured && (
-                <div className="card-popular-pill">
-                  ВЫБОР КЛИЕНТОВ
-                </div>
-              )}
-
-              {/* Image & Header */}
-              <div className="service-card__media">
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="service-card__img"
-                  loading="lazy"
-                />
-                <div className="service-card__overlay"></div>
-                <span className="service-card__tag">{service.tag}</span>
-                {service.duration && (
-                  <span className="service-card__duration">⏱ {service.duration}</span>
-                )}
-              </div>
-
-              {/* Body */}
-              <div className="service-card__body">
-                <h3 className="service-card__title">{service.title}</h3>
-                <p className="service-card__desc">{service.description}</p>
-
-                {/* Features list */}
-                <ul className="service-card__features">
-                  {service.features.map((feature, idx) => (
-                    <li key={idx} className="feature-item">
-                      <span className="feature-check">✦</span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Card Footer: Price & CTA */}
-                <div className="service-card__footer">
-                  <div className="service-price-block">
-                    <span className="price-label">Стоимость:</span>
-                    <span className="price-value gold-text">{service.price}</span>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="service-card__btn"
-                    onClick={() => handleBook(service.title)}
-                  >
-                    <span>Записаться</span>
-                    <span className="btn-icon">→</span>
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
+    <section className="cinema-container service-catalog" aria-label="Каталог послуг">
+      <ol className="service-catalog__list" role="list">
+        {services.map((service, index) => (
+          <ServiceRow
+            key={service.id}
+            service={service}
+            index={index}
+            open={openService === service.id}
+            onToggle={() => setOpenService((current) => current === service.id ? null : service.id)}
+          />
+        ))}
+      </ol>
     </section>
   );
 }

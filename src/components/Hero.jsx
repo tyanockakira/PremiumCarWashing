@@ -1,96 +1,48 @@
 import { Link } from 'react-router-dom';
+import { ArrowRightIcon } from './Icons';
+import heroPhoto from '../assets/premiumwash/hero-alternative.webp';
+import { heroImageSizes, responsiveImages } from '../data/responsiveImages';
 import './Hero.css';
 
 export default function Hero() {
   return (
-    <section id="hero" className="hero-section">
-      {/* Background Ambience & Lighting */}
-      <div className="hero-glow hero-glow--top"></div>
-      <div className="hero-glow hero-glow--right"></div>
-      <div className="hero-grid-pattern"></div>
-
-      <div className="container hero-container">
-        <div className="hero-content">
-          {/* Status Badge */}
-          <div className="hero-badge">
-            <span className="badge-pulse"></span>
-            <span className="badge-text">ПРЕМИАЛЬНЫЙ ДЕТЕЙЛИНГ В МОСКВЕ</span>
-          </div>
-
-          {/* Main Title */}
-          <h1 className="hero-title">
-            Искусство блеска <br />
-            и <span className="gold-text">абсолютная защита</span> <br />
-            вашего автомобиля
+    <section className="hero" aria-labelledby="hero-title">
+      <div className="cinema-container hero__layout">
+        <div className="hero__intro">
+          <h1 id="hero-title">
+            <span className="hero__line-mask">
+              <span className="hero__line"><span>Догляд,</span></span>
+            </span>{' '}
+            <span className="hero__line-mask">
+              <span className="hero__line hero__line--accent">
+                <span>який видно</span>
+                <i className="hero__slash" aria-hidden="true" />
+              </span>
+            </span>
           </h1>
-
-          {/* Subtitle */}
-          <p className="hero-description">
-            Восстановительная многоэтапная полировка, керамические составы 9H+ и
-            детальный уход за интерьером представительского и спортивного класса.
-          </p>
-
-          {/* Action CTAs */}
-          <div className="hero-actions">
-            <Link to="/booking" className="btn-gold hero-btn">
-              <span>Записаться на детейлинг</span>
-              <span className="btn-arrow">→</span>
+          <p className="hero__description">Дітейлінг кузова й салону в студійному форматі.</p>
+          <div className="hero__actions">
+            <Link to="/booking" className="btn-platinum cinema-button hero__primary">
+              Записатися на дітейлінг
+              <ArrowRightIcon size={18} className="cinema-arrow cinema-arrow--diagonal" />
             </Link>
-
-            <Link to="/pricing" className="btn-outline hero-btn">
-              <span>Рассчитать стоимость</span>
-            </Link>
-          </div>
-
-          {/* Key Metrics / Highlights */}
-          <div className="hero-stats">
-            <div className="stat-card">
-              <span className="stat-number gold-text">9+</span>
-              <span className="stat-label">Лет на рынке детейлинга</span>
-            </div>
-            <div className="stat-divider"></div>
-
-            <div className="stat-card">
-              <span className="stat-number gold-text">3 800+</span>
-              <span className="stat-label">Обработанных спорткаров и SUV</span>
-            </div>
-            <div className="stat-divider"></div>
-
-            <div className="stat-card">
-              <span className="stat-number gold-text">100%</span>
-              <span className="stat-label">Гарантия на стойкость покрытия</span>
-            </div>
           </div>
         </div>
-
-        {/* Visual Showcase: Luxury Car */}
-        <div className="hero-visual">
-          <div className="car-frame">
-            <div className="car-glow-ring"></div>
+        <div className="hero__scene">
+          <picture>
+            <source media="(max-width: 767px)" srcSet={responsiveImages.heroAlternative.mobileSrcSet} />
+            <source media="(max-width: 1199px)" srcSet={responsiveImages.heroAlternative.tabletSrcSet} />
             <img
-              src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=85"
-              alt="Эксклюзивный спорткар после детейлинга"
-              className="car-image"
-              loading="eager"
+            className="hero__image"
+            src={heroPhoto}
+            srcSet={responsiveImages.heroAlternative.srcSet}
+            sizes={heroImageSizes}
+            alt="Чорний Porsche у дітейлінг-боксі"
+            width="1672"
+            height="941"
+            fetchPriority="high"
             />
-
-            {/* Floating Quality Badge */}
-            <div className="floating-badge floating-badge--top">
-              <span className="floating-badge__icon">💎</span>
-              <div>
-                <span className="floating-badge__title">Керамика 9H Pro</span>
-                <span className="floating-badge__desc">Гидрофобный эффект до 36 мес</span>
-              </div>
-            </div>
-
-            <div className="floating-badge floating-badge--bottom">
-              <span className="floating-badge__icon">⭐</span>
-              <div>
-                <span className="floating-badge__title">Глянцевый блеск 100%</span>
-                <span className="floating-badge__desc">Устранение голограмм и рисок</span>
-              </div>
-            </div>
-          </div>
+          </picture>
         </div>
       </div>
     </section>

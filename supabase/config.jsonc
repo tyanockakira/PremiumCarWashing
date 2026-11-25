@@ -1,0 +1,53 @@
+{
+  "$schema": "https://supabase.com/schemas/config/v1.json",
+  // Start only after confirming Docker Desktop publishes ports on loopback.
+  "project_id": "premiumwash-2-local",
+  "api": {
+    "enabled": true,
+    "port": 54321
+  },
+  "db": {
+    "port": 54322,
+    "major_version": 17,
+    "pooler": {
+      "enabled": false
+    },
+    "migrations": {
+      "enabled": true,
+      "schema_paths": []
+    },
+    "seed": {
+      "enabled": false
+    }
+  },
+  "studio": {
+    "enabled": true,
+    "port": 54323,
+    "api_url": "http://127.0.0.1"
+  },
+  "auth": {
+    "enabled": true,
+    "site_url": "http://127.0.0.1:5173"
+  },
+  "edge_runtime": {
+    "enabled": true,
+    "deno_version": 2
+  },
+  "functions": {
+    "submit-booking-request": {
+      "verify_jwt": false
+    }
+  },
+  "analytics": {
+    "enabled": false
+  },
+  "local_smtp": {
+    "enabled": false
+  },
+  "realtime": {
+    "enabled": false
+  },
+  "storage": {
+    "enabled": false
+  }
+}
