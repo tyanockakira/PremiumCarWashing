@@ -1,6 +1,10 @@
 import { BodyError, readJsonBody } from './jsonBody.mjs';
 
-const allowedOrigins = new Set(['http://localhost:5173', 'http://127.0.0.1:5173']);
+const allowedOrigins = new Set([
+  'https://premium-car-washing.vercel.app',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+]);
 const endpointPaths = new Set(['/submit-booking-request', '/functions/v1/submit-booking-request']);
 const corsRequestHeaders = new Set(['content-type', 'idempotency-key', 'cf-turnstile-response']);
 const mediaType = /^application\/json(?:\s*;\s*charset\s*=\s*(?:"utf-8"|utf-8))?$/i;
