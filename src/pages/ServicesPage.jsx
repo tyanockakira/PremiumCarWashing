@@ -35,6 +35,7 @@ export default function ServicesPage() {
         lines={['Послуги', 'дітейлінгу']}
         description="Полірування й захист кузова, хімчистка та догляд за салоном."
         photo={rearPhoto}
+        desktopPhoto={rearPhoto}
       />
 
       <Services />

@@ -1,8 +1,7 @@
 import { forwardRef, useLayoutEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useIsPresent } from 'motion/react';
-import { createConsultation, phoneOnlyConsultationUnavailable } from '../api/bookingApi';
 import { bookingMode } from '../lib/supabase';
-import { normalizeUkrainianPhone } from '../lib/bookingValidation';
+import { normalizeUkrainianPhone, phoneOnlyConsultationUnavailable } from '../lib/bookingValidation';
 import { duration, easeGlide } from '../lib/motion';
 import { ArrowRightIcon, CheckIcon, CloseIcon } from './Icons';
 import { useDetailReducedMotion } from './useDetailReducedMotion';
@@ -125,6 +124,7 @@ function EntrySession({ initialMode, reduce, onClose, onChooseBooking }) {
     setSending(true);
     setFailure(false);
     try {
+      const { createConsultation } = await import('../api/bookingApi');
       const result = await createConsultation({ phone: normalized });
       if (result?.success !== true) {
         setFailure(true);

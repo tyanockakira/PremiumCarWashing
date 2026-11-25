@@ -40,3 +40,14 @@ main {
   }
 
 }
+.route-error {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-16);
+  min-height: 50vh;
+  padding: var(--space-96) var(--cinema-gutter);
+}
+
+.route-error p {
+  max-width: 42rem;
+}

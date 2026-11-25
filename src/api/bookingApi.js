@@ -1,11 +1,12 @@
-import { supabase, bookingMode, isSupabaseConfigured } from '../lib/supabase';
+import { getSupabase, bookingMode } from '../lib/supabase';
+import { phoneOnlyConsultationUnavailable } from '../lib/bookingValidation';
 
-export const phoneOnlyConsultationUnavailable = 'Наразі онлайн-запит на консультацію лише за номером телефону недоступний.';
-
-function ensureLiveSupabase() {
-  if (bookingMode === 'live' && (!isSupabaseConfigured || !supabase)) {
+async function getLiveSupabase() {
+  const supabase = await getSupabase();
+  if (!supabase) {
     throw new Error('Реальний режим недоступний: Supabase не налаштовано.');
   }
+  return supabase;
 }
 
 function validateBookingResponse(data, fallbackMessage) {
@@ -29,7 +30,7 @@ export async function createBooking({ name, phone, car, service, date, timeSlot,
     };
   }
 
-  ensureLiveSupabase();
+  const supabase = await getLiveSupabase();
 
   const { data, error } = await supabase.rpc('submit_booking', {
     p_name: name,
@@ -63,7 +64,7 @@ export async function createConsultation({ name, phone, carModel, question }) {
   }
 
   if (!name?.trim()) throw new Error(phoneOnlyConsultationUnavailable);
-  ensureLiveSupabase();
+  const supabase = await getLiveSupabase();
 
   const { data, error } = await supabase.rpc('submit_consultation', {
     p_name: name,
@@ -84,11 +85,10 @@ export async function createConsultation({ name, phone, carModel, question }) {
  * Отримання активних послуг із бази даних
  */
 export async function getServices() {
-  if (!isSupabaseConfigured || !supabase) {
-    return null; // Повертає null для використання локального фолбека
-  }
-
   try {
+    const supabase = await getSupabase();
+    if (!supabase) return null;
+
     const { data, error } = await supabase
       .from('services')
       .select('*')
@@ -111,11 +111,10 @@ export async function getServices() {
  * Отримання тарифів і класів авто із бази даних
  */
 export async function getPricingData() {
-  if (!isSupabaseConfigured || !supabase) {
-    return null;
-  }
-
   try {
+    const supabase = await getSupabase();
+    if (!supabase) return null;
+
     const [classesRes, packagesRes] = await Promise.all([
       supabase.from('car_classes').select('*').order('sort_order', { ascending: true }),
       supabase.from('service_packages').select('*').eq('is_active', true).order('sort_order', { ascending: true })

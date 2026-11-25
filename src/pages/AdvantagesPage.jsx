@@ -9,6 +9,7 @@ import ceramicPhoto from '../assets/premiumwash/ceramic.webp';
 import interiorPhoto from '../assets/premiumwash/interior.webp';
 import filmPhoto from '../assets/premiumwash/ppf.webp';
 import inspectionPhoto from '../assets/premiumwash/inspection.webp';
+import { getResponsiveImage } from '../data/responsiveImages';
 import './AdvantagesPage.css';
 
 const approaches = [
@@ -65,7 +66,15 @@ function ApproachPhoto({ photo, alt, from }) {
         data-photo-reveal
         variants={editorialPhoto[from]}
       >
-        <img src={photo} alt={alt} loading="lazy" width={1672} height={941} />
+        <img
+          src={photo}
+          srcSet={getResponsiveImage(photo)?.srcSet}
+          sizes="(max-width: 767px) 100vw, (max-width: 1199px) 70vw, 930px"
+          alt={alt}
+          loading="lazy"
+          width={1672}
+          height={941}
+        />
       </motion.div>
     </div>
   );

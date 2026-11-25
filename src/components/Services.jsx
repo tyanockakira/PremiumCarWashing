@@ -10,6 +10,7 @@ import polishingPhoto from '../assets/premiumwash/polishing.webp';
 import ceramicPhoto from '../assets/premiumwash/ceramic.webp';
 import interiorPhoto from '../assets/premiumwash/interior.webp';
 import ppfPhoto from '../assets/premiumwash/ppf.webp';
+import { getResponsiveImage } from '../data/responsiveImages';
 import './Services.css';
 
 const numberFormat = new Intl.NumberFormat('uk-UA');
@@ -134,7 +135,15 @@ function ServiceRow({ service, index, open, onToggle }) {
               data-photo-reveal
               variants={servicePhoto}
             >
-              <img src={direction?.photo ?? polishingPhoto} alt="" width={1672} height={941} loading="lazy" />
+              <img
+                src={direction?.photo ?? polishingPhoto}
+                srcSet={getResponsiveImage(direction?.photo ?? polishingPhoto)?.srcSet}
+                sizes="(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 520px"
+                alt=""
+                width={1672}
+                height={941}
+                loading="lazy"
+              />
             </motion.span>
           </span>
           <ArrowRightIcon size={24} className="service-row__arrow" />

@@ -2,11 +2,12 @@ import { Fragment, useId } from 'react';
 import { motion } from 'motion/react';
 import { useDetailReducedMotion } from './useDetailReducedMotion';
 import { duration, easeOut, photoWipe } from '../lib/motion';
+import { getResponsiveImage } from '../data/responsiveImages';
 import './DetailPageParts.css';
 
 const heroWipe = photoWipe();
 
-export function DetailHero({ number, label, lines, description, photo }) {
+export function DetailHero({ number, label, lines, description, photo, desktopPhoto = photo }) {
   const reduceMotion = useDetailReducedMotion();
   const titleId = useId();
 
@@ -19,7 +20,20 @@ export function DetailHero({ number, label, lines, description, photo }) {
         initial={reduceMotion ? false : 'hidden'}
         animate={reduceMotion ? undefined : 'visible'}
       >
-        <img src={photo} alt="" width={1672} height={941} fetchPriority="high" />
+        <picture>
+          <source media="(max-width: 767px)" srcSet={getResponsiveImage(photo)?.mobileSrcSet} />
+          <source media="(max-width: 1199px)" srcSet={getResponsiveImage(photo)?.tabletSrcSet} />
+          {desktopPhoto && <source media="(min-width: 1200px)" srcSet={desktopPhoto} />}
+          <img
+            src={desktopPhoto}
+            srcSet={getResponsiveImage(photo)?.srcSet}
+            sizes="1123px"
+            alt=""
+            width={1672}
+            height={941}
+            fetchPriority="high"
+          />
+        </picture>
       </motion.div>
       <div className="cinema-container detail-hero__layout">
         <p className="cinema-label detail-hero__label">

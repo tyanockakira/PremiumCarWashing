@@ -581,7 +581,8 @@
 @media (max-width: 480px) {
   .booking-page__layout { padding-top: var(--space-12); }
   .booking-intro h1 { margin-block: var(--space-12); }
-  .booking-intro h1 + p { max-width: 34ch; }
+  /* Keep the 34ch Plex width while its font subsets load. */
+  .booking-intro h1 + p { max-width: 20.4em; }
   .booking-intro__link { margin-top: var(--space-4); }
   .booking-configurator { padding: var(--space-16); }
   .booking-configurator__header { gap: var(--space-8); margin-bottom: var(--space-16); }

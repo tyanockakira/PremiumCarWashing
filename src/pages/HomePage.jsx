@@ -8,6 +8,7 @@ import polishingPhoto from '../assets/premiumwash/polishing.webp';
 import ceramicPhoto from '../assets/premiumwash/ceramic.webp';
 import interiorPhoto from '../assets/premiumwash/interior.webp';
 import filmPhoto from '../assets/premiumwash/ppf.webp';
+import { getResponsiveImage } from '../data/responsiveImages';
 import './HomePage.css';
 
 const directions = [
@@ -44,7 +45,15 @@ export default function HomePage() {
                   whileInView={reduceMotion ? undefined : 'visible'}
                   viewport={{ once: true, amount: 0.18 }}
                 >
-                  <img src={image} alt="" width={width} height={height} loading="lazy" />
+                  <img
+                    src={image}
+                    srcSet={getResponsiveImage(image)?.srcSet}
+                    sizes="(max-width: 767px) 50vw, (max-width: 1199px) 25vw, 281px"
+                    alt=""
+                    width={width}
+                    height={height}
+                    loading="lazy"
+                  />
                 </motion.div>
               </div>
               <h3>{title}</h3>

@@ -1,4 +1,5 @@
 export const latestBookingDate = '2099-12-31';
+export const phoneOnlyConsultationUnavailable = 'Наразі онлайн-запит на консультацію лише за номером телефону недоступний.';
 
 export function getBookingDateError(value, today) {
   if (!value) return '';

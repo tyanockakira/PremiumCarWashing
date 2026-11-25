@@ -12,6 +12,7 @@ import { useDetailReducedMotion } from '../components/useDetailReducedMotion';
 import { duration, easeGlide } from '../lib/motion';
 import { getBookingDateError, latestBookingDate, normalizeUkrainianPhone } from '../lib/bookingValidation';
 import headlightPhoto from '../assets/premiumwash/booking-headlight.webp';
+import { responsiveImages } from '../data/responsiveImages';
 import './BookingPage.css';
 
 const services = [
@@ -319,7 +320,19 @@ export default function BookingPage({ onOpenConsultation }) {
             </Link>
           </div>
           <div className="booking-intro__photo">
-            <img src={headlightPhoto} alt="" width={1672} height={941} fetchPriority="high" />
+            <picture>
+              <source media="(max-width: 767px)" srcSet={responsiveImages.bookingHeadlight.mobileSrcSet} />
+              <source media="(max-width: 1199px)" srcSet={responsiveImages.bookingHeadlight.tabletSrcSet} />
+              <img
+                src={headlightPhoto}
+                srcSet={responsiveImages.bookingHeadlight.srcSet}
+                sizes="756px"
+                alt=""
+                width={1672}
+                height={941}
+                fetchPriority="high"
+              />
+            </picture>
           </div>
         </aside>
 

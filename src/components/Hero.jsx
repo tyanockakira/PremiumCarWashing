@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRightIcon } from './Icons';
 import heroPhoto from '../assets/premiumwash/hero-alternative.webp';
+import { heroImageSizes, responsiveImages } from '../data/responsiveImages';
 import './Hero.css';
 
 export default function Hero() {
@@ -28,14 +29,20 @@ export default function Hero() {
           </div>
         </div>
         <div className="hero__scene">
-          <img
+          <picture>
+            <source media="(max-width: 767px)" srcSet={responsiveImages.heroAlternative.mobileSrcSet} />
+            <source media="(max-width: 1199px)" srcSet={responsiveImages.heroAlternative.tabletSrcSet} />
+            <img
             className="hero__image"
             src={heroPhoto}
+            srcSet={responsiveImages.heroAlternative.srcSet}
+            sizes={heroImageSizes}
             alt="Чорний Porsche у дітейлінг-боксі"
             width="1672"
             height="941"
             fetchPriority="high"
-          />
+            />
+          </picture>
         </div>
       </div>
     </section>
