@@ -10,6 +10,7 @@ const id = '73000000-0000-4000-8000-000000000001';
 test('a public POST admits the HTTP attempt before creating a consultation', async () => {
   const calls = [];
   const handler = createBookingHandler({
+    turnstileRequired: false,
     backend: {
       async admit() { calls.push('admit'); return 0; },
       async create(request, requestKey) {
@@ -64,7 +65,13 @@ function fixture(overrides = {}) {
       return overrides.create ? overrides.create() : { data: id };
     },
   };
-  const handler = createBookingHandler({ backend, log: (entry) => logs.push(entry), bodyTimeoutMs: overrides.bodyTimeoutMs });
+  const handler = createBookingHandler({
+    backend,
+    log: (entry) => logs.push(entry),
+    bodyTimeoutMs: overrides.bodyTimeoutMs,
+    turnstileRequired: overrides.turnstileRequired ?? false,
+    verifyTurnstile: overrides.verifyTurnstile,
+  });
   return { handler, calls, logs };
 }
 
@@ -78,6 +85,33 @@ async function expectError(response, status, code) {
   assert.match(error.message, /[А-Яа-яІіЇїЄє]/);
 }
 
+test('Turnstile is fail-closed before the booking RPC', async () => {
+  for (const [label, headers, verification, status, code] of [
+    ['missing token', {}, undefined, 403, 'TURNSTILE_REQUIRED'],
+    ['invalid token', { 'cf-turnstile-response': 'invalid' }, { success: false }, 403, 'TURNSTILE_FAILED'],
+    ['Siteverify outage', { 'cf-turnstile-response': 'token' }, { unavailable: true }, 503, 'TURNSTILE_UNAVAILABLE'],
+  ]) {
+    const { handler, calls } = fixture({
+      turnstileRequired: true,
+      verifyTurnstile: async () => verification,
+    });
+    const response = await handler(post({ headers }));
+    await expectError(response, status, code);
+    assert.equal(calls.writes.length, 0, label);
+  }
+});
+
+test('a valid Turnstile token reaches the booking RPC without being logged', async () => {
+  const { handler, calls, logs } = fixture({
+    turnstileRequired: true,
+    verifyTurnstile: async (token) => ({ success: token === 'valid-token' }),
+  });
+  const response = await handler(post({ headers: { 'cf-turnstile-response': 'valid-token' } }));
+  assert.equal(response.status, 200);
+  assert.equal(calls.writes.length, 1);
+  assert.equal(JSON.stringify(logs).includes('valid-token'), false);
+});
+
 for (const allowedOrigin of [origin, 'http://127.0.0.1:5173']) {
   test('preflight is admitted and reflects only approved origin ' + allowedOrigin, async () => {
     const { handler, calls } = fixture();
@@ -85,7 +119,7 @@ for (const allowedOrigin of [origin, 'http://127.0.0.1:5173']) {
     assert.equal(response.status, 204);
     assert.equal(response.headers.get('access-control-allow-origin'), allowedOrigin);
     assert.equal(response.headers.get('access-control-allow-methods'), 'POST');
-    assert.equal(response.headers.get('access-control-allow-headers'), 'Content-Type, Idempotency-Key');
+    assert.equal(response.headers.get('access-control-allow-headers'), 'Content-Type, Idempotency-Key, Cf-Turnstile-Response');
     assert.equal(response.headers.get('access-control-allow-credentials'), null);
     assert.match(response.headers.get('vary'), /Access-Control-Request-Headers/);
     assert.deepEqual(calls, { admits: 1, writes: [] });
@@ -288,7 +322,7 @@ test('the backend uses only the two fixed RPCs and its own credentials', async (
       return Response.json(target.pathname.endsWith('admit_booking_http_attempt') ? 0 : id);
     },
   });
-  const handler = createBookingHandler({ backend });
+  const handler = createBookingHandler({ backend, turnstileRequired: false });
   const response = await handler(post({
     headers: { authorization: 'Bearer browser-value', apikey: 'browser-key', 'x-forwarded-for': '203.0.113.9' },
   }));
@@ -322,7 +356,7 @@ for (const target of ['admission', 'booking']) {
         });
       },
     });
-    const handler = createBookingHandler({ backend });
+    const handler = createBookingHandler({ backend, turnstileRequired: false });
     const [response] = await Promise.all([handler(post()), pause(35)]);
     await expectError(response, 503, target === 'admission' ? 'PW017' : 'BACKEND_UNAVAILABLE');
     assert.deepEqual(calls, target === 'admission' ? ['admission'] : ['admission', 'booking']);

@@ -81,7 +81,7 @@ function getRetryAt(header) {
 function responseError(status, code, retryAt) {
   switch (status) {
     case 400: return new BookingError(code === 'PW014' ? code : 'PW001', requestError);
-    case 403: return new BookingError('HTTP_403', 'Надсилання з цієї сторінки недоступне.');
+    case 403: return new BookingError(code === 'TURNSTILE_REQUIRED' || code === 'TURNSTILE_FAILED' ? 'TURNSTILE_FAILED' : 'HTTP_403', code === 'TURNSTILE_REQUIRED' || code === 'TURNSTILE_FAILED' ? 'Перевірка захисту не пройшла. Оновіть віджет і спробуйте ще раз.' : 'Надсилання з цієї сторінки недоступне.');
     case 409: return new BookingError('PW015', 'За цим ключем уже надіслано заявку з іншими даними. Перевірте дані або зверніться до нас.');
     case 413: return new BookingError('HTTP_413', 'Заявка завелика. Скоротіть текст і спробуйте знову.');
     case 415: return new BookingError('HTTP_415', 'Сервер не підтримує формат заявки. Оновіть сторінку й спробуйте ще раз.');
@@ -104,12 +104,13 @@ export function createBookingSubmission({
   apiUrl = bookingApiUrl,
   fetchRequest = (...args) => fetch(...args),
   timeoutMs = 15_000,
+  turnstileRequired = true,
 } = {}) {
   let pending = false;
   let attempt;
   let rateError;
 
-  async function send(type, draft) {
+  async function send(type, draft, turnstileToken) {
     try {
       if (rateError?.retryAt > Date.now()) throw rateError;
       const payload = payloadFor(type, draft);
@@ -133,6 +134,9 @@ export function createBookingSubmission({
       }
       const url = endpoint(apiUrl);
       if (!url) throw new BookingError('NOT_CONFIGURED', 'Онлайн-форма тимчасово недоступна.');
+      if (turnstileRequired && (typeof turnstileToken !== 'string' || !turnstileToken)) {
+        throw new BookingError('TURNSTILE_REQUIRED', 'Підтвердьте перевірку захисту перед надсиланням.');
+      }
       if (!sameRequest) {
         const bytes = globalThis.crypto.getRandomValues(new Uint8Array(32));
         const key = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
@@ -142,9 +146,11 @@ export function createBookingSubmission({
       const timeout = setTimeout(() => abort.abort(), timeoutMs);
       const startedAt = Date.now();
       try {
+        const requestHeaders = { 'Content-Type': 'application/json', 'Idempotency-Key': attempt.key };
+        if (turnstileToken) requestHeaders['Cf-Turnstile-Response'] = turnstileToken;
         const response = await fetchRequest(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Idempotency-Key': attempt.key },
+          headers: requestHeaders,
           credentials: 'omit',
           redirect: 'error',
           body,
@@ -177,10 +183,10 @@ export function createBookingSubmission({
     }
   }
 
-  return (type, draft) => {
+  return (type, draft, turnstileToken) => {
     if (pending) return null;
     pending = true;
-    return send(type, draft);
+    return send(type, draft, turnstileToken);
   };
 }
 

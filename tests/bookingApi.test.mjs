@@ -11,7 +11,7 @@ const success = () => Response.json({ success: true, booking_id: bookingId });
 const consultation = { type: 'consultation', phone };
 
 function live(fetchRequest, options) {
-  return api.createBookingSubmission({ mode: 'live', apiUrl, fetchRequest, ...options });
+  return api.createBookingSubmission({ mode: 'live', apiUrl, fetchRequest, turnstileRequired: false, ...options });
 }
 
 test('both forms send the protected HTTP contract and no browser credentials', async () => {
@@ -39,6 +39,27 @@ test('both forms send the protected HTTP contract and no browser credentials', a
     carClassId: 'suv', car: 'Тестове авто', slotId: '21:00-00:00',
   });
   assert.deepEqual(JSON.parse(second.body), consultation);
+});
+
+test('live mode requires a Turnstile token and keeps idempotency across a token refresh', async () => {
+  const requests = [];
+  let calls = 0;
+  const submit = api.createBookingSubmission({
+    mode: 'live', apiUrl,
+    fetchRequest: async (_url, options) => {
+      requests.push(options);
+      calls++;
+      if (calls === 1) throw new TypeError('lost response');
+      return success();
+    },
+  });
+  await assert.rejects(submit('consultation', { phone }), { code: 'TURNSTILE_REQUIRED' });
+  await assert.rejects(submit('consultation', { phone }, 'token-one'), { code: 'UNCONFIRMED' });
+  const recovered = await submit('consultation', { phone }, 'token-two');
+  assert.equal(recovered.booking_id, bookingId);
+  assert.equal(requests[0].headers['Cf-Turnstile-Response'], 'token-one');
+  assert.equal(requests[1].headers['Cf-Turnstile-Response'], 'token-two');
+  assert.equal(requests[0].headers['Idempotency-Key'], requests[1].headers['Idempotency-Key']);
 });
 
 test('uncertain attempts keep the key for an equivalent draft and change it for a different draft', async () => {

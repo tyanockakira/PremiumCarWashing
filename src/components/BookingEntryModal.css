@@ -296,3 +296,12 @@ html.booking-entry-open {
     transform: none !important;
   }
 }
+.turnstile-widget {
+  min-height: 65px;
+  margin-top: 1rem;
+}
+
+.turnstile-widget__error {
+  margin-top: 1rem;
+  color: var(--color-racing-red);
+}

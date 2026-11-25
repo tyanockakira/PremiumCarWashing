@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion, useIsPresent } from 'motion/react';
 import { bookingMode } from '../lib/supabase';
@@ -13,6 +13,7 @@ import { duration, easeGlide } from '../lib/motion';
 import { expiredBookingSlotMessage, getBookingDateBounds, getBookingDateError, isBookingSlotExpired, normalizeUkrainianPhone } from '../lib/bookingValidation';
 import { useBookingClock } from '../lib/useBookingClock';
 import { useBookingSubmission } from '../lib/useBookingSubmission';
+import TurnstileWidget from '../components/TurnstileWidget';
 import headlightPhoto from '../assets/premiumwash/booking-headlight.webp';
 import { responsiveImages } from '../data/responsiveImages';
 import './BookingPage.css';
@@ -141,12 +142,16 @@ export default function BookingPage({ onOpenConsultation }) {
   const [direction, setDirection] = useState(1);
   const [errors, setErrors] = useState({});
   const [result, setResult] = useState(null);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileRef = useRef(null);
   const { submit, sending: isSubmitting, error: submitError, waiting, clearError } = useBookingSubmission();
   const focusStep = useRef(false);
   const panel = useRef(null);
   const stage = useRef(null);
   const reduce = useDetailReducedMotion();
   const isDemo = bookingMode === 'demo';
+  const handleTurnstileToken = useCallback((token) => setTurnstileToken(token), []);
+  const handleTurnstileError = useCallback(() => setTurnstileToken(''), []);
   const scheduleNow = useBookingClock(step === 2);
   const dateBounds = step === 2 ? getBookingDateBounds(scheduleNow) : null;
   const selectedService = bookingServices.find(({ id }) => id === draft.service);
@@ -240,9 +245,14 @@ export default function BookingPage({ onOpenConsultation }) {
       goTo(step + 1);
       return;
     }
-    const response = await submit('booking', {
-      ...draft, phone, selection: selectedOption?.selection, carClassId: draft.carClass, slotId: draft.timeSlot,
-    });
+    let response;
+    try {
+      response = await submit('booking', {
+        ...draft, phone, selection: selectedOption?.selection, carClassId: draft.carClass, slotId: draft.timeSlot,
+      }, turnstileToken);
+    } finally {
+      turnstileRef.current?.reset();
+    }
     if (response) {
       focusStep.current = true;
       setResult(response);
@@ -413,6 +423,7 @@ export default function BookingPage({ onOpenConsultation }) {
                             <BookingField {...fieldProps('phone')} label="Номер телефону *" type="tel" placeholder="+380 67 123 45 67" autoComplete="tel" required />
                           </div>
                           <BookingField {...fieldProps('comment')} label="Побажання (необов’язково)" placeholder="Додайте деталі щодо авто чи візиту" multiline />
+                          {!isDemo && <TurnstileWidget ref={turnstileRef} onToken={handleTurnstileToken} onError={handleTurnstileError} disabled={isSubmitting} />}
                         </>
                       )}
                     </BookingStep>

@@ -1,4 +1,4 @@
-import { forwardRef, useLayoutEffect, useRef, useState } from 'react';
+import { forwardRef, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useIsPresent } from 'motion/react';
 import { bookingMode } from '../lib/supabase';
 import { normalizeUkrainianPhone } from '../lib/bookingValidation';
@@ -6,6 +6,7 @@ import { useBookingSubmission } from '../lib/useBookingSubmission';
 import { duration, easeGlide } from '../lib/motion';
 import { ArrowRightIcon, CheckIcon, CloseIcon } from './Icons';
 import { useDetailReducedMotion } from './useDetailReducedMotion';
+import TurnstileWidget from './TurnstileWidget';
 import './BookingEntryModal.css';
 
 const choices = [
@@ -84,9 +85,13 @@ function EntrySession({ initialMode, reduce, onClose, onChooseBooking }) {
   const [direction, setDirection] = useState(1);
   const [phone, setPhone] = useState('');
   const [invalid, setInvalid] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
   const { submit: send, sending, error, waiting, clearError } = useBookingSubmission();
   const stage = useRef(null);
   const phoneField = useRef(null);
+  const turnstileRef = useRef(null);
+  const handleTurnstileToken = useCallback((token) => setTurnstileToken(token), []);
+  const handleTurnstileError = useCallback(() => setTurnstileToken(''), []);
 
   useLayoutEffect(() => {
     const container = stage.current;
@@ -119,7 +124,12 @@ function EntrySession({ initialMode, reduce, onClose, onChooseBooking }) {
       return;
     }
 
-    const result = await send('consultation', { phone: normalized });
+    let result;
+    try {
+      result = await send('consultation', { phone: normalized }, turnstileToken);
+    } finally {
+      turnstileRef.current?.reset();
+    }
     if (result) {
       setPhone('');
       changeMode('complete', 1);
@@ -217,6 +227,7 @@ function EntrySession({ initialMode, reduce, onClose, onChooseBooking }) {
                 {error && (
                   <p className="booking-entry__error" role="alert">{error}</p>
                 )}
+                {!isDemo && <TurnstileWidget ref={turnstileRef} onToken={handleTurnstileToken} onError={handleTurnstileError} disabled={sending} />}
                 <button
                   type="submit"
                   className="btn-platinum cinema-button"

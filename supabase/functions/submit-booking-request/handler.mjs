@@ -2,7 +2,7 @@ import { BodyError, readJsonBody } from './jsonBody.mjs';
 
 const allowedOrigins = new Set(['http://localhost:5173', 'http://127.0.0.1:5173']);
 const endpointPaths = new Set(['/submit-booking-request', '/functions/v1/submit-booking-request']);
-const corsRequestHeaders = new Set(['content-type', 'idempotency-key']);
+const corsRequestHeaders = new Set(['content-type', 'idempotency-key', 'cf-turnstile-response']);
 const mediaType = /^application\/json(?:\s*;\s*charset\s*=\s*(?:"utf-8"|utf-8))?$/i;
 const idempotencyKeyFormat = /^[0-9a-f]{64}$/;
 const bookingIdFormat = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -27,6 +27,9 @@ const errors = {
   PW015: [409, 'Цей ключ уже використано для заявки з іншими даними.'],
   PW016: [429, 'Забагато заявок. Спробуйте трохи пізніше.'],
   PW017: [503, 'Захист заявок тимчасово недоступний. Спробуйте пізніше.'],
+  TURNSTILE_REQUIRED: [403, 'Перевірка захисту не пройшла. Оновіть сторінку і спробуйте ще раз.'],
+  TURNSTILE_FAILED: [403, 'Перевірка захисту не пройшла. Спробуйте ще раз.'],
+  TURNSTILE_UNAVAILABLE: [503, 'Сервіс перевірки тимчасово недоступний. Спробуйте ще раз.'],
   METHOD_NOT_ALLOWED: [405, 'Цей метод запиту не підтримується.'],
   ENDPOINT_NOT_FOUND: [404, 'Цей маршрут недоступний.'],
   ORIGIN_NOT_ALLOWED: [403, 'Цей сайт не має доступу до надсилання заявок.'],
@@ -74,7 +77,7 @@ function retrySeconds(value) {
   return Number.isSafeInteger(value) && value > 0 ? value : null;
 }
 
-export function createBookingHandler({ backend, log = () => {}, bodyTimeoutMs = 5_000 }) {
+export function createBookingHandler({ backend, log = () => {}, bodyTimeoutMs = 5_000, turnstileRequired = true, verifyTurnstile = async () => ({ success: false }) }) {
   return async function handle(request) {
     const requestId = crypto.randomUUID();
     const started = performance.now();
@@ -133,7 +136,7 @@ export function createBookingHandler({ backend, log = () => {}, bodyTimeoutMs = 
         return fail('INVALID_PREFLIGHT', 'cors');
       }
       headers.set('access-control-allow-methods', 'POST');
-      headers.set('access-control-allow-headers', 'Content-Type, Idempotency-Key');
+      headers.set('access-control-allow-headers', 'Content-Type, Idempotency-Key, Cf-Turnstile-Response');
       headers.set('access-control-max-age', '300');
       return finish(204, 'PREFLIGHT_OK', 'cors');
     }
@@ -155,6 +158,19 @@ export function createBookingHandler({ backend, log = () => {}, bodyTimeoutMs = 
     }
     const shapeError = requestError(payload);
     if (shapeError) return fail(shapeError, 'request');
+
+    if (turnstileRequired) {
+      const token = request.headers.get('cf-turnstile-response');
+      if (!token || token.length > 2048) return fail('TURNSTILE_REQUIRED', 'turnstile');
+      let verification;
+      try {
+        verification = await verifyTurnstile(token);
+      } catch {
+        return fail('TURNSTILE_UNAVAILABLE', 'turnstile');
+      }
+      if (verification?.unavailable) return fail('TURNSTILE_UNAVAILABLE', 'turnstile');
+      if (verification?.success !== true) return fail('TURNSTILE_FAILED', 'turnstile');
+    }
 
     let result;
     try {

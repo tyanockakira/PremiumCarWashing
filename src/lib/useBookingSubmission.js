@@ -27,7 +27,7 @@ export function useBookingSubmission() {
     if (!retryAt) setError('');
   }
 
-  async function submit(type, draft) {
+  async function submit(type, draft, turnstileToken) {
     if (pending.current || retryAt > Date.now()) return null;
     pending.current = true;
     setSending(true);
@@ -42,7 +42,7 @@ export function useBookingSubmission() {
         }
         submission.current = api.createBookingSubmission();
       }
-      return await submission.current(type, draft);
+      return await submission.current(type, draft, turnstileToken);
     } catch (failure) {
       setError(failure?.message ?? 'Підтвердження від сервера не надійшло. Спробуйте ще раз із тими самими даними.');
       setRetryAt(failure?.retryAt ?? 0);

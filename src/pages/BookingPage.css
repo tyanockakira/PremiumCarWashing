@@ -611,3 +611,12 @@
   .booking-actions > * { padding-inline: var(--space-8); font-size: 0.875rem; }
   .booking-result { min-height: 0; }
 }
+.turnstile-widget {
+  min-height: 65px;
+  margin-top: 1rem;
+}
+
+.turnstile-widget__error {
+  margin-top: 1rem;
+  color: var(--color-racing-red);
+}
