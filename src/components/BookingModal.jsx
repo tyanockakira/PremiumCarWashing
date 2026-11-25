@@ -1,34 +1,40 @@
 import { useState, useEffect } from 'react';
-import { createBooking } from '../api/bookingApi';
 import { bookingMode } from '../lib/supabase';
+import { bookingPackages, bookingServices, getBookingPreselection, individualBooking } from '../data/bookingOptions';
+import { getBookingDateBounds, isBookingSlotExpired } from '../lib/bookingValidation';
+import { useBookingClock } from '../lib/useBookingClock';
+import { useBookingSubmission } from '../lib/useBookingSubmission';
 import { InfoIcon, AlertTriangleIcon, CloseIcon, SparkleIcon } from './Icons';
 import './BookingModal.css';
 
-const defaultServices = [
-  'Відновлювальне полірування',
-  'Нанокераміка 9H Pro',
-  'Преміум-хімчистка салона',
-  'Обклеювання поліуретаном PPF',
-  'Executive Care (Комплекс)',
-  'Ceramic Elite (Комплекс)',
-  'Royal Perfection (Комплекс)'
+const services = [...bookingServices, ...bookingPackages, individualBooking];
+const timeSlots = [
+  ['10:00-12:00', 'Ранок (10:00 — 12:00)'],
+  ['12:00-15:00', 'День (12:00 — 15:00)'],
+  ['15:00-19:00', 'Вечір (15:00 — 19:00)'],
+  ['19:00-23:00', 'Пізній вечір (19:00 — 23:00)'],
+  ['night_by_arrangement', 'Нічна зміна (за домовленістю)'],
 ];
 
-export default function BookingModal({ isOpen, onClose, initialService }) {
-  const [formData, setFormData] = useState({
+function emptyDraft(service = services[0].id) {
+  return {
     name: '',
     phone: '',
     car: '',
-    service: initialService || defaultServices[0],
+    service,
     date: '',
-    timeSlot: '10:00 — 12:00',
+    timeSlot: '10:00-12:00',
     comment: ''
-  });
+  };
+}
+
+export default function BookingModal({ isOpen, onClose, initialService }) {
+  const [formData, setFormData] = useState(() => emptyDraft(getBookingPreselection({ service: initialService })?.id));
   const [submitted, setSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const { submit, sending: isSubmitting, error: errorMsg, waiting } = useBookingSubmission();
   const [bookingResult, setBookingResult] = useState(null);
   const isDemoMode = bookingMode === 'demo';
+  const scheduleNow = useBookingClock(isOpen && !submitted);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -44,34 +50,26 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone) return;
-
-    setIsSubmitting(true);
-    setErrorMsg('');
-
-    try {
-      const result = await createBooking(formData);
+    if (isSubmitting || waiting) return;
+    const field = e.currentTarget.querySelector('input:required:invalid, input[type=date]:invalid');
+    if (field?.required || field?.validity.badInput) {
+      field.reportValidity();
+      return;
+    }
+    const result = await submit('booking', {
+      ...formData,
+      selection: services.find(({ id }) => id === formData.service)?.selection,
+      slotId: formData.timeSlot,
+    });
+    if (result) {
       setBookingResult(result);
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
         onClose();
-        setFormData({
-          name: '',
-          phone: '',
-          car: '',
-          service: defaultServices[0],
-          date: '',
-          timeSlot: '10:00 — 12:00',
-          comment: ''
-        });
+        setFormData(emptyDraft());
         setBookingResult(null);
       }, 3500);
-    } catch (err) {
-      console.error('Помилка запису:', err);
-      setErrorMsg(err instanceof Error ? err.message : 'Не вдалося зберегти запис онлайн. Будь ласка, зателефонуйте нам за номером +380 (44) 000-00-00.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -138,12 +136,12 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
             </div>
 
             {errorMsg && (
-              <div className="modal-error-banner">
+              <div className="modal-error-banner" role="alert">
                 <span style={{ flexShrink: 0 }}><AlertTriangleIcon size={16} /></span> {errorMsg}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="modal-form">
+            <form onSubmit={handleSubmit} className="modal-form" noValidate>
               <div className="form-row">
                 <div className="modal-field">
                   <label htmlFor="modal-name">Ваше ім’я *</label>
@@ -193,14 +191,11 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                     disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                   >
-                    {defaultServices.map((srv, idx) => (
-                      <option key={idx} value={srv}>
-                        {srv}
+                    {services.map(({ id, label }) => (
+                      <option key={id} value={id}>
+                        {label}
                       </option>
                     ))}
-                    {!defaultServices.includes(formData.service) && formData.service && (
-                      <option value={formData.service}>{formData.service}</option>
-                    )}
                   </select>
                 </div>
               </div>
@@ -211,6 +206,7 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                   <input
                     id="modal-date"
                     type="date"
+                    {...getBookingDateBounds(scheduleNow)}
                     value={formData.date}
                     disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
@@ -225,11 +221,10 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
                     disabled={isSubmitting}
                     onChange={(e) => setFormData({ ...formData, timeSlot: e.target.value })}
                   >
-                    <option value="10:00 — 12:00">Ранок (10:00 — 12:00)</option>
-                    <option value="12:00 — 15:00">День (12:00 — 15:00)</option>
-                    <option value="15:00 — 19:00">Вечір (15:00 — 19:00)</option>
-                    <option value="19:00 — 23:00">Пізній вечір (19:00 — 23:00)</option>
-                    <option value="Ніч 24/7">Нічна зміна (за домовленістю)</option>
+                    {timeSlots.map(([id, label]) => {
+                      const expired = isBookingSlotExpired(formData.date, id, scheduleNow);
+                      return <option key={id} value={id} disabled={expired}>{label}{expired ? ' — недоступний' : ''}</option>;
+                    })}
                   </select>
                 </div>
               </div>
@@ -249,7 +244,7 @@ export default function BookingModal({ isOpen, onClose, initialService }) {
               <button
                 type="submit"
                 className="btn-gold modal-submit-btn"
-                disabled={isSubmitting}
+                disabled={isSubmitting || waiting}
               >
                 {isSubmitting ? 'Бронювання...' : 'Забронювати бокс'}
               </button>

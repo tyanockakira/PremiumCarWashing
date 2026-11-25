@@ -167,7 +167,7 @@ function ServiceRow({ service, index, open, onToggle }) {
           )}
           <Link
             to="/booking"
-            state={{ service: service.title }}
+            state={{ service: service.title, selection: { kind: 'service', slug: service.id } }}
             className="btn-platinum cinema-button"
           >
             Записатися <ArrowRightIcon size={16} className="cinema-arrow cinema-arrow--diagonal" />
@@ -187,7 +187,7 @@ export default function Services() {
     getServices().then((data) => {
       if (active && data?.length) {
         setServices(data.map((item) => ({
-          id: item.slug || item.id,
+          id: item.slug,
           title: item.title,
           basePrice: item.base_price,
           duration: item.duration_text,

@@ -2,6 +2,7 @@ import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getPricingData } from '../api/bookingApi';
 import { defaultCarClasses } from '../data/carClasses';
+import { bookingPackages } from '../data/bookingOptions';
 import { ArrowRightIcon, CheckIcon, ClockIcon } from './Icons';
 import { useDetailReducedMotion } from './useDetailReducedMotion';
 import { duration, easeGlide } from '../lib/motion';
@@ -9,8 +10,8 @@ import './Pricing.css';
 
 const defaultPackages = [
   {
-    id: 'pkg-light',
-    title: 'Executive Care',
+    id: bookingPackages[0].id,
+    title: bookingPackages[0].title,
     tag: 'Регулярний догляд',
     basePrice: 4500,
     time: '4–6 годин',
@@ -26,8 +27,8 @@ const defaultPackages = [
     ]
   },
   {
-    id: 'pkg-ceramic',
-    title: 'Ceramic Elite',
+    id: bookingPackages[1].id,
+    title: bookingPackages[1].title,
     tag: 'Керамічний захист',
     basePrice: 22000,
     time: '2 дні',
@@ -43,8 +44,8 @@ const defaultPackages = [
     ]
   },
   {
-    id: 'pkg-royal',
-    title: 'Royal Perfection',
+    id: bookingPackages[2].id,
+    title: bookingPackages[2].title,
     tag: 'Комплексний захист',
     basePrice: 55000,
     time: '3–4 дні',
@@ -223,7 +224,11 @@ export default function Pricing() {
               </div>
               <Link
                 to="/booking"
-                state={{ service: `${pkg.title} (${currentClass.label})` }}
+                state={{
+                  service: `${pkg.title} (${currentClass.label})`,
+                  selection: { kind: 'package', id: pkg.id },
+                  carClass: { id: currentClass.id, label: currentClass.label, example: currentClass.example },
+                }}
                 className={`cinema-button ${pkg.featured ? 'btn-platinum' : 'btn-outline'}`}
                 aria-label={`Обрати комплекс ${pkg.title}`}
               >

@@ -1,7 +1,35 @@
-export const latestBookingDate = '2099-12-31';
-export const phoneOnlyConsultationUnavailable = 'Наразі онлайн-запит на консультацію лише за номером телефону недоступний.';
+const kyivDate = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Kyiv' });
+const kyivTime = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/Kyiv', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+});
 
-export function getBookingDateError(value, today) {
+const slotEnds = new Map([
+  ['10:00-12:00', '12:00'],
+  ['12:00-15:00', '15:00'],
+  ['15:00-18:00', '18:00'],
+  ['18:00-21:00', '21:00'],
+  ['21:00-00:00', '24:00'],
+  ['15:00-19:00', '19:00'],
+  ['19:00-23:00', '23:00'],
+]);
+
+export const expiredBookingSlotMessage = 'Цей часовий інтервал уже минув. Оберіть інший час.';
+
+export function isBookingSlotExpired(date, slotId, now = new Date()) {
+  const end = slotEnds.get(slotId);
+  if (!date || !end) return false; // An undated request or a night shift by arrangement has no fixed deadline.
+  const today = kyivDate.format(now);
+  return date < today || (date === today && kyivTime.format(now) >= end);
+}
+
+export function getBookingDateBounds(now = new Date()) {
+  const min = kyivDate.format(now);
+  const end = new Date(min + 'T00:00:00Z');
+  end.setUTCDate(end.getUTCDate() + 90);
+  return { min, max: end.toISOString().slice(0, 10) };
+}
+
+export function getBookingDateError(value, now) {
   if (!value) return '';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return 'Вкажіть рік чотирма цифрами.';
 
@@ -9,8 +37,9 @@ export function getBookingDateError(value, today) {
   if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value) {
     return 'Такої дати немає. Перевірте день, місяць і рік.';
   }
-  if (value < today) return 'Оберіть сьогоднішню або майбутню дату.';
-  if (value > latestBookingDate) return 'Оберіть дату до 31 грудня 2099 року включно.';
+  const { min, max } = getBookingDateBounds(now);
+  if (value < min) return 'Оберіть сьогоднішню або майбутню дату.';
+  if (value > max) return 'Оберіть дату не більш ніж на 90 днів наперед.';
   return '';
 }
 

@@ -1,36 +1,37 @@
 import { forwardRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion, useIsPresent } from 'motion/react';
-import { createBooking } from '../api/bookingApi';
 import { bookingMode } from '../lib/supabase';
 import { defaultCarClasses } from '../data/carClasses';
+import { bookingPackages, bookingServices, getBookingPreselection, individualBooking } from '../data/bookingOptions';
 import {
   ArrowRightIcon, CarIcon, CheckIcon, InfoIcon, LogoEmblem,
   MessageSquareIcon, ShieldCheckIcon, ShieldIcon, ZapIcon,
 } from '../components/Icons';
 import { useDetailReducedMotion } from '../components/useDetailReducedMotion';
 import { duration, easeGlide } from '../lib/motion';
-import { getBookingDateError, latestBookingDate, normalizeUkrainianPhone } from '../lib/bookingValidation';
+import { expiredBookingSlotMessage, getBookingDateBounds, getBookingDateError, isBookingSlotExpired, normalizeUkrainianPhone } from '../lib/bookingValidation';
+import { useBookingClock } from '../lib/useBookingClock';
+import { useBookingSubmission } from '../lib/useBookingSubmission';
 import headlightPhoto from '../assets/premiumwash/booking-headlight.webp';
 import { responsiveImages } from '../data/responsiveImages';
 import './BookingPage.css';
 
-const services = [
-  { value: 'Відновлювальне полірування', title: 'Полірування кузова', detail: 'Відновлювальне полірування', icon: LogoEmblem },
-  { value: 'Нанокераміка 9H Pro', title: 'Захисне покриття', detail: 'Нанокераміка 9H Pro', icon: ShieldCheckIcon },
-  { value: 'Преміум-хімчистка салона', title: 'Догляд за салоном', detail: 'Преміум-хімчистка салону', icon: CarIcon },
-  { value: 'Обклеювання поліуретаном PPF', title: 'Обклеювання PPF', detail: 'Поліуретанова плівка', icon: ShieldIcon },
-];
+const serviceCards = {
+  polishing: { title: 'Полірування кузова', icon: LogoEmblem },
+  ceramic: { title: 'Захисне покриття', icon: ShieldCheckIcon },
+  interior: { title: 'Догляд за салоном', icon: CarIcon },
+  ppf: { title: 'Обклеювання PPF', detail: 'Поліуретанова плівка', icon: ShieldIcon },
+};
 
-const packages = ['Executive Care (Комплекс)', 'Ceramic Elite (Комплекс)', 'Royal Perfection (Комплекс)'];
-const individual = 'Індивідуальний підбір із технологом';
+const defaultExtras = [...bookingPackages, individualBooking];
 const timeSlots = [
-  ['10:00 — 12:00', 'Ранок'],
-  ['12:00 — 15:00', 'День'],
-  ['15:00 — 18:00', 'День'],
-  ['18:00 — 21:00', 'Вечір'],
-  ['21:00 — 00:00', 'Нічна зміна'],
-].map(([time, label]) => ({ time, label, value: time + ' (' + label + ')' }));
+  ['10:00-12:00', 'Ранок'],
+  ['12:00-15:00', 'День'],
+  ['15:00-18:00', 'День'],
+  ['18:00-21:00', 'Вечір'],
+  ['21:00-00:00', 'Нічна зміна'],
+].map(([id, label]) => ({ id, label, time: id.replace('-', ' — ') }));
 
 const steps = [
   { label: 'Послуга', title: 'Оберіть послугу', description: 'Одна послуга або один пакет догляду на заявку.' },
@@ -49,44 +50,26 @@ const stepMotion = {
   }),
 };
 
-function currentDate() {
-  return new Intl.DateTimeFormat('sv-SE').format(new Date());
-}
-
-function pricingClassFor(service) {
-  return defaultCarClasses.find(({ label }) => service.endsWith(' (' + label + ')'))?.label || '';
-}
-
 function makeDraft(preselection) {
   return {
-    service: preselection || services[0].value,
-    carClass: pricingClassFor(preselection),
+    service: preselection?.id ?? bookingServices[0].id,
+    carClass: preselection?.carClass?.id ?? '',
     car: '',
     date: '',
-    timeSlot: timeSlots[0].value,
+    timeSlot: timeSlots[0].id,
     name: '',
     phone: '',
     comment: '',
   };
 }
 
-function serviceLabel(service) {
-  const pricingClass = pricingClassFor(service);
-  if (pricingClass) return service.slice(0, -(pricingClass.length + 3));
-  return findService(service)?.detail || service;
-}
-
-function findService(service) {
-  return services.find(({ value, detail }) => value === service || detail === service);
-}
-
-function BookingSummary({ draft, reduce, complete = false }) {
+function BookingSummary({ draft, serviceLabel, classLabel, reduce, slotExpired, complete = false }) {
   const date = draft.date ? draft.date.split('-').reverse().join('.') : 'Дата не вказана';
-  const slot = timeSlots.find(({ value }) => value === draft.timeSlot);
+  const time = slotExpired ? 'Час не обрано' : timeSlots.find(({ id }) => id === draft.timeSlot)?.time;
   const summary = [
-    ['Послуга', serviceLabel(draft.service)],
-    ['Автомобіль', [draft.car.trim(), draft.carClass].filter(Boolean).join(' · ') || 'Не вказано'],
-    ['Дата і час', [date, slot?.time].filter(Boolean).join(' · ')],
+    ['Послуга', serviceLabel],
+    ['Автомобіль', [draft.car.trim(), classLabel].filter(Boolean).join(' · ') || 'Не вказано'],
+    ['Дата і час', [date, time].filter(Boolean).join(' · ')],
   ];
 
   return (
@@ -152,26 +135,31 @@ function BookingField({ name, label, error, multiline = false, ...props }) {
 
 export default function BookingPage({ onOpenConsultation }) {
   const { state } = useLocation();
-  const preselection = typeof state?.service === 'string' ? state.service.trim() : '';
+  const preselection = getBookingPreselection(state);
   const [draft, setDraft] = useState(() => makeDraft(preselection));
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState(null);
-  const [submitError, setSubmitError] = useState('');
-  const pending = useRef(false);
+  const { submit, sending: isSubmitting, error: submitError, waiting, clearError } = useBookingSubmission();
   const focusStep = useRef(false);
   const panel = useRef(null);
   const stage = useRef(null);
   const reduce = useDetailReducedMotion();
   const isDemo = bookingMode === 'demo';
-  const today = currentDate();
-  const selectedService = findService(draft.service);
-  const extraServices = [...packages, individual];
-  if (preselection && !findService(preselection) && !extraServices.includes(preselection)) {
-    extraServices.unshift(preselection);
-  }
+  const scheduleNow = useBookingClock(step === 2);
+  const dateBounds = step === 2 ? getBookingDateBounds(scheduleNow) : null;
+  const selectedService = bookingServices.find(({ id }) => id === draft.service);
+  const extraServices = preselection && !bookingServices.some(({ id }) => id === preselection.id)
+    ? [preselection, ...defaultExtras.filter(({ id }) => id !== preselection.id)] : defaultExtras;
+  const selectedOption = selectedService ?? extraServices.find(({ id }) => id === draft.service);
+  const preselectedClass = preselection?.carClass;
+  const carClasses = preselectedClass && !defaultCarClasses.some(({ id }) => id === preselectedClass.id)
+    ? [...defaultCarClasses, preselectedClass] : defaultCarClasses;
+  const summary = {
+    serviceLabel: serviceCards[draft.service]?.detail ?? selectedOption?.label,
+    classLabel: carClasses.find(({ id }) => id === draft.carClass)?.label,
+  };
 
   useLayoutEffect(() => {
     const container = stage.current;
@@ -197,21 +185,21 @@ export default function BookingPage({ onOpenConsultation }) {
 
   function update(name, value) {
     setDraft((current) => ({ ...current, [name]: value }));
-    setErrors((current) => ({ ...current, [name]: '' }));
-    setSubmitError('');
+    setErrors((current) => name === 'date' ? { ...current, date: '', timeSlot: '' } : { ...current, [name]: '' });
+    clearError();
   }
 
   function goTo(nextStep) {
     focusStep.current = true;
     setDirection(nextStep < step ? -1 : 1);
     setErrors({});
-    setSubmitError('');
+    clearError();
     setStep(nextStep);
   }
 
   function validate(phone) {
-    if (step === 0 && !draft.service) return { service: 'Оберіть послугу або пакет.' };
-    if (step === 1 && draft.carClass && !defaultCarClasses.some(({ label }) => label === draft.carClass)) {
+    if (step === 0 && !selectedOption) return { service: 'Оберіть послугу або пакет.' };
+    if (step === 1 && draft.carClass && !carClasses.some(({ id }) => id === draft.carClass)) {
       return { carClass: 'Оберіть клас зі списку.' };
     }
     if (step === 2) {
@@ -219,9 +207,11 @@ export default function BookingPage({ onOpenConsultation }) {
       if (field?.validity.badInput) {
         return { date: 'Вкажіть дійсну календарну дату або залиште поле порожнім.' };
       }
-      const dateError = getBookingDateError(draft.date, currentDate());
+      const now = new Date();
+      const dateError = getBookingDateError(draft.date, now);
       if (dateError) return { date: dateError };
-      if (!timeSlots.some(({ value }) => value === draft.timeSlot)) return { timeSlot: 'Оберіть бажаний час.' };
+      if (!timeSlots.some(({ id }) => id === draft.timeSlot)) return { timeSlot: 'Оберіть бажаний час.' };
+      if (isBookingSlotExpired(draft.date, draft.timeSlot, now)) return { timeSlot: expiredBookingSlotMessage };
     }
     if (step === 3) {
       const contactErrors = {};
@@ -236,56 +226,31 @@ export default function BookingPage({ onOpenConsultation }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    if (pending.current) return;
+    if (isSubmitting || (waiting && step === steps.length - 1)) return;
 
     const phone = step === steps.length - 1 ? normalizeUkrainianPhone(draft.phone) : '';
     const invalid = validate(phone);
     const firstInvalid = Object.keys(invalid)[0];
     if (firstInvalid) {
       setErrors(invalid);
-      stage.current?.querySelector('.booking-step:not([inert]) [name="' + firstInvalid + '"]')?.focus();
+      stage.current?.querySelector('.booking-step:not([inert]) [name="' + firstInvalid + '"]:not(:disabled)')?.focus();
       return;
     }
     if (step < steps.length - 1) {
       goTo(step + 1);
       return;
     }
-    const dateError = getBookingDateError(draft.date, currentDate());
-    if (dateError) {
-      goTo(2);
-      setErrors({ date: dateError });
-      return;
-    }
-
-    pending.current = true;
-    setIsSubmitting(true);
-    setSubmitError('');
-    try {
-      const pricingClass = pricingClassFor(draft.service);
-      const service = pricingClass && pricingClass !== draft.carClass
-        ? [serviceLabel(draft.service), draft.carClass && '(' + draft.carClass + ')'].filter(Boolean).join(' ')
-        : draft.service;
-      const response = await createBooking({
-        name: draft.name.trim(),
-        phone,
-        car: draft.car.trim(),
-        service,
-        date: draft.date,
-        timeSlot: draft.timeSlot,
-        comment: [draft.carClass && 'Клас автомобіля: ' + draft.carClass, draft.comment.trim()].filter(Boolean).join('\n'),
-      });
+    const response = await submit('booking', {
+      ...draft, phone, selection: selectedOption?.selection, carClassId: draft.carClass, slotId: draft.timeSlot,
+    });
+    if (response) {
       focusStep.current = true;
       setResult(response);
-    } catch {
-      setSubmitError('Не вдалося зберегти заявку. Спробуйте ще раз.');
-    } finally {
-      pending.current = false;
-      setIsSubmitting(false);
     }
   }
 
   function reset() {
-    setDraft(makeDraft(''));
+    setDraft(makeDraft());
     setResult(null);
     goTo(0);
   }
@@ -364,7 +329,7 @@ export default function BookingPage({ onOpenConsultation }) {
               <h2 id="booking-result" className="cinema-heading" tabIndex={-1}>{result.demo ? 'Демонстрацію завершено' : 'Заявку збережено'}</h2>
               <p>{result.demo ? 'Це імітація надсилання. Реальну заявку не створено, візит не підтверджено.' : 'Деталі візиту потрібно узгодити окремо за вказаним номером телефону.'}</p>
               {result.booking_id && <p className="booking-result__reference">Номер заявки: {result.booking_id}</p>}
-              <BookingSummary draft={draft} reduce={reduce} complete />
+              <BookingSummary draft={draft} {...summary} reduce={reduce} complete />
               <div className="booking-actions">
                 <Link to="/" className="btn-outline cinema-button">На головну</Link>
                 <button type="button" className="btn-platinum cinema-button" onClick={reset}>Нова заявка <ArrowRightIcon size={18} /></button>
@@ -379,14 +344,15 @@ export default function BookingPage({ onOpenConsultation }) {
                       {step === 0 && (
                         <>
                           <fieldset className="booking-options booking-options--services" aria-label="Окремі послуги" aria-describedby={errors.service ? 'booking-service-error' : undefined}>
-                            {services.map(({ value, title, detail, icon: Icon }) => (
-                              <label className="booking-option booking-option--service" key={value}>
-                                <input type="radio" name="service" value={value} checked={selectedService?.value === value} onChange={() => update('service', value)} />
+                            {bookingServices.map(({ id, label }) => {
+                              const { title, detail = label, icon: Icon } = serviceCards[id];
+                              return <label className="booking-option booking-option--service" key={id}>
+                                <input type="radio" name="service" value={id} checked={selectedService?.id === id} onChange={() => update('service', id)} />
                                 <Icon size={24} />
                                 <span><strong>{title}</strong><small>{detail}</small></span>
                                 <span className="booking-option__check"><CheckIcon size={14} /></span>
-                              </label>
-                            ))}
+                              </label>;
+                            })}
                           </fieldset>
                           <div className="booking-service-package" data-selected={!selectedService && Boolean(draft.service)}>
                             <ZapIcon size={23} />
@@ -394,7 +360,7 @@ export default function BookingPage({ onOpenConsultation }) {
                               <label htmlFor="booking-package">Пакет або індивідуальний підбір</label>
                               <select id="booking-package" value={selectedService ? '' : draft.service} onChange={(event) => update('service', event.target.value)}>
                                 <option value="" disabled>Оберіть варіант</option>
-                                {extraServices.map((value) => <option key={value} value={value}>{value}</option>)}
+                                {extraServices.map(({ id, label }) => <option key={id} value={id}>{label}</option>)}
                               </select>
                             </div>
                           </div>
@@ -405,9 +371,9 @@ export default function BookingPage({ onOpenConsultation }) {
                       {step === 1 && (
                         <>
                           <fieldset className="booking-options booking-options--classes" aria-label="Клас автомобіля">
-                            {defaultCarClasses.map(({ id, label, example }) => (
+                            {carClasses.map(({ id, label, example }) => (
                               <label className="booking-option booking-option--class" key={id}>
-                                <input type="radio" name="carClass" value={label} checked={draft.carClass === label} onChange={() => update('carClass', label)} />
+                                <input type="radio" name="carClass" value={id} checked={draft.carClass === id} onChange={() => update('carClass', id)} />
                                 <CarIcon size={22} />
                                 <span><strong>{label}</strong><small>{example}</small></span>
                                 <span className="booking-option__check"><CheckIcon size={14} /></span>
@@ -422,17 +388,20 @@ export default function BookingPage({ onOpenConsultation }) {
 
                       {step === 2 && (
                         <>
-                          <BookingField {...fieldProps('date')} label="Бажана дата (необов’язково)" type="date" min={today} max={latestBookingDate} />
-                          <fieldset className="booking-options booking-options--slots">
+                          <BookingField {...fieldProps('date')} label="Бажана дата (необов’язково)" type="date" {...dateBounds} />
+                          <fieldset className="booking-options booking-options--slots" aria-describedby={errors.timeSlot ? 'booking-slot-error' : undefined}>
                             <legend>Бажаний час</legend>
-                            {timeSlots.map(({ value, label, time }) => (
-                              <label className="booking-option booking-option--slot" key={value}>
-                                <input type="radio" name="timeSlot" value={value} checked={draft.timeSlot === value} onChange={() => update('timeSlot', value)} />
-                                <span><strong>{time}</strong><small>{label}</small></span>
-                                <span className="booking-option__check"><CheckIcon size={14} /></span>
-                              </label>
-                            ))}
-                            {errors.timeSlot && <p className="booking-field__error">{errors.timeSlot}</p>}
+                            {timeSlots.map(({ id, label, time }) => {
+                              const expired = isBookingSlotExpired(draft.date, id, scheduleNow);
+                              return (
+                                <label className="booking-option booking-option--slot" key={id}>
+                                  <input type="radio" name="timeSlot" value={id} checked={!expired && draft.timeSlot === id} disabled={expired} onChange={() => update('timeSlot', id)} />
+                                  <span><strong>{time}</strong><small>{expired ? 'Недоступний' : label}</small></span>
+                                  <span className="booking-option__check"><CheckIcon size={14} /></span>
+                                </label>
+                              );
+                            })}
+                            {errors.timeSlot && <p className="booking-field__error" id="booking-slot-error" role="alert">{errors.timeSlot}</p>}
                           </fieldset>
                         </>
                       )}
@@ -451,7 +420,8 @@ export default function BookingPage({ onOpenConsultation }) {
                 </div>
               </fieldset>
 
-              <BookingSummary draft={draft} reduce={reduce} complete={step === 3} />
+              <BookingSummary draft={draft} {...summary} reduce={reduce}
+                slotExpired={step === 2 && isBookingSlotExpired(draft.date, draft.timeSlot, scheduleNow)} complete={step === 3} />
               {submitError && <p className="booking-submit-error" role="alert">{submitError}</p>}
               <div className="booking-actions">
                 {step > 0 && (
@@ -459,7 +429,7 @@ export default function BookingPage({ onOpenConsultation }) {
                     <ArrowRightIcon size={18} /> Назад
                   </button>
                 )}
-                <button type="submit" className="btn-platinum cinema-button booking-next" aria-disabled={isSubmitting}>
+                <button type="submit" className="btn-platinum cinema-button booking-next" aria-disabled={isSubmitting || (waiting && step === 3)}>
                   {isSubmitting ? 'Надсилаємо заявку…' : step < 3 ? 'Продовжити' : isDemo ? 'Надіслати демо-заявку' : 'Надіслати заявку'}
                   <ArrowRightIcon size={19} className="cinema-arrow" />
                 </button>

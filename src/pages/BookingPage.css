@@ -304,10 +304,15 @@
 
 .booking-option__check svg { opacity: 0; }
 
-.booking-option:active { background: var(--bg-selected); }
+.booking-option:active:not(:has(:disabled)) { background: var(--bg-selected); }
 
 @media (hover: hover) and (pointer: fine) {
-  .booking-option:hover { border-color: var(--color-accent); background: var(--bg-selected); }
+  .booking-option:hover:not(:has(:disabled)) { border-color: var(--color-accent); background: var(--bg-selected); }
+}
+
+.booking-option:has(:disabled) {
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
 }
 
 .booking-option:has(:checked),

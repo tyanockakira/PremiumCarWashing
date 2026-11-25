@@ -1,7 +1,8 @@
 import { forwardRef, useLayoutEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useIsPresent } from 'motion/react';
 import { bookingMode } from '../lib/supabase';
-import { normalizeUkrainianPhone, phoneOnlyConsultationUnavailable } from '../lib/bookingValidation';
+import { normalizeUkrainianPhone } from '../lib/bookingValidation';
+import { useBookingSubmission } from '../lib/useBookingSubmission';
 import { duration, easeGlide } from '../lib/motion';
 import { ArrowRightIcon, CheckIcon, CloseIcon } from './Icons';
 import { useDetailReducedMotion } from './useDetailReducedMotion';
@@ -12,7 +13,7 @@ const choices = [
   { title: 'Консультація', description: 'Залиште номер телефону для зв’язку зі спеціалістом.' },
 ];
 const demoNotice = 'Демонстраційний режим. Реальний дзвінок не здійснюється.';
-const unavailable = bookingMode !== 'demo';
+const isDemo = bookingMode === 'demo';
 const contentVariants = {
   enter: (direction) => ({ x: 14 * direction, opacity: 0 }),
   active: { x: 0, opacity: 1 },
@@ -83,9 +84,7 @@ function EntrySession({ initialMode, reduce, onClose, onChooseBooking }) {
   const [direction, setDirection] = useState(1);
   const [phone, setPhone] = useState('');
   const [invalid, setInvalid] = useState(false);
-  const [failure, setFailure] = useState(false);
-  const [sending, setSending] = useState(false);
-  const pending = useRef(false);
+  const { submit: send, sending, error, waiting, clearError } = useBookingSubmission();
   const stage = useRef(null);
   const phoneField = useRef(null);
 
@@ -104,14 +103,14 @@ function EntrySession({ initialMode, reduce, onClose, onChooseBooking }) {
 
   function changeMode(nextMode, nextDirection) {
     setInvalid(false);
-    setFailure(false);
+    clearError();
     setDirection(nextDirection);
     setMode(nextMode);
   }
 
   async function submit(event) {
     event.preventDefault();
-    if (pending.current || unavailable) return;
+    if (sending || waiting) return;
 
     const normalized = normalizeUkrainianPhone(phone);
     if (!normalized) {
@@ -120,23 +119,10 @@ function EntrySession({ initialMode, reduce, onClose, onChooseBooking }) {
       return;
     }
 
-    pending.current = true;
-    setSending(true);
-    setFailure(false);
-    try {
-      const { createConsultation } = await import('../api/bookingApi');
-      const result = await createConsultation({ phone: normalized });
-      if (result?.success !== true) {
-        setFailure(true);
-        return;
-      }
+    const result = await send('consultation', { phone: normalized });
+    if (result) {
       setPhone('');
       changeMode('complete', 1);
-    } catch {
-      setFailure(true);
-    } finally {
-      pending.current = false;
-      setSending(false);
     }
   }
 
@@ -212,7 +198,6 @@ function EntrySession({ initialMode, reduce, onClose, onChooseBooking }) {
                     autoComplete="tel"
                     placeholder="+380 XX XXX XX XX"
                     required
-                    disabled={unavailable}
                     readOnly={sending}
                     value={phone}
                     aria-invalid={invalid || undefined}
@@ -220,7 +205,7 @@ function EntrySession({ initialMode, reduce, onClose, onChooseBooking }) {
                     onChange={(event) => {
                       setPhone(event.target.value);
                       setInvalid(false);
-                      setFailure(false);
+                      clearError();
                     }}
                   />
                   {invalid && (
@@ -229,19 +214,18 @@ function EntrySession({ initialMode, reduce, onClose, onChooseBooking }) {
                     </p>
                   )}
                 </div>
-                {failure && (
-                  <p className="booking-entry__error" role="alert">Не вдалося надіслати запит. Спробуйте ще раз.</p>
+                {error && (
+                  <p className="booking-entry__error" role="alert">{error}</p>
                 )}
                 <button
                   type="submit"
                   className="btn-platinum cinema-button"
-                  disabled={unavailable}
-                  aria-disabled={sending || undefined}
+                  aria-disabled={sending || waiting || undefined}
                 >
                   {sending ? 'Надсилаємо запит…' : 'Замовити дзвінок'}
                 </button>
                 <p id="booking-entry-mode" className="booking-entry__notice">
-                  {unavailable ? phoneOnlyConsultationUnavailable : demoNotice}
+                  {isDemo ? demoNotice : 'Для консультації достатньо номера телефону.'}
                 </p>
               </form>
             </EntryContent>
@@ -252,7 +236,7 @@ function EntrySession({ initialMode, reduce, onClose, onChooseBooking }) {
               {...content}
               label="Консультація"
               title="Запит прийнято"
-              description="Демонстраційний запит успішно оформлено. Реальний дзвінок не здійснюється."
+              description={isDemo ? 'Демонстраційний запит успішно оформлено. Реальний дзвінок не здійснюється.' : 'Запит на консультацію збережено. Ми зв’яжемося з вами за вказаним номером.'}
             >
               <CheckIcon size={32} className="motion-check booking-entry__check" />
               <button className="btn-platinum cinema-button" type="button" onClick={onClose}>Готово</button>

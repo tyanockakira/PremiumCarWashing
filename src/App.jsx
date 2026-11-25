@@ -65,17 +65,19 @@ const PageFrame = forwardRef(function PageFrame({ location, reduce, onOpenConsul
       exit={reduce ? undefined : { y: -8, opacity: 0, transition: { duration: 0.15, ease: easeGlide } }}
       transition={{ duration: reduce ? 0 : duration.page, ease: easeOut }}
     >
-      <Routes location={location}>
-        <Route path="/" element={<HomePage />} />
-        {InitialPage && initialRoute === location.pathname.toLowerCase().replace(/\/$/, '') && (
-          <Route path={initialRoute} element={<InitialPage onOpenConsultation={onOpenConsultation} />} />
-        )}
-        <Route path="/services" element={<ServicesPage />} />
-        <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/advantages" element={<AdvantagesPage />} />
-        <Route path="/booking" element={<LazyBookingPage onOpenConsultation={onOpenConsultation} />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <RouteErrorBoundary>
+        <Routes location={location}>
+          <Route path="/" element={<HomePage />} />
+          {InitialPage && initialRoute === location.pathname.toLowerCase().replace(/\/$/, '') && (
+            <Route path={initialRoute} element={<InitialPage onOpenConsultation={onOpenConsultation} />} />
+          )}
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/advantages" element={<AdvantagesPage />} />
+          <Route path="/booking" element={<LazyBookingPage onOpenConsultation={onOpenConsultation} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </RouteErrorBoundary>
     </motion.div>
   );
 });
@@ -100,13 +102,10 @@ function AnimatedRoutes({ onOpenConsultation, focusBookingRef, initialPage, init
 
   return (
     <>
-      <main>
-        <ScrollToTop />
-        <AnimatePresence initial={false} mode="popLayout">
-          <PageFrame key={location.pathname} location={location} reduce={reduce} onOpenConsultation={onOpenConsultation} initialPage={initialPage} initialRoute={initialRoute} />
-        </AnimatePresence>
-      </main>
-      <Footer />
+      <ScrollToTop />
+      <AnimatePresence initial={false} mode="popLayout">
+        <PageFrame key={location.pathname} location={location} reduce={reduce} onOpenConsultation={onOpenConsultation} initialPage={initialPage} initialRoute={initialRoute} />
+      </AnimatePresence>
     </>
   );
 }
@@ -118,9 +117,11 @@ function AppShell({ initialPage, initialRoute }) {
   const [dismissedQuery, setDismissedQuery] = useState(null);
   const sessionCount = useRef(0);
   const focusBookingRef = useRef(false);
+  const mainContent = useRef(null);
   const normalizedPath = location.pathname.toLowerCase().replace(/\/$/, '') || '/';
   const isBooking = normalizedPath === '/booking';
   const isInitialRoute = normalizedPath === initialRoute;
+  const routeReady = !isInitialRoute || initialPage;
   const params = new URLSearchParams(location.search);
   const opensFromQuery = isBooking && params.get('mode') === 'consultation';
   if (entry && entry.locationKey !== location.key) setEntry(null);
@@ -166,17 +167,27 @@ function AppShell({ initialPage, initialRoute }) {
     target?.focus({ preventScroll: true });
   }
 
+  function skipToContent(event) {
+    event.preventDefault();
+    mainContent.current.focus({ preventScroll: true });
+    mainContent.current.scrollIntoView({ block: 'start', behavior: 'instant' });
+  }
+
   return (
     <>
       <div className="app-wrapper">
+        <a className="skip-link btn-platinum cinema-button" href="#main-content" onClick={skipToContent}>
+          Перейти до основного вмісту
+        </a>
         <Header onOpenBooking={(opener) => openEntry('choice', opener)} />
-        {(!isInitialRoute || initialPage) && (
-          <RouteErrorBoundary key={location.pathname}>
+        <main id="main-content" tabIndex={-1} ref={mainContent}>
+          {routeReady && (
             <Suspense fallback={null}>
               <AnimatedRoutes onOpenConsultation={(opener) => openEntry('consultation', opener)} focusBookingRef={focusBookingRef} initialPage={isInitialRoute ? initialPage : null} initialRoute={initialRoute} />
             </Suspense>
-          </RouteErrorBoundary>
-        )}
+          )}
+        </main>
+        {routeReady && <Footer />}
       </div>
       <BookingEntryModal
         session={session}
